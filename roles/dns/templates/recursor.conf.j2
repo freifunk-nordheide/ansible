@@ -1,0 +1,62 @@
+# {{ ansible_managed }}
+
+#################################
+# allow-from    If set, only allow these comma separated netmasks to recurse
+#
+#allow-from=127.0.0.0/8
+
+#################################
+# config-dir    Location of configuration directory (recursor.conf)
+#
+config-dir=/etc/powerdns
+
+#################################
+# dnssec        DNSSEC mode: off/process-no-validate (default)/process/log-fail/validate
+#
+# dnssec=process-no-validate
+dnssec=off
+
+#################################
+# forward-zones Zones for which we forward queries, comma separated domain=ip pairs
+#
+# forward-zones=
+# alt: forward-zones=ffnh=127.0.0.1:5300,90.10.in-addr.arpa=127.0.0.1:5300
+forward-zones={{ site }}=127.0.0.1:5300
+
+#################################
+# local-address IP addresses to listen on, separated by spaces or commas. Also accepts ports.
+#
+local-address=127.0.0.1,{{ batman_ipv4 | ipaddr('address') }}, ::
+
+#################################
+# local-port    port to listen on
+#
+local-port=5300
+
+#################################
+# query-local-address6 Send out local IPv6 queries from this address or addresses. Disabled by default, which also disables outgoing
+#
+{% if global_ipv6 is defined %}
+query-local-address6={{ global_ipv6 | ipaddr('address') }}
+{% endif %}
+
+#################################
+# quiet Suppress logging of questions and answers
+#
+quiet=yes
+
+#################################
+# security-poll-suffix  Domain name from which to query security update notifications
+#
+# security-poll-suffix=secpoll.powerdns.com.
+security-poll-suffix=
+
+#################################
+# setgid        If set, change group id to this gid for more security
+#
+setgid=pdns
+
+#################################
+# setuid        If set, change user id to this uid for more security
+#
+setuid=pdns

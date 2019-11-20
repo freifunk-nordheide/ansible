@@ -1,0 +1,21 @@
+---
+
+- name: Install bird
+  apt: package=bird
+
+- name: Enable IPv6 routing
+  sysctl: name=net.ipv6.conf.all.forwarding value=1 state=present
+
+- name: Configure bird
+  template: src=bird.conf.j2 dest=/etc/bird/bird.conf
+  notify: Restart bird
+
+- name: Configure bird6
+  template: src=bird6.conf.j2 dest=/etc/bird/bird6.conf
+  notify: Restart bird6
+
+- name: Enable bird
+  service: name=bird state=started enabled=yes
+
+- name: Enable bird6
+  service: name=bird6 state=started enabled=yes

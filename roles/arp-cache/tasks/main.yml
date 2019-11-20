@@ -1,0 +1,11 @@
+---
+
+- name: Configure ARP/ND cache
+  sysctl: name={{ item.key }} value={{ item.value }} state=present
+  with_items:
+  - { key: 'net.ipv4.neigh.default.gc_thresh1', value: 2048 }
+  - { key: 'net.ipv4.neigh.default.gc_thresh2', value: 4096 }
+  - { key: 'net.ipv4.neigh.default.gc_thresh3', value: 8192 }
+  - { key: 'net.ipv6.neigh.default.gc_thresh1', value: 2048 }
+  - { key: 'net.ipv6.neigh.default.gc_thresh2', value: 4096 }
+  - { key: 'net.ipv6.neigh.default.gc_thresh3', value: 8192 }

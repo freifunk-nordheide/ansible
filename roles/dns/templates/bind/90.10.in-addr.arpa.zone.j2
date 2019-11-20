@@ -1,0 +1,14 @@
+$ORIGIN 90.10.in-addr.arpa	; base for unqualified names
+$TTL 1h				; default time-to-live
+@				IN	      SOA ns.ffrgb. hostmaster.ffrgb. (
+					2018011701; serial
+					1d; refresh
+					2h; retry
+					4w; expire
+					1h; minimum time-to-live
+				)
+				IN	NS	ns.ffrgb.
+; Gateways
+11.32   IN  PTR gw11.ffrgb.
+21.64   IN  PTR gw21.ffrgb.
+31.96   IN  PTR gw31.ffrgb.

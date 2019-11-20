@@ -1,0 +1,10 @@
+zone "{{ site }}" {
+	type master;
+	file "/etc/powerdns/bind/{{ site }}.zone";
+	allow-update { none; };
+};
+# zone "90.10.in-addr.arpa" {
+# 	type master;
+# 	file "/etc/powerdns/bind/90.10.in-addr.arpa.zone";
+# 	allow-update { none; };
+# };

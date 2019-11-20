@@ -1,0 +1,7 @@
+---
+
+- name: Reload interfaces
+  command: /sbin/ifreload -a
+
+- name: Reload systemd
+  command: systemctl daemon-reload

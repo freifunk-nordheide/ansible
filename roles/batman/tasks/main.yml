@@ -1,0 +1,10 @@
+---
+
+- name: Install batctl from apt
+  apt: name=batctl
+
+- name: Enable batman during boot
+  lineinfile: dest=/etc/modules line=batman-adv
+
+- name: Load batman-adv module
+  modprobe: name=batman-adv

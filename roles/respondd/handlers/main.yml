@@ -1,0 +1,7 @@
+---
+
+- name: Restart respondd
+  service: name=respondd state=restarted
+
+- name: Reload systemd
+  command: systemctl daemon-reload

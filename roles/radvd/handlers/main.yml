@@ -1,0 +1,6 @@
+---
+
+- name: Restart radvd
+  service: name={{ item }} state=restarted
+  with_items:
+   - radvd

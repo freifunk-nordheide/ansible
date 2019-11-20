@@ -1,0 +1,46 @@
+# {{ ansible_managed }}
+
+#################################
+# launch        Which backends to launch and order to query them in
+#
+# launch=
+launch=bind
+
+#################################
+# local-address Local IP addresses to which we bind
+#
+# local-address=0.0.0.0
+local-address=127.0.0.1
+
+#################################
+# local-ipv6    Local IP address to which we bind
+#
+# local-ipv6=::
+local-ipv6=
+
+#################################
+# local-port    The port on which we listen
+#
+# local-port=53
+local-port=53
+
+#################################
+# security-poll-suffix  Domain name from which to query security update notifications
+#
+# security-poll-suffix=secpoll.powerdns.com.
+security-poll-suffix=
+
+#################################
+# setgid        If set, change group id to this gid for more security
+#
+setgid=pdns
+
+#################################
+# setuid        If set, change user id to this uid for more security
+#
+setuid=pdns
+
+#################################
+# bind-config   Location of the Bind configuration file to parse.
+#
+bind-config=/etc/powerdns/bindbackend.conf

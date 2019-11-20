@@ -1,0 +1,34 @@
+# {{ ansible_managed }}
+
+auto br-{{ site_code }} 
+iface br-{{ site_code }}
+	mtu		1500
+	bridge-ports 	bat-{{ site_code }}
+	bridge-stp	no
+	address		{{ batman_ipv4 }}
+	address 	{{ batman_ipv6 }}
+
+# bat-{{ site_code }}
+auto bat-{{ site_code }}
+iface bat-{{ site_code }}
+	hwaddress	fe:ed:be:42:{{ gateway_id }}:20
+	mtu		1500
+	#
+	batman-hop-penalty	5
+	batman-ifaces		dmy-{{ site_code }}
+	batman-ifaces-ignore-regex	.*_.*
+	#
+	up /usr/sbin/batctl -m bat-{{ site_code }} gw_mode server 1000000/1000000
+	up /usr/sbin/batctl -m bat-{{ site_code }} it 5000
+	up /usr/sbin/batctl -m bat-{{ site_code }} multicast_mode 0
+	up /usr/sbin/batctl -m bat-{{ site_code }} ra {{ batman_algo }}
+
+# dmy-{{ site_code }}
+auto dmy-{{ site_code }}
+iface dmy-{{ site_code }}
+	hwaddress	fe:ed:be:42:{{ gateway_id }}:00
+	link-type	dummy
+	mtu		1560
+
+
+

@@ -1,0 +1,24 @@
+---
+
+- name: Install iptables-persistent
+  apt: name=iptables-persistent
+
+- name: Enable IPv4 routing
+  sysctl: name=net.ipv4.ip_forward value=1 state=present
+
+- name: Load nf_conntrack module
+  modprobe: name=nf_conntrack
+
+- name: Enable nf_conntrack during boot
+  lineinfile: dest=/etc/modules line=nf_conntrack
+
+- name: Increase conntrack limit
+  sysctl: name=net.netfilter.nf_conntrack_max value={{ conntrack_max }} state=present
+
+- name: Configure iptables
+  template: src=rules.v4.j2 dest=/etc/iptables/rules.v4
+  notify: Reload iptables
+
+- name: Configure ip6tables
+  template: src=rules.v6.j2 dest=/etc/iptables/rules.v6
+  notify: Reload ip6tables

@@ -1,0 +1,12 @@
+# completion
+autoload -U compinit
+compinit
+
+
+# cache for the completion
+zstyle ':completion::complete:*' use-cache 1
+
+
+# promt
+autoload -U promptinit
+promptinit

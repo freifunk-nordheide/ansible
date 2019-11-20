@@ -1,0 +1,6 @@
+---
+
+# dhcpd_interfaces: br-{{ site_code }}
+# dhcpd_first: "{{ batman_ipv4 | ipaddr('512') | ipaddr('address') }}"
+# dhcpd_last: "{{ batman_ipv4 | ipaddr('2558') | ipaddr('address') }}"
+# name_server: "{{ batman_ipv4 | ipaddr('address') }}"

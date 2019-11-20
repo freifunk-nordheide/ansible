@@ -1,0 +1,9 @@
+---
+
+- name: Install misc software
+  apt: name={{ item }}
+  with_items:
+  - git
+  - net-tools
+  - sudo
+  - fail2ban

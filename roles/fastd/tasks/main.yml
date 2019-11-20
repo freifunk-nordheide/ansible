@@ -1,0 +1,64 @@
+---
+
+- name: Create group
+  group: name=fastd
+
+- name: Create user
+  user: name=fastd group=fastd
+
+- name: Install fastd
+  apt: name=fastd state=latest
+
+- name: Install haveged (to create entropy)
+  apt: name=haveged
+
+- name: Systemd unit for fastd
+  copy: src=fastd@.service dest=/etc/systemd/system/fastd@.service
+  notify:
+  - Reload systemd
+  - Restart fastd
+
+- name: Disable fastd default instance
+  service: name=fastd enabled=no
+
+- name: Create config directory
+  file: path=/etc/fastd/{{ site_code }} state=directory
+
+- name: Create config directories
+  file: path=/etc/fastd/{{ site_code }}{{ item }}/peers state=directory
+  with_sequence: start=0 count={{ fastd_instances }}
+
+- name: Configure fastd
+  template: src=fastd.conf.j2 dest=/etc/fastd/{{ site_code }}{{ item }}/fastd.conf
+  with_sequence: start=0 count={{ fastd_instances }}
+  notify: Restart fastd
+
+- name: Generate fastd secret
+  fastd_key: path=/etc/fastd/{{ site_code }}/secret.conf
+  notify: Restart fastd
+
+- name: Permissions (secret)
+  file: owner=fastd group=fastd path=/etc/fastd/{{ site_code }}/secret.conf
+
+- name: Create symlinks (secret)
+  file: src=/etc/fastd/{{ site_code }}/secret.conf dest=/etc/fastd/{{ site_code }}{{ item }}/secret.conf state=link
+  with_sequence: start=0 count={{ fastd_instances }}
+
+- name: Create Blacklist Script
+  copy: src=blacklist.sh dest=/etc/fastd/{{ site_code }}/blacklist.sh mode=0755 force=yes
+
+- name: Create symlinks (blacklist)
+  file: src=/etc/fastd/{{ site_code }}/blacklist.sh dest=/etc/fastd/{{ site_code }}{{ item }}/blacklist.sh state=link
+  with_sequence: start=0 count={{ fastd_instances }}
+
+- name: Create Blacklist directory
+  file: path=/etc/fastd/{{ site_code }}/vpn-blacklist/ state=directory
+
+- name: Create Blacklist file
+  copy: src=blacklist.json dest=/etc/fastd/{{ site_code }}/vpn-blacklist/blacklist.json mode=0644
+
+- name: Enable fastd {{ site_code }}
+  service: 
+    name=fastd@{{ site_code }}{{ item }}
+    enabled=yes
+  with_sequence: start=0 count={{ fastd_instances }}

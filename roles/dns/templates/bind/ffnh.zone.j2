@@ -1,0 +1,31 @@
+
+$TTL 86400
+$ORIGIN ffnh.
+;                                                 primary-master admin-mail
+@                                 IN        SOA   00.ffnh. heini66@gmail.com. (
+                                  2019101705 ; serial
+                                  1h         ; refresh
+                                  15m        ; retry
+                                  1w         ; expire
+                                  1d)        ; ttl
+; Nameserver
+                                 IN             NS    11.gw
+                                 IN             NS    12.gw
+
+; Hosts
+11.gw                    86400    IN            A       10.72.1.11
+                                                AAAA  fd8f:14c7:d31f::ff11
+12.gw                    86400    IN            A       10.72.1.12
+                                                AAAA  fd8f:14c7:d31f::ff12
+
+; NTP Server
+01.ntp.services          86400     IN           A       10.72.1.11
+                                                AAAA  fd8f:14c7:d31f::ff11
+02.ntp.services          86400     IN           A       10.72.1.12
+                                                AAAA  fd8f:14c7:d31f::ff12
+; Nextnode
+node                     86400     IN           A       10.72.254.254
+                                                AAAA  fd8f:14c7:d31f::ffff
+
+
+

@@ -1,0 +1,14 @@
+[Unit]
+Description=Fast and Secure Tunnelling Daemon (connection %I)
+After=network.target
+
+[Service]
+Type=notify
+ExecStartPre=/bin/mkdir -p /run/fastd
+ExecStartPre=/bin/chown -R fastd:fastd /run/fastd
+ExecStart=/usr/bin/fastd --syslog-level info --syslog-ident fastd@%I -c /etc/fastd/%I/fastd.conf
+ExecReload=/bin/kill -HUP $MAINPID
+ExecStopPost=/bin/rm -f /run/fastd-%I.sock
+
+[Install]
+WantedBy=multi-user.target

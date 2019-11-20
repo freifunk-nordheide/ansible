@@ -1,0 +1,49 @@
+# {{ ansible_managed }}
+
+# option definitions common to all supported networks...
+option domain-name "{{ site_domain }}";
+option domain-name-servers {{nextnode4}}, {{ batman_ipv4 | ipaddr('address') }};
+
+local-address {{ batman_ipv4 | ipaddr('address') }};
+
+default-lease-time 60;
+max-lease-time 360;
+
+# Use this to enble / disable dynamic dns updates globally.
+ddns-update-style none;
+
+# If this DHCP server is the official DHCP server for the local
+# network, the authoritative directive should be uncommented.
+authoritative;
+
+# Use this to send dhcp log messages to a different log file (you also
+# have to hack syslog.conf to complete the redirection).
+log-facility local7;
+
+
+# Freifunk Nordheide
+subnet {{ batman_ipv4 | ipaddr('network') }} netmask {{ batman_ipv4 | ipaddr('netmask') }} {
+  option routers {{ batman_ipv4 | ipaddr('address') }};
+  option interface-mtu {{ (mtu | int) }};
+  option domain-name "{{ site_domain }}";
+  option domain-name-servers {{nextnode4}}, {{ batman_ipv4 | ipaddr('address') }};
+  option broadcast-address {{ batman_ipv4 | ipaddr('broadcast') }};
+  pool {
+    range {{ dhcpd_first }} {{ dhcpd_last }};
+  }
+	
+# use static arp entries to reduce broadcast
+  on commit {
+    set clip = binary-to-ascii(10, 8, ".", leased-address);
+    set clhw = binary-to-ascii(16, 8, ":", substring(hardware, 1, 6));
+    execute("/usr/sbin/arp", "-s", clip, clhw);
+  }
+  on release {
+    set clip = binary-to-ascii(10, 8, ".", leased-address);
+    execute("/usr/sbin/arp", "-d", clip);
+  }
+  on expiry {
+    set clip = binary-to-ascii(10, 8, ".", leased-address);
+    execute("/usr/sbin/arp", "-d", clip);
+  }
+}

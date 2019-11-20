@@ -1,0 +1,14 @@
+# {{ ansible_managed }}
+
+[Unit]
+Description=respondd
+After=network-online.target
+
+[Service]
+ExecStart=/opt/{{ site_code }}/respondd-announce/respondd.py -b {{ batman_interface }} -i {{ main_bridge }} -d /opt/{{ site_code }}/respondd-announce/
+Restart=always
+Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+WorkingDirectory=/opt/{{ site_code }}/respondd-announce
+
+[Install]
+WantedBy=multi-user.target

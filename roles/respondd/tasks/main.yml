@@ -1,0 +1,17 @@
+---
+
+- name: Install dependencies
+  apt: name=ethtool
+
+- name: Clone respondd announce repository
+  git: repo={{ respondd_announce_git_root }} dest=/opt/{{ site_code }}/respondd-announce/ version={{ respondd_announce_git_version }}
+  notify: Restart respondd
+
+- name: Install systemd unit
+  template: src=respondd.service.j2 dest=/lib/systemd/system/respondd.service
+  notify:
+  - Reload systemd
+  - Restart respondd
+
+- name: Enable respondd
+  service: name=respondd state=started enabled=yes

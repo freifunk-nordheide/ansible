@@ -1,0 +1,52 @@
+# {{ ansible_managed }}
+
+user "fastd";
+group "fastd";
+
+log to syslog level warn;
+hide ip addresses yes;
+status socket "/run/fastd/vpn-{{ site_code }}{{ item }}.sock";
+
+interface "vpn-{{ site_code }}{{ item }}";
+
+method "null";
+method "salsa2012+umac";
+
+secure handshakes yes;
+
+bind {{ fastd_bind }}:{{ fastd_port + item|int }};
+
+include "secret.conf";
+
+mtu {{ mtu }};
+
+{% if fastd_peers_limit > -1 %}
+	{% if item|int == 0 %}
+peer limit {{ fastd_peers_limit-10 }};
+	{% elif item|int == (fastd_instances-1) %}
+peer limit {{ fastd_peers_limit+10 }};
+	{% else %}
+peer limit {{ fastd_peers_limit }};
+	{% endif %}
+{% endif %}
+
+on up "
+	ifconfig $INTERFACE down
+	ip link set address fe:ed:be:42:{{ gateway_id }}:{{ 10 + item|int }} dev $INTERFACE
+	ifconfig $INTERFACE up
+
+	batctl -m {{ batman_interface }} if add $INTERFACE
+";
+
+on down "
+	batctl -m {{ batman_interface }} if del $INTERFACE
+";
+
+{% if fastd_anonymous %}
+on verify "/etc/fastd/{{ site_code }}/blacklist.sh $PEER_KEY $PEER_ADDRESS /etc/fastd/{{ site_code }}/vpn-blacklist/blacklist.json";
+{% endif %}
+
+include peers from "peers";
+
+
+

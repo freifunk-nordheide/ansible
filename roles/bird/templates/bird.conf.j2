@@ -1,0 +1,29 @@
+# {{ ansible_managed }}
+
+log syslog all;
+
+router id {{ ansible_default_ipv4.address }};
+
+timeformat protocol iso long;
+
+protocol device {
+	scan time 10;
+}
+
+protocol kernel {
+	metric 64;	# Use explicit kernel route metric to avoid collisions
+			# with non-BIRD routes in the kernel routing table
+	import none;
+	export all;	# Actually insert routes into the kernel routing table
+}
+
+protocol ospf bbmesh {
+	area 0 {
+		interface "br-*" {
+			stub yes;
+		};
+		interface "tun-*" {
+			type ptp;
+		};
+	};
+}

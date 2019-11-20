@@ -1,0 +1,15 @@
+---
+
+{{ ansible_fqdn }}:
+- path: /etc/nginx/ssl/{{ ansible_fqdn }}.crt
+  user: root
+  group: root
+  perm: '400'
+  format: crt,ca
+  action: '/usr/sbin/service nginx restart'
+- path: /etc/nginx/ssl/{{ ansible_fqdn }}.key
+  user: root
+  group: root
+  perm: '400'
+  format: key
+  action: '/usr/sbin/service nginx restart'

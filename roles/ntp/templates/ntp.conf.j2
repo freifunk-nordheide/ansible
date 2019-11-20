@@ -1,0 +1,17 @@
+# {{ ansible_managed }}
+
+{% for srv in ntp_servers %}
+server {{ srv }} iburst
+{% endfor %}
+{% if ntp_peers is defined %}
+
+{% for peer in ntp_peers %}
+peer {{ peer }}
+{% endfor %}
+{% endif %}
+
+restrict default kod nomodify notrap nopeer noquery
+restrict -6 default kod nomodify notrap nopeer noquery
+
+restrict 127.0.0.1
+restrict -6 ::1

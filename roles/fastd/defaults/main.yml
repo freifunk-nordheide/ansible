@@ -1,0 +1,8 @@
+---
+
+batman_interface: bat-{{ site_code }}
+
+fastd_anonymous: true
+fastd_bind: any
+fastd_instances: 2
+fastd_peers_limit: 70
