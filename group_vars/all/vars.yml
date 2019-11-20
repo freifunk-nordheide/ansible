@@ -1,0 +1,49 @@
+---
+
+# acertmgr_mode: webdir
+
+# confluence_domain: confluence.regensburg.freifunk.net
+# confluence_dbname: confluence
+# confluence_dbuser: confluence
+# confluence_dbpass: "{{ vault_confluence_dbpass }}"
+
+# fastd_targets:
+# - gw11.regensburg.freifunk.net:9281
+# - gw21.regensburg.freifunk.net:9281
+# - gw31.regensburg.freifunk.net:9281
+
+# gre_prefix: 10.90.232.0/24
+# gre_matrix:
+# - { id: 1, a: svcs, b: gw11 }
+# - { id: 2, a: svcs, b: gw12 }
+# - { id: 3, a: svcs, b: gw21 }
+# - { id: 4, a: svcs, b: gw22 }
+# - { id: 5, a: svcs, b: gw31 }
+# - { id: 9, a: gw11, b: gw12 }
+# - { id: 10, a: gw11, b: gw21 }
+# - { id: 11, a: gw11, b: gw22 }
+# - { id: 12, a: gw11, b: gw31 }
+# - { id: 17, a: gw12, b: gw21 }
+# - { id: 18, a: gw12, b: gw22 }
+# - { id: 19, a: gw12, b: gw31 }
+# - { id: 25, a: gw21, b: gw22 }
+# - { id: 26, a: gw21, b: gw31 }
+# - { id: 33, a: gw22, b: gw31 }
+
+# node_targets:
+# - gw11.regensburg.freifunk.net:9100
+# - gw21.regensburg.freifunk.net:9100
+# - gw31.regensburg.freifunk.net:9100
+# - confluence.regensburg.freifunk.net:9100
+# - stats.ffrgb:9100
+# - unms.ffrgb:9100
+
+ntp_servers:
+- 0.de.pool.ntp.org
+- 1.de.pool.ntp.org
+- 2.de.pool.ntp.org
+- 3.de.pool.ntp.org
+
+site: ffnh
+site_domain_a: nordheide.freifunk.net
+site_domain: freifunk-nordheide.de
