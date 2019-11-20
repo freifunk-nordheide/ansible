@@ -1,0 +1,22 @@
+---
+
+batman_ipv4: 10.72.1.11/16
+batman_ipv6: fd8f:14c7:d31f::ff11/64
+batman_algo: BATMAN_IV
+-- global_ipv6: 2a00:9d80:6000:0101::11/64
+nextnode4: 10.72.31.254
+nextnode6: fd8f:14c7:d31f::ffff   
+mtu: 1374 
+
+fastd_port: 10100
+
+gateway_id: 11
+srv_name: 11gw
+
+site_code: ffnhsw
+
+dhcpd_interfaces: br-{{ site_code }}
+dhcpd_first: 10.72.16.2
+dhcpd_last: 10.72.31.253
+name_server: "{{ batman_ipv4 }}"
+
