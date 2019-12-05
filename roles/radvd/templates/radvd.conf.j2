@@ -7,18 +7,11 @@ interface br-{{ site_code }} {
   AdvOtherConfigFlag on;
   MaxRtrAdvInterval 200;
   AdvLinkMTU {{ (mtu | int) }};
-  prefix {{ batman_ipv6 | ipaddr('address') | ipsubnet(64) }} {
-    AdvOnLink on;
-    AdvAutonomous on;
-#    AdvRouterAddr on;
-  };
-  {% if global_ipv6 is defined %}
-  prefix {{ global_ipv6 | ipaddr('address') | ipsubnet(64) }} {
+  prefix {{ batman_ipv6 | ipaddr('network') | ipsubnet(64) }} {
     AdvOnLink on;
     AdvAutonomous on;
     AdvRouterAddr on;
   };
-  {% endif %}
   RDNSS {{ batman_ipv6 | ipaddr('address')}} {
   };
 };

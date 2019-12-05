@@ -1,0 +1,9 @@
+---
+
+- name: Setup gateways
+  hosts: 11.gw.freifunk-nordheide.de, 12.gw.freifunk-nordheide.de
+  roles:
+#  - nginx
+  - yanic
+
+

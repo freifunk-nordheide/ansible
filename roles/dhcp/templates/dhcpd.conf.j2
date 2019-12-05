@@ -1,0 +1,26 @@
+# {{ ansible_managed }}
+
+# option definitions common to all supported networks...
+option domain-name ".{{ site_domain }}";
+
+default-lease-time 120;
+max-lease-time 600;
+
+# Use this to enble / disable dynamic dns updates globally.
+ddns-update-style none;
+
+# If this DHCP server is the official DHCP server for the local
+# network, the authoritative directive should be uncommented.
+authoritative;
+
+# Use this to send dhcp log messages to a different log file (you also
+# have to hack syslog.conf to complete the redirection).
+log-facility local7;
+
+# Freifunk Nordheide
+subnet {{ batman_ipv4 | ipaddr('network') }} netmask {{ batman_ipv4 | ipaddr('netmask') }} {
+  option routers {{ batman_ipv4 | ipaddr('address') }};
+  option domain-name-servers {{nextnode4}}, {{ batman_ipv4 | ipaddr('address') }};
+  range {{ dhcpd_first }} {{ dhcpd_last }};
+}
+include "/etc/dhcp/static.conf";

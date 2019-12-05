@@ -1,0 +1,15 @@
+---
+
+- name: Restart network
+  # Restart the network, sleep 3 seconds, return the
+  # exit code returned by "service network restart".
+  # This is to work-around a glitch in Ansible where
+  # it detects a successful network restart as a failure.
+  command: perl -e 'my $exit_code = system("systemctl restart networking"); sleep 3; $exit_code = $exit_code >> 8; exit($exit_code);'
+
+- name: Reload iptables
+  command: /sbin/iptables-restore < /etc/iptables.up.rules 
+  ignore_errors: True
+
+- name: Reload systemd
+  command: systemctl daemon-reload

@@ -1,22 +1,97 @@
 ---
 
-batman_ipv4: 10.72.1.11/16
-batman_ipv6: fd8f:14c7:d31f::ff11/64
-batman_algo: BATMAN_IV
--- global_ipv6: 2a00:9d80:6000:0101::11/64
-nextnode4: 10.72.31.254
-nextnode6: fd8f:14c7:d31f::ffff   
-mtu: 1374 
+unit_type: gateway
 
-fastd_port: 10100
+site: ffnh
+site_domain_a: nordheide.freifunk.net
+site_domain: freifunk-nordheide.de
 
-gateway_id: 11
-srv_name: 11gw
+# Unit id's 01-15 und 51-65 only!)
+# Units 01 and 51 up to 15 and 65 are always bulding pairs of gateways for one site_code (f.e.: 11gw und 61gw are belonging to site_code ffnhsw - 12gw und 62gw to ffnhso)
 
+unit_id: "11"
+site_range_ipv4_prefix: "10.72"
+site_range_ipv6_prefix: "fd8f:14c7:d31f::"
 site_code: ffnhsw
 
-dhcpd_interfaces: br-{{ site_code }}
-dhcpd_first: 10.72.16.2
-dhcpd_last: 10.72.31.253
+hw_address_prefix: "fe:ed:be:42:"
+
+# ####################################
+# Basiseinstellungen
+# ####################################
+
+batman_algo: BATMAN_IV
+
+mtu: 1374 
+
+unit_idn: "{{ unit_id }}gw"
+unit_name: "{{ unit_id }}.gw.{{ site_domain }}"
+
+base_ipv4: "{{ ansible_facts['default_ipv4']['address'] }}"
+base_if: "{{ ansible_facts['default_ipv4']['interface'] }}"
+
 name_server: "{{ batman_ipv4 }}"
+
+batman_interface: bat-{{ site_code }}
+batman_ipv4_range: "{{ site_range_ipv4_prefix }}.0.0/16"
+batman_ipv4: "{{ site_range_ipv4_prefix }}.1.{{ unit_id }}/16"
+batman_ipv6: "{{ site_range_ipv6_prefix }}ff{{ unit_id }}/64"
+
+tun_if: "tun0"
+
+-- global_ipv6: 2a00:9d80:6000:0101::12/64
+
+# ####################################
+# Fastd
+# ####################################
+
+# Fastd-Port: jeweils zwei Gateways haben den gleichen fastd-Port: z.b. 01 und 51, 12 und 62. (Diese bilden pro Hood ein Pärchen) 
+
+#
+# bei unit_ids < 50
+# fastd_port: "11{{ unit_id }}0"
+#
+fastd_port: "11{{ unit_id }}0"
+#
+# bei unit-ids > 50 UND < 60 also für 51 - 59
+#	fastd_port: "110{{ unit_id|int - 50}}0"
+# oder > 59
+#	fastd_port: "11{{ unit_id|int - 50}}0"
+#
+# weitere fastd-Einstellungen
+fastd_anonymous: true
+fastd_bind: any
+fastd_instances: 1
+fastd_peers_limit: 70
+
+# ####################################
+# Dhcp
+# ####################################
+
+dhcpd_interfaces: br-{{ site_code }}
+
+#
+# je hood gibt es ein /20 Netz das für die beiden Gws aufgeteilt wird in 2 /21 Netze - der "untere" Teil des Bereiches geht an das GW mit der kleineren Zahl
+#
+dhcpd_range: "{{ site_range_ipv4_prefix }}.{{ unit_id|int * 16 }}.0/21"
+dhcpd_first: "{{ site_range_ipv4_prefix }}.{{ unit_id|int * 16 }}.2"
+dhcpd_last: "{{ site_range_ipv4_prefix }}.{{ (unit_id|int + 1) * 16 - 8 - 1 }}.253"
+nextnode4: "{{ site_range_ipv4_prefix }}.{{ (unit_id|int + 1) * 16 - 8 - 1 }}.254"
+#
+# Der "obere" Teil des Bereiches geht an das GW mit der größeren Zahl
+#
+# dhcpd_range: "{{ site_range_ipv4_prefix }}.{{ (unit_id|int - 50) * 16 + 8 }}.0/21"
+# dhcpd_first: "{{ site_range_ipv4_prefix }}.{{ (unit_id|int - 50) * 16 + 8 }}.1"
+# dhcpd_last: "{{ site_range_ipv4_prefix }}.{{ (unit_id|int - 50 + 1) * 16 - 1 }}.253"
+# nextnode4: "{{ site_range_ipv4_prefix }}.{{ (unit_id|int - 50 + 1) * 16 - 1 }}.254"
+
+nextnode6: "{{ site_range_ipv6_prefix }}ffff"   
+
+
+# ####################################
+# Nginx
+# ####################################
+
+nginx_ssl: True
+
 

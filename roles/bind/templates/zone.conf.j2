@@ -1,0 +1,12 @@
+# Zones WE have authority over!
+
+zone "{{ site_code }}" IN {
+  type master;
+  file "/etc/bind/zones/{{ site_code }}/db.{{ site_code }}";
+};
+
+
+
+
+
+

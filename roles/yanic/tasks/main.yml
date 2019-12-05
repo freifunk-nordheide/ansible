@@ -1,0 +1,41 @@
+---
+
+- name: Stop a running yanic service
+  service:
+    name: "yanic.service"
+    state: stopped
+  ignore_errors: True
+
+- name: Create user
+  user: 
+    name: yanic
+    create_home: no
+
+- name: Install yanic
+  shell: /usr/local/go/bin/go get -t -f -u -fix {{ yanic_source }}
+  args:
+    creates: /opt/go/bin/yanic
+  environment:
+    GOPATH: /opt/go
+  notify: Restart yanic
+  ignore_errors: true
+
+- name: Configure yanic
+  template: src=yanic.conf.j2 dest=/etc/yanic.conf
+  notify: Restart yanic
+
+- name: Create directories
+  file: path={{ item }}/ state=directory owner=yanic
+  with_items:
+  - /var/www/html/yanic
+  - /var/lib/yanic
+
+- name: Install systemd unit
+  copy: src=yanic.service dest=/lib/systemd/system/yanic.service
+  notify:
+  - Reload systemd
+  - Restart yanic
+
+- name: Enable yanic
+  service: name=yanic enabled=yes
+...

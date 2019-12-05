@@ -1,0 +1,51 @@
+- name: Hostname im Prompt setzen
+  hostname:
+    name: "{{ unit_idn }}"
+
+- name: Hostname in /etc/hostname setzen
+  copy:
+    content: "{{ unit_idn }}}{{'\n'}}"
+    dest: /etc/hostname
+    owner: root
+    group: root
+    mode: 0644
+
+- debug: var=ansible_facts
+- debug: var=ansible_fqdn 
+
+- name: Hostname für IPv4 in /etc/hosts setzen
+  lineinfile:
+    dest: /etc/hosts
+    regexp: "^127.0.1.1"
+    line: "127.0.1.1{{'\t'}}{{ unit_idn }}{{'\t'}}{{ unit_name }}"
+    state: present
+
+- name: Hostname für für IPv4 in /etc/hosts setzen
+  lineinfile:
+    dest: /etc/hosts
+    regexp: "^{{ base_ipv4 }}"
+    insertafter: "^127.0.1.1"
+    line: "{{ base_ipv4 }}{{'\t'}}{{ unit_name }}{{'\t'}}{{ unit_idn }}"
+    state: present
+
+- name: Hostname für IPv6 in /etc/hosts setzen
+  lineinfile:
+    dest: /etc/hosts
+    regexp: "^::1"
+    line: "::1{{'\t'}}{{unit_idn}}{{'\t'}}{{ unit_name }}{{'\t'}}localhost ip6-localhost ip6-loopback"
+    state: present
+
+- name: Adresse (IPv4) setzen
+  lineinfile:
+    dest: /etc/hosts
+    regexp: "^{{ batman_ipv4 | ipaddr('address')}}"
+    insertafter: "^127.0.1.1"
+    line: "{{ batman_ipv4 | ipaddr('address')}}{{'\t'}}{{ site_code }}"
+    state: present
+
+- name: Adresse (IPv6) setzen
+  lineinfile:
+    dest: /etc/hosts
+    regexp: "^{{ batman_ipv6 | ipaddr('address')}}"
+    line: "{{ batman_ipv6 | ipaddr('address')}}{{'\t'}}{{ site_code }}"
+    state: present
