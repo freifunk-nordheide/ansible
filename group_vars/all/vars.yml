@@ -103,7 +103,7 @@ hoods:
   "12":
     number:       "12"
     sname:        ffnhno
-    name:         FFNH-Nordwest
+    name:         FFNH-Nordost
     comment:      Nördlich A39 / Oestlich A1/A7
     site:         ffnh
     dhcp_range:   "10.72.192.0/21"
@@ -114,7 +114,7 @@ hoods:
   "13":
     number:       "13"
     sname:        ffnhso
-    name:         FFNH-Nordwest
+    name:         FFNH-Suedost
     comment:      Südlich A39 / Östlich A7
     site:         ffnh
     dhcp_range:   "10.72.208.0/21"
@@ -125,7 +125,7 @@ hoods:
   "14":
     number:       "14"
     sname:        ffnhsw
-    name:         FFNH-Nordwest
+    name:         FFNH-Suedwest
     comment:      Südlich A1 / Westlich A7
     site:         ffnh
     dhcp_range:   "10.72.224.0/21"
