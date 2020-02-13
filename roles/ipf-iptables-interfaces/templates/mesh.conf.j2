@@ -7,7 +7,7 @@ auto br-{{ site_code }}
 	netmask		255.255.0.0
 
 iface br-{{ site_code }} inet6 static
-	address		{{ batman_ipv6 }}
+	address		{{ batman_ipv6_global }}
 	netmask		64
 	post-up /sbin/ip rule add iif br-{{ site_code }} table 42
 	pre-down /sbin/ip rule del iif br-{{ site_code }} table 42

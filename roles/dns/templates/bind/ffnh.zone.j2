@@ -11,21 +11,27 @@ $ORIGIN ffnh.
 ; Nameserver
                                  IN             NS    11.gw
                                  IN             NS    12.gw
+                                 IN             NS    61.gw
+                                 IN             NS    62.gw
 
 ; Hosts
 11.gw                    86400    IN            A       10.72.1.11
-                                                AAAA  fd8f:14c7:d31f::ff11
+                                                AAAA  fd8f:14c7:d318:11ff::ff11
+61.gw                    86400    IN            A       10.72.1.61
+                                                AAAA  fd8f:14c7:d318:11ff::ff61
 12.gw                    86400    IN            A       10.72.1.12
-                                                AAAA  fd8f:14c7:d31f::ff12
+                                                AAAA  fd8f:14c7:d318:12ff::ff12
+62.gw                    86400    IN            A       10.72.1.62
+                                                AAAA  fd8f:14c7:d318:12ff::ff62
 
 ; NTP Server
 01.ntp.services          86400     IN           A       10.72.1.11
-                                                AAAA  fd8f:14c7:d31f::ff11
+                                                AAAA  fd8f:14c7:d318:11ff::ff11
 02.ntp.services          86400     IN           A       10.72.1.12
-                                                AAAA  fd8f:14c7:d31f::ff12
+                                                AAAA  fd8f:14c7:d318:12ff::ff12
 ; Nextnode
 node                     86400     IN           A       10.72.254.254
-                                                AAAA  fd8f:14c7:d31f::ffff
+                                                AAAA  fd8f:14c7:d318:ffff::ffff
 
 
 

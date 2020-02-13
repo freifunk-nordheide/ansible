@@ -1,4 +1,7 @@
 ---
+- name: Include fastd_keys
+  include_vars:
+    file: tasks/../../../../ansible-keys/fastd_keys.yml
 
 - name: Create group
   group: name=fastd
@@ -19,19 +22,54 @@
   - Restart fastd
 
 - name: Disable fastd default instance
-  service: name=fastd enabled=no
+  service: 
+    name:      fastd 
+    enabled:   no
+
+- name: Display facts
+  debug: 
+    var:       fastd_keys['{{ unit_idn }}']['secret']
 
 - name: Create config directory
-  file: path=/etc/fastd/{{ site_code }} state=directory
+  file:     
+    path:      /etc/fastd/{{ site_code }} 
+    state:     directory
 
-- name: Create config directories
-  file: path=/etc/fastd/{{ site_code }}{{ item }}/peers state=directory
+- name: Create config directories peers
+  file: 
+    path:      /etc/fastd/{{ site_code }}{{ item }}/peers 
+    state:     directory
   with_sequence: start=0 count={{ fastd_instances }}
+
+- name: Create config directory backbone
+  file: 
+    path:      /etc/fastd/{{ site_code }}{{ fastd_instances|int -1 }}/backbone 
+    state:     directory
+
+- name: Config backbone
+  template: 
+    src:       backbone.j2 
+    dest:      /etc/fastd/{{ site_code }}{{ fastd_instances|int -1 }}/backbone/{{ igw.value.lname }}
+  loop:        "{{ gateways|dict2items }}"
+  loop_control:
+    loop_var:  igw
+  when:        igw.value.hood == hood_id
 
 - name: Configure fastd
-  template: src=fastd.conf.j2 dest=/etc/fastd/{{ site_code }}{{ item }}/fastd.conf
+  template: 
+    src:       fastd.conf.j2 
+    dest:      /etc/fastd/{{ site_code }}{{ item }}/fastd.conf
   with_sequence: start=0 count={{ fastd_instances }}
-  notify: Restart fastd
+  notify:      Restart fastd
+
+- name: Copy existing fastd secret
+  copy:
+    content:   "{{ fastd_keys[unit_idn]['secret'] }}\n" 
+    dest:      /etc/fastd/{{ site_code }}/secret.conf
+    mode:      0600
+  when:        fastd_keys[unit_idn]['secret'] is defined and fastd_keys[unit_idn]['secret'] != '' and fastd_keys[unit_idn]['public'] is defined and fastd_keys[unit_idn]['public'] != ''
+  ignore_errors: True
+  notify: Restart fastd 
 
 - name: Generate fastd secret
   fastd_key: path=/etc/fastd/{{ site_code }}/secret.conf

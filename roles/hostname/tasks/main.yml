@@ -10,8 +10,14 @@
     group: root
     mode: 0644
 
-- debug: var=ansible_facts
-- debug: var=ansible_fqdn 
+- name: Show fields
+  debug: 
+    var: gateways[unit_id]
+- name: Show fields1
+  debug: 
+    var: sites[hoods[gateways[unit_id].hood].site]
+#   var: site_domain
+  
 
 - name: Hostname für IPv4 in /etc/hosts setzen
   lineinfile:
@@ -46,6 +52,6 @@
 - name: Adresse (IPv6) setzen
   lineinfile:
     dest: /etc/hosts
-    regexp: "^{{ batman_ipv6 | ipaddr('address')}}"
-    line: "{{ batman_ipv6 | ipaddr('address')}}{{'\t'}}{{ site_code }}"
+    regexp: "^{{ batman_ipv6_global | ipaddr('address')}}"
+    line: "{{ batman_ipv6_global | ipaddr('address')}}{{'\t'}}{{ site_code }}"
     state: present

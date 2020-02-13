@@ -1,9 +1,30 @@
 ---
 
-- name: Setup gateways
-  hosts: 11.gw.freifunk-nordheide.de, 12.gw.freifunk-nordheide.de
+- name: Setup common roles on all hosts
+  hosts: all
   roles:
-#  - nginx
-  - yanic
+  - hostname
+  - common
 
+- name: Setup gateways
+  hosts: all
+  roles:
+  - ntp
+  - batman
+  - fastd
+  - meshconfig
+  - respondd
+  - radvd
+  - bind
+  - dhcp
+ # - firewall
+ # - bird
+ # - nginx
+ # - yanic
+  - maintenance
+
+- name: Reboot gateways
+  hosts: all
+  roles:
+  - reboot-unit
 

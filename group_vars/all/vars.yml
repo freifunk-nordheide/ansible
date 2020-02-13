@@ -1,9 +1,297 @@
 ---
-
+batman_algo:       BATMAN_IV
+mtu:               1374 
+fastd_port_pref:   11
+                     
 ntp_servers:
 - 0.de.pool.ntp.org
 - 1.de.pool.ntp.org
 - 2.de.pool.ntp.org
 - 3.de.pool.ntp.org
 
+hosts:
+  "01":
+    number:       "01"
+    provider:     ovh
+    name:         proxmox01.freifunk-nordheide.de
+    proxmox:      proxmox01.freifunk-nordheide.de
+    ipv4:         "37.59.18.229"
+    ipv4_range:	
+  "02":
+    number:       "02"
+    provider:     vserver.site
+    name:         root18.vserver.site
+    proxmox:      proxmox02.freifunk-nordheide.de
+    ipv4:         "194.50.19.45"
+    ipv4_range:   "194.50.19.96/29"
+  "03":
+    number:       "03"
+    provider:     ovh
+    name:         proxmox03.freifunk-nordheide.de
+    proxmox:      proxmox03.freifunk-nordheide.de
+    ipv4:         "145.239.2.135"
+    ipv4_range:	
+  "04":
+    number:       "04"
+    provider:     ovh
+    name:         proxmox04.freifunk-nordheide.de
+    proxmox:      proxmox04.freifunk-nordheide.de
+    ipv4:         "145.239.2.137"
+    ipv4_range:
+  "05":
+    number:       "05"
+    provider:     vserver.site
+    name:         root21.vserver.site
+    proxmox:      proxmox05.freifunk-nordheide.de
+    ipv4:         "194.50.19.48"
+    ipv4_range:   "194.50.19.104/29"
+
+sites:
+  ffnh:
+    sname:        ffnh
+    name:         Freifunk Nordheide
+    domain:       freifunk-nordheide.de
+    domain2:      nordheide.freifunk.net
+    ipv4_prefix:  "10.72"
+    ipv6_prefix2: "fd8f:14c7:d318:"
+    ipv6_prefix:  "2a07:59c6:ec06:"
+    hwadr_prefix: "fe:ed:be:42:"
+  ffcux:
+    sname:        ffcux
+    name:         Freifunk Cuxhaven
+    domain:       freifunk-nordheide.de
+    domain2:      nordheide.freifunk.net
+    ipv4_prefix:  "10.72"
+    ipv6_prefix2: "fd8f:14c7:d318:"
+    ipv6_prefix:  "2a07:59c6:ec06:"
+    hwadr_prefix: "fe:ed:be:42:"
+
+hoods:
+  "49":
+    number:       "49"
+    sname:        default
+    name:         FFNH-Default (nicht öffentlich)
+    comment:      FFNH Sonstige
+    site:         ffnh
+    dhcp_range:   "10.72.144.0/21"
+    fastd_anonym: true
+    fastd_bind:   any
+    fastd_inst:   2
+    fastd_p_lim:  70
+  "48":
+    number:       "48"
+    sname:        events
+    name:         FFNH-Veranstaltungen
+    comment:      FFNH Veranstaltungen (nicht öffentlich)
+    site:         ffnh
+    dhcp_range:   "10.72.160.0/21"
+    fastd_anonym: true
+    fastd_bind:   any
+    fastd_inst:   2
+    fastd_p_lim:  70
+  "11":
+    number:       "11"
+    sname:        ffnhnw
+    name:         FFNH-Nordwest
+    comment:      Nördlich A1 / Westlich A1/A7
+    site:         ffnh
+    dhcp_range:   "10.72.176.0/21"
+    fastd_anonym: true
+    fastd_bind:   any
+    fastd_inst:   2
+    fastd_p_lim:  70
+  "12":
+    number:       "12"
+    sname:        ffnhno
+    name:         FFNH-Nordwest
+    comment:      Nördlich A39 / Oestlich A1/A7
+    site:         ffnh
+    dhcp_range:   "10.72.192.0/21"
+    fastd_anonym: true
+    fastd_bind:   any
+    fastd_inst:   1
+    fastd_p_lim:  70
+  "13":
+    number:       "13"
+    sname:        ffnhso
+    name:         FFNH-Nordwest
+    comment:      Südlich A39 / Östlich A7
+    site:         ffnh
+    dhcp_range:   "10.72.208.0/21"
+    fastd_anonym: true
+    fastd_bind:   any
+    fastd_inst:   2
+    fastd_p_lim:  70
+  "14":
+    number:       "14"
+    sname:        ffnhsw
+    name:         FFNH-Nordwest
+    comment:      Südlich A1 / Westlich A7
+    site:         ffnh
+    dhcp_range:   "10.72.224.0/21"
+    fastd_anonym: true
+    fastd_bind:   any
+    fastd_inst:   2
+    fastd_p_lim:  70
+
+gateways:
+  "11":
+    number:       "11"
+    name:         11gw
+    lname:        "11.gw.{{ sites[hoods['11'].site].domain }}"
+    ipv4:         "194.50.19.104"
+    if:           "ens18"
+    bat_ipv4:     "10.72.1.11"
+    bat_ipv6:     "2a07:59c6:ec06:ff11::ff11"
+    host:         "05"
+    hood:         "11"
+    dhcp_first:   "10.72.176.2"
+    dhcp_last:    "10.72.183.253"
+    nextnode4:    "10.72.191.254"
+    nextnode6:    "2a07:59c6:ec06:ff11::ffff"
+    div_type:     "vlannw"
+    div_if:       "ens19"
+    div_gwv4:     10.100.0.1
+    div_ipv4:     10.100.0.2
+    div_ipv6:     "{{ sites[hoods['11'].site].ipv6_prefix }}ff11::fd11/48" 
+
+  "12":
+    number:       "12"
+    name:         12gw
+    lname:        "12.gw.{{ sites[hoods['12'].site].domain }}"
+    hood:         "12"
+    if:           "ens18"
+    host:         "05"
+    ipv4:         "194.50.19.105"
+    bat_ipv4:     "10.72.1.12"
+    bat_ipv6:     "2a07:59c6:ec06:ff12::ff12"
+    dhcp_first:   "10.72.192.2"
+    dhcp_last:    "10.72.199.253"
+    nextnode4:    "10.72.199.254"
+    nextnode6:    "2a07:59c6:ec06:ff12::ffff"
+    div_type:     "vlannw"
+    div_if:       "ens19"
+    div_gwv4:     10.100.0.1
+    div_ipv4:     10.100.0.3
+    div_ipv6:     "{{ sites[hoods['12'].site].ipv6_prefix }}ff12::fd12/48" 
+
+  "13":
+    number:       "13"
+    name:         13gw
+    lname:        "13.gw.{{ sites[hoods['13'].site].domain }}"
+    hood:         "13"
+    host:         "02"
+    ipv4:         "194.50.19.96"
+    if:           "ens18"
+    bat_ipv4:     "10.72.1.13"
+    bat_ipv6:     "2a07:59c6:ec06:ff13::ff13"
+    dhcp_first:   "10.72.208.2"
+    dhcp_last:    "10.72.215.253"
+    nextnode4:    "10.72.223.254"
+    nextnode6:    "2a07:59c6:ec06:ff13::ffff" 
+    div_type:     "vlannw"
+    div_if:       "ens19"
+    div_gwv4:     10.100.0.1
+    div_ipv4:     10.100.0.2
+    div_ipv6:     "{{ sites[hoods['13'].site].ipv6_prefix }}ff13::fd13/48" 
+ 
+  "14":
+    number:       "14"
+    name:         14gw
+    lname:        "14.gw.{{ sites[hoods['14'].site].domain }}"
+    hood:         "14"
+    host:         "02"
+    ipv4:         194.50.19.97
+    if:           "ens18"
+    bat_ipv4:     "10.72.1.14"
+    bat_ipv6:     "2a07:59c6:ec06:ff14::ff14"
+    dhcp_first:   "10.72.224.2"
+    dhcp_last:    "10.72.231.253"
+    nextnode4:    "10.72.239.254"
+    nextnode6:    "2a07:59c6:ec06:ff14::ffff" 
+    div_type:     "vlannw"
+    div_if:       "ens19"
+    div_gwv4:     10.100.0.1
+    div_ipv4:     10.100.0.3
+    div_ipv6:     "{{ sites[hoods['14'].site].ipv6_prefix }}ff14::fd14/48" 
+ 
+  "61":
+    number:       "61"
+    name:         61gw
+    lname:        "61.gw.{{ sites[hoods['11'].site].domain }}"
+    hood:         "11"
+    host:         "02"
+    ipv4:         "194.50.19.98"
+    if:           "ens18"
+    bat_ipv4:     "10.72.1.61"
+    bat_ipv6:     "2a07:59c6:ec06:ff11::ff61"
+    dhcp_first:   "10.72.184.2"
+    dhcp_last:    "10.72.191.253"
+    nextnode4:    "10.72.191.254"
+    nextnode6:    "2a07:59c6:ec06:ff11::ffff"
+    div_type:     "vlannw"
+    div_if:       "ens19"
+    div_gwv4:     10.100.0.1
+    div_ipv4:     10.100.0.4
+    div_ipv6:     "{{ sites[hoods['11'].site].ipv6_prefix }}ff11::fd61/48" 
+
+  "62":
+    number:       "62"
+    name:         62gw
+    lname:        "62.gw.{{ sites[hoods['12'].site].domain }}"
+    hood:         "12"
+    host:         "02"
+    ipv4:         "194.50.19.99"
+    if:           "ens18"
+    bat_ipv4:     "10.72.1.62"
+    bat_ipv6:     "2a07:59c6:ec06:ff12::ff62"
+    dhcp_first:   "10.72.200.2"
+    dhcp_last:    "10.72.207.253"
+    nextnode4:    "10.72.207.254"
+    nextnode6:    "2a07:59c6:ec06:ff12::ffff"
+    div_type:     "vlannw"
+    div_if:       "ens19"
+    div_gwv4:     10.100.0.1
+    div_ipv4:     10.100.0.5
+    div_ipv6:     "{{ sites[hoods['12'].site].ipv6_prefix }}ff12::fd62/48" 
+
+  "63":
+    number:       "63"
+    name:         63gw
+    lname:        "63.gw.{{ sites[hoods['13'].site].domain }}"
+    hood:         "13"
+    host:         "05"
+    ipv4:         "194.50.19.106"
+    if:           "ens18"
+    bat_ipv4:     "10.72.1.63"
+    bat_ipv6:     "2a07:59c6:ec06:ff13::ff63"
+    dhcp_first:   "10.72.216.2"
+    dhcp_last:    "10.72.223.253"
+    nextnode4:    "10.72.223.254"
+    nextnode6:    "2a07:59c6:ec06:ff13::ffff"
+    div_type:     "vlannw"
+    div_if:       "ens19"
+    div_gwv4:     10.100.0.1
+    div_ipv4:     10.100.0.4
+    div_ipv6:     "{{ sites[hoods['13'].site].ipv6_prefix }}ff13::fd63/48" 
+
+  "64":
+    number:       "64"
+    name:         64gw
+    lname:        "64.gw.{{ sites[hoods['14'].site].domain }}"
+    hood:         "14"
+    host:         "05"
+    ipv4:         "194.50.19.107"
+    if:           "ens18"
+    bat_ipv4:     "10.72.1.64"
+    bat_ipv6:     "2a07:59c6:ec06:ff14::ff64"
+    dhcp_first:   "10.72.232.2"
+    dhcp_last:    "10.72.239.253"
+    nextnode4:    "10.72.239.254"
+    nextnode6:    "2a07:59c6:ec06:ff14::ffff"
+    div_type:     "vlannw"
+    div_if:       "ens19"
+    div_gwv4:     10.100.0.1
+    div_ipv4:     10.100.0.5
+    div_ipv6:     "{{ sites[hoods['14'].site].ipv6_prefix }}ff14::fd64/48" 
 

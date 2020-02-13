@@ -1,7 +1,7 @@
 # {{ ansible_managed }}
 
 # option definitions common to all supported networks...
-option domain-name ".{{ site_domain }}";
+option domain-name "{{ site_domain }}";
 
 default-lease-time 120;
 max-lease-time 600;

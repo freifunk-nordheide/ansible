@@ -15,32 +15,48 @@ method "salsa2012+umac";
 # secure handshakes yes;
 mode tap;
 
-bind {{ fastd_bind }}: {{ (fastd_port|int + item|int)|string }} interface "{{ base_if }}";
+bind {{ fastd_bind }}: {{ (fastd_port|int + item|int)|string }};
 
 include "secret.conf";
 
 mtu {{ mtu }};
 
-{% if fastd_peers_limit > -1 %}
-	{% if item|int == 0 %}
-peer limit {{ (fastd_peers_limit-10)|string }};
-	{% elif item|int == (fastd_instances-1) %}
-peer limit {{ (fastd_peers_limit+10)|string }};
-	{% else %}
-peer limit {{ fastd_peers_limit|string }};
-	{% endif %}
+{% if fastd_peers_limit|int > -1 %}
+{% if item|int == 0 %}
+	peer limit {{ (fastd_peers_limit|int - 10)|string }};
+{% elif item|int == (fastd_instances|int - 1) %}
+	peer limit {{ (fastd_peers_limit|int + 10)|string }};
+{% else %}
+	peer limit {{ fastd_peers_limit|string }};
+{% endif %}
 {% endif %}
 
+# include peers
+peer group "nodes" {
+	include peers from "peers";
+}
+
+# include backbone
+{% if item|int == (fastd_instances|int -1) %}
+peer group "backbone" {
+#        peer limit 20;
+        include peers from "backbone";
+}
+{% endif %}
+
+
 on up "
-	ip link set dev $INTERFACE address {{ hw_address_prefix }}{ unit_id }}:{{ (10 + item|int)|string }}
+	ip link set dev $INTERFACE down
+	ip link set dev $INTERFACE address {{ hw_address_prefix }}{{ unit_id }}:{{ (10 + item|int)|string }}
 	ip link set dev $INTERFACE up
 	ifup {{ batman_interface }}
+{% if item|int == (fastd_instances|int -1) %}
 	sh /etc/fastd/iptables_{{ site }}.sh
+{% endif %}
 ";
 
 on down "
 	ifdown {{ batman_interface }}
-
 ";
 
 on verify "true";
@@ -49,5 +65,6 @@ on verify "true";
 # on verify "true";
 # {% endif %}
 
-include peers from "peers";
+
+
 

@@ -1,32 +1,37 @@
 
 $TTL 86400
 $ORIGIN {{ site_code }}.
-;                                                 primary-master admin-mail
-@                                  IN        SOA   {{ site_domain }} kontakt.{{ site_domain}}. (
-                                   2019101705 ; serial
-                                   1h         ; refresh
-                                   15m        ; retry
-                                   1w         ; expire
-                                   1d)        ; ttl
+;					primary-master admin-mail
+@ 					IN	SOA	{{ site_domain }} kontakt.{{ site_domain}}. (
+					2020012201	; serial
+					1h		; refresh
+					15m		; retry
+					1w		; expire
+					1d)		; ttl
 ; Nameserver
-                                   IN		NS    12.gw
- 				  
+					IN	NS	12.gw
+					IN	NS	62.gw
+
 ; Hosts
-12.gw                    86400     IN		A     	10.72.1.12
-                                    		AAAA  fd8f:14c7:d31f::ff12
-map	                 86400     IN		A     	10.71.62.1
-                                     		AAAA  fd8f:14c7:d318::ff15
+12.gw			86400		IN	A	10.72.1.12
+						AAAA	2a07:59c6:ec06:12ff::ff12
+62.gw			86400		IN	A	10.72.1.62
+						AAAA	2a07:59c6:ec06:12ff::ff62
+map			86400		IN	A	10.71.62.1
+						AAAA	fd8f:14c7:d318::ff15
 
 ; NTP Server
-12.ntp.services          86400     IN		A     	10.72.1.12
-                                     		AAAA  fd8f:14c7:d31f::ff12
+12.gw			86400		IN	A	10.72.1.12
+						AAAA	2a07:59c6:ec06:12ff::ff12
+62.gw			86400		IN	A	10.72.1.62
+						AAAA	2a07:59c6:ec06:12ff::ff62
 ; Nextnode
-node			 86400     IN		A     	10.72.254.254
-				     		AAAA  fd8f:14c7:d31f::ffff
-						
-local-node               86400     IN		CNAME node
-localnode                86400     IN		CNAME node
-next-node                86400     IN		CNAME node
-nextnode                 86400     IN		CNAME node
+node			86400		IN	A     	10.72.254.254
+				     		AAAA	2a07:59c6:ec06:12ff::ffff
+
+local-node		86400		IN	CNAME	node
+localnode		86400		IN	CNAME	node
+next-node		86400		IN	CNAME	node
+nextnode		86400		IN	CNAME	node
 
 

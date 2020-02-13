@@ -3,7 +3,7 @@ $TTL 86400
 $ORIGIN {{ site_code }}.
 ;                                                 primary-master admin-mail
 @                                  IN        SOA   {{ site_domain }} kontakt.{{ site_domain }}. (
-                                   2019101705 ; serial
+                                   2020100401 ; serial
                                    1h         ; refresh
                                    15m        ; retry
                                    1w         ; expire
@@ -14,6 +14,8 @@ $ORIGIN {{ site_code }}.
 ; Hosts
 11.gw                    86400     IN		A     	10.72.1.11
                                     		AAAA  fd8f:14c7:d31f::ff11
+12.gw                    86400     IN		A     	10.72.1.12
+                                    		AAAA  fd8f:14c7:d31f::ff12
 map	                 86400     IN		A     	10.71.62.1
                                      		AAAA  fd8f:14c7:d318::ff15
 

@@ -33,8 +33,9 @@
  
 - name: Load db.zone
   template: 
-    src: db.{{ site_code }}.j2 
+    src: db.xxxx.j2 
     dest: /etc/bind/zones/{{ site_code }}/db.{{ site_code }}
-  notify: reload daemon
-  notify: restart bind9
+  notify: 
+  - reload daemon
+  - restart bind9
 

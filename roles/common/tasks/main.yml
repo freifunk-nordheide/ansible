@@ -1,16 +1,24 @@
 ---
 
+- name: copy bashrc
+  copy:  
+    src: bashrc 
+    dest: /root/.bashrc
+    force: yes
+
 - name: Install misc software
-  apt: name={{ item }}
-  with_items:
-  - build-essential
-  - git
-  - apt-transport-https
-  - net-tools
-  - sudo
-  - dnsutils
-  - bridge-utils
-  - fail2ban
+  apt: 
+    name:
+    - build-essential
+    - git
+    - apt-transport-https
+    - net-tools
+    - mc
+    - sudo
+    - dnsutils
+    - bridge-utils
+    - iptables-persistent
+    - fail2ban
   register: task_result
 
 - name: Reboot immediately if there was a change.
