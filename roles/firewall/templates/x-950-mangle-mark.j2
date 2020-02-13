@@ -1,0 +1,3 @@
+ip4tables  -t mangle -I PREROUTING -s {{ batman_ipv4_range }} -j MARK --set-mark 0x1
+ip4tables  -t mangle -I OUTPUT -s {{ batman_ipv4_range }} -j MARK --set-mark 0x1
+

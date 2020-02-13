@@ -1,0 +1,2 @@
+ip4tables -A mesh-forward -o {{ divert_if }} -j ACCEPT
+ip4tables -A mesh-forward -o {{ base_if }} -j ACCEPT

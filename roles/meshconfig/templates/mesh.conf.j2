@@ -1,0 +1,52 @@
+# {{ ansible_managed }}
+
+
+# Zweite Schnittstelle für Ausleitung falls anders als die Erste
+{% if divert_if != base_if %}
+auto {{ divert_if }}
+iface {{ divert_if }} inet static
+	address {{ divert_ipv4 }}/32
+        netmask 255.255.255.255
+        post-up ip route add {{ divert_gwv4 }} dev {{ divert_if }}
+        post-up ip route add {{ divert_gwv4 }} dev {{ divert_if }} table 19
+        post-up ip route add default via {{ divert_gwv4 }} dev {{ divert_if }} table 19
+        pre-down ip route del default via {{ divert_gwv4 }} dev {{ divert_if }} table 19
+        pre-down ip route del {{ divert_gwv4 }} dev {{ divert_if }} table 19
+        pre-down ip route del {{ divert_gwv4 }} dev {{ divert_if }}
+{% endif %}
+
+auto br-{{ site_code }} 
+iface br-{{ site_code }} inet static
+	bridge_ports	bat-{{ site_code }}
+	address		{{ batman_ipv4 }}
+	netmask		255.255.0.0
+
+iface br-{{ site_code }} inet6 static
+	address		{{ batman_ipv6_global }}
+	netmask		64
+	post-up /sbin/ip rule add iif br-{{ site_code }} table 42
+	pre-down /sbin/ip rule del iif br-{{ site_code }} table 42
+
+# bat-{{ site_code }}
+
+allow-hotplug bat-{{ site_code }}
+iface bat-{{ site_code }} inet6 manual
+
+	pre-up modprobe batman-adv
+{% for icnt in range(fastd_instances|int) %}
+	post-up batctl -m bat-{{ site_code }} if add vpn-{{ site_code }}{{ icnt|int }}
+{% endfor %}
+
+	post-up ip link set address {{ hw_address_prefix }}{{ unit_id }}:20 dev bat-{{ site_code }}
+	post-up ip link set dev bat-{{ site_code }} up
+	post-up	brctl addif br-{{ site_code }} bat-{{ site_code }}
+	post-up batctl -m bat-{{ site_code }} it 10000
+	post-up batctl -m bat-{{ site_code }} gw server 1000mbit/1000mbit
+	post-up batctl -m bat-{{ site_code }} ra {{ batman_algo }}
+
+	post-up ip rule add from all fwmark 0x1 table 42
+
+	pre-down brctl delif br-{{ site_code }} bat-{{ site_code }} || true
+
+
+

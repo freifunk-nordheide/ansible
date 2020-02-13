@@ -1,0 +1,34 @@
+
+$TTL 86400
+$ORIGIN {{ site_code }}.
+;						primary-master admin-mail
+@						IN	SOA	{{ site_domain }} kontakt.{{ site_domain }}. (
+						{{ansible_date_time.epoch}} ; serial
+						1h	; refresh
+						15m	; retry
+						1w	; expire
+						1d)	; ttl
+; Nameserver
+					IN	NS	{{ unit_id }}.gw
+
+; Hosts
+{% for igw in gateways|dict2items %}
+{% if igw.value.hood == hood_id %}
+{{ igw.key }}.gw				86400	IN	A	{{ igw.value.bat_ipv4 }}
+							AAAA	{{ igw.value.bat_ipv6 }}
+{% endif %}
+{% endfor %}
+
+; NTP Server
+{{ unit_id }}.gw				86400	IN	A	{{ gateways[unit_id].bat_ipv4 }}
+						AAAA	{{ gateways[unit_id].bat_ipv6 }}
+; Nextnode
+node				86400	IN	A	{{ gateways[unit_id].nextnode4 }}
+						AAAA	{{ gateways[unit_id].nextnode6 }}
+						
+local-node			86400	IN	CNAME node
+localnode			86400	IN	CNAME node
+next-node			86400	IN	CNAME node
+nextnode			86400	IN	CNAME node
+
+

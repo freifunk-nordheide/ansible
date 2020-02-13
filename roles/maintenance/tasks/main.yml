@@ -1,0 +1,15 @@
+---
+
+# maintenance
+- name: Creates file etc/{{ site_code }}
+  copy:
+    content: "MAINTENANCE=0\n" 
+    dest: "/etc/{{ site_code }}"
+    mode: 0644
+
+- name: Create excutable file (maintenance)
+  template: 
+     src: maintenance.j2 
+     dest: /usr/local/bin/maintenance
+     mode: '0755'
+

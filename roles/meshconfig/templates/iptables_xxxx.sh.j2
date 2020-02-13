@@ -1,0 +1,14 @@
+#!/bin/sh
+# {{ ansible_managed }}
+/sbin/ip route add default via {{ divert_ipv4 }} table 42
+/sbin/ip route add {{ batman_ipv4_range }} dev br-{{ site_code }} src {{ batman_ipv4 | ipaddr('address')}} table 42
+/sbin/ip route del default via {{ divert_ipv4 }} table 42
+
+/sbin/iptables -t nat -D POSTROUTING -s 0/0 -d 0/0 -j SNAT --to-source {{ divert_ipv4 }} > /dev/null 2>&1
+/sbin/iptables -t nat -I POSTROUTING -s 0/0 -d 0/0 -j SNAT --to-source {{ divert_ipv4 }}
+
+/sbin/iptables -t mangle -D PREROUTING -s {{ batman_ipv4_range }} -j MARK --set-mark 0x1 > /dev/null 2>&1
+/sbin/iptables -t mangle -I PREROUTING -s {{ batman_ipv4_range }} -j MARK --set-mark 0x1
+/sbin/iptables -t mangle -D OUTPUT -s {{ batman_ipv4_range }} -j MARK --set-mark 0x1 > /dev/null 2>&1
+/sbin/iptables -t mangle -I OUTPUT -s {{ batman_ipv4_range }} -j MARK --set-mark 0x1
+

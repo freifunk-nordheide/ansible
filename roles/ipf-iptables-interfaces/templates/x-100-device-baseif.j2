@@ -1,0 +1,4 @@
+# Process packages from device {{ base_if }}
+ip46tables -A input -i {{ base_if }} -j wan-input
+ip46tables -A forward -i {{ base_if }} -j wan-forward
+    

@@ -1,0 +1,26 @@
+# {{ ansible_managed }}
+
+{% for link in gre_matrix %}
+{% if ansible_hostname.startswith(link.a) or ansible_hostname.startswith(link.b) %}
+{% if ansible_hostname.startswith(link.a) %}
+{% set ifname = "tun-%s" % link.b %}
+{% set address = gre_prefix | ipsubnet(31, link.id * 2) | ipaddr(0) %}
+{% set peer = "%s.%s" % (link.b, site_domain) %}
+{% else %}
+{% set ifname = "tun-%s" % link.a %}
+{% set address = gre_prefix | ipsubnet(31, link.id * 2) | ipaddr(1) %}
+{% set peer = "%s.%s" % (link.a, site_domain) %}
+{% endif %}
+# {{ ifname }}
+auto {{ ifname }}
+iface {{ ifname }} inet tunnel
+	mode		gre
+	local		{{ ansible_default_ipv4.address }}
+	endpoint	{{ peer | resolve('a') }}
+	#
+	address	{{ address }}
+	ttl	64
+	mtu	1400
+
+{% endif %}
+{% endfor %}

@@ -1,0 +1,4 @@
+# Process packages from device icvpn
+ip46tables -A input -i icvpn -j mesh-input
+ip46tables -A forward -i icvpn -j mesh-forward
+    

@@ -1,0 +1,66 @@
+# {{ ansible_managed }}
+
+# This file describes the network interfaces available on the system
+# it depends on the divert_type
+
+source /etc/network/interfaces.d/*
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+{% if divert_type == "direct" %}
+
+auto {{ base_if }}
+iface {{ base_if }} inet static
+        address {{ base_ipv4 }}
+        netmask 255.255.255.255
+        post-up ip route add {{ base_gwv4 }} dev {{ base_if }}
+        post-up ip route add default via {{ base_gwv4 }} dev {{ base_if }}
+        pre-down ip route del default via {{ base_gwv4 }} dev {{ base_if }}
+        pre-down ip route del {{ base_gwv4 }} dev {{ base_if }}
+
+{% elif divert_type == "vlannw" %}
+
+ip addr flush dev {{ base_if }}
+ip addr flush dev {{ divert_if }}
+
+auto {{ base_if }}
+iface {{ base_if }} inet static
+        address {{ base_ipv4 }}
+        netmask 255.255.255.255
+        post-up ip route add {{ base_gwv4 }} dev {{ base_if }}
+	post-up ip route add default via {{ base_gwv4 }} dev {{ base_if }} table 18
+	post-up ip rule add from {{ base_ipv4 }} table 18
+	pre-down ip rule del from {{ base_ipv4 }} table 18
+	pre-down ip route del default via {{ base_gwv4 }} dev {{ base_if }} table 18
+        pre-down ip route del {{ base_gwv4 }} dev {{ base_if }}
+iface {{ base_if }} inet6 static
+        address {{ base_ipv6 }}
+        netmask 48
+
+auto {{ divert_if }}
+iface {{ divert_if }} inet static
+        address {{ divert_ipv4 }}/32
+        netmask 255.255.255.255
+        vlan-raw-device {{ base_if }}
+        post-up ip route add {{ divert_gwv4 }} dev {{ divert_if }};ip route add default via {{ divert_gwv4 }} dev {{ divert_if }}
+        pre-down ip route del {{ divert_gwv4 }} dev {{ divert_if }};ip route del default via {{ divert_gwv4 }} dev {{ divert_if }}
+iface {{ divert_if }} inet6 static
+        address {{ divert_ipv6 }}
+        netmask 48
+        gateway fe80::1
+
+{% else %}
+
+auto {{ base_if }}
+iface {{ base_if }} inet static
+        address {{ base_ipv4 }}
+        netmask 255.255.255.255
+        post-up ip route add {{ base_gwv4 }} dev {{ base_if }}
+        post-up ip route add default via {{ base_gwv4 }} dev {{ base_if }}
+        pre-down ip route del default via {{ base_gwv4 }} dev {{ base_if }}
+        pre-down ip route del {{ base_gwv4 }} dev {{ base_if }}
+
+{% endif %}
+

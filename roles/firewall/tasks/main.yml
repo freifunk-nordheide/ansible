@@ -1,0 +1,50 @@
+---
+
+# ip -forwarding
+
+- name: IP4-forwarding
+  lineinfile:
+    dest:       /etc/sysctl.conf
+    regexp:     "net.ipv4.ip_forward"
+    line:       "net.ipv4.ip_forward=1"
+    state:      present
+
+- name: IP6-forwarding
+  lineinfile:
+    dest:       /etc/sysctl.conf
+    regexp:     "net.ipv6.conf.all.forwarding"
+    line:       "net.ipv6.conf.all.forwarding=1"
+    state:      present
+
+# iptables
+
+# copy executable "build-firewall"
+
+- name: create executable to load iptables
+  copy: 
+     src:       build-firewall 
+     dest:      /usr/local/bin/build-firewall
+     mode:      '0755'
+
+- name:         Create iptables.d directory
+  file:         path=/etc/iptables.d state=directory
+
+- name:         Create rclocal.d directory
+  file:         path=/etc/rclocal.d state=directory
+
+# copy templates (iptable definitions) and build firewall (new or changed)
+
+- name: get the list of templates to transfer
+  local_action: "shell ls {{ role_path }}/templates/x-* | sed 's~.*/~~g'"
+  register:     template_files
+
+- name: iterate and send templates
+  template:     
+    src:        templates/{{ item }} 
+    dest:       /etc/iptables.d/{{ item | regex_replace('x-', '') | regex_replace('\.j2', '') }}
+  with_items:
+  -             "{{ template_files.stdout.splitlines() }}"
+  notify:       
+  -             Build firewall
+  -             Reload iptables
+

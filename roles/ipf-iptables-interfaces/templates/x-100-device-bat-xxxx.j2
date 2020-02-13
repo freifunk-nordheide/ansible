@@ -1,0 +1,4 @@
+# Process packages from device bat-ffnh
+ip46tables -A input -i bat-{{ site_code }} -j bat-input
+ip46tables -A forward -i bat-{{ site_code }} -j bat-forward
+    

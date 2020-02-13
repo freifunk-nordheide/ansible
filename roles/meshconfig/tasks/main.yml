@@ -1,0 +1,70 @@
+---
+
+# ip -forwarding
+
+- name: IP4-forwarding
+  lineinfile:
+    dest: /etc/sysctl.conf
+    regexp: "net.ipv4.ip_forward"
+    line: "net.ipv4.ip_forward=1"
+    state: present
+
+- name: IP6-forwarding
+  lineinfile:
+    dest: /etc/sysctl.conf
+    regexp: "net.ipv6.conf.all.forwarding"
+    line: "net.ipv6.conf.all.forwarding=1"
+    state: present
+
+# load executable for ip mesh config
+
+- name: create executable for ip mesh config
+  template: 
+     src: iptables_xxxx.sh.j2 
+     dest: /etc/fastd/iptables_{{ site }}.sh
+     mode: '0755'
+
+# iptables
+
+- name: Define base-rules
+  template: src=iptables.up.rules.j2 dest=/etc/iptables.up.rules
+
+- name: Create excutable file to reload iptables - base rules
+  copy: 
+     src: iptables 
+     dest: /etc/network/if-pre-up.d/iptables
+     mode: '0755'
+
+# mesh-interfaces
+
+- name: Configure mesh interfaces
+  template: 
+    src: mesh.conf.j2 
+    dest: /etc/network/interfaces.d/mesh.conf
+  notify: 
+  - Run ip mesh config
+  - Reload systemd
+  - Restart network
+  - Reload iptables
+  register: task_result
+
+#- name: Reboot immediately if there was a change.
+# shell: "sleep 5 && reboot"
+# async: 1
+# poll: 0
+# when: task_result is changed
+
+# name: Wait for the reboot to complete if there was a change.
+# wait_for_connection:
+#   connect_timeout: 20
+#   sleep: 5
+#   delay: 5
+#   timeout: 300
+# when: task_result is changed
+
+
+#- name: Configure backbone interfaces
+#  template: src=backbone.conf.j2 dest=/etc/network/interfaces.d/backbone.conf
+#  notify: Reload interfaces
+
+

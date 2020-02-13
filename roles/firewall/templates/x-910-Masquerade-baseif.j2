@@ -1,0 +1,4 @@
+# ip4tables -t nat -A POSTROUTING -o {{ base_if }} -j MASQUERADE
+ip4tables -t nat -I POSTROUTING -s 0/0 -d 0/0 -j MASQUERADE
+# ip4tables -t nat -D POSTROUTING -s 0/0 -d 0/0 -o {{ tun_if }} -j MASQUERADE > /dev/null 2>&1
+

@@ -1,0 +1,6 @@
+# Allow Service fastd-ffnh
+{% if fastd_instances|int == 1 %}
+ip46tables -A wan-input -p udp -m udp --dport {{ fastd_port|int }} -j ACCEPT -m comment --comment 'fastd-ffnh'
+{% else %}
+ip46tables -A wan-input -p udp -m multiport --dports {{ fastd_port|int }}:{{ fastd_port|int + fastd_instances - 1 }} -j ACCEPT -m comment --comment 'fastd-{{ site_code }}'
+{% endif %}
