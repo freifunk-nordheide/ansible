@@ -14,7 +14,7 @@
      mode: '0755'
 
 - name: Create excutable file (fastd-query)
-  temlate:
-    src: 
+  template:
+    src: fastd-query.j2
     dest: /usr/local/bin/fastd-query
     mode: '0755'
