@@ -19,6 +19,8 @@
     - bridge-utils
     - iptables-persistent
     - fail2ban
+    - socat
+    -jg
   register: task_result
 
 - name: Reboot immediately if there was a change.
