@@ -13,3 +13,8 @@
      dest: /usr/local/bin/maintenance
      mode: '0755'
 
+- name: Create excutable file (fastd-query)
+  temlate:
+    src: 
+    dest: /usr/local/bin/fastd-query
+    mode: '0755'
