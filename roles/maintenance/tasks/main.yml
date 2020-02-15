@@ -9,12 +9,12 @@
 
 - name: Create excutable file (maintenance)
   template: 
-     src: maintenance.j2 
-     dest: /usr/local/bin/maintenance
-     mode: '0755'
+    src: maintenance.j2
+    dest: /usr/local/bin/maintenance
+    mode: '0755'
 
 - name: Create excutable file (fastd-query)
-  template:
-    src: fastd-query.j2
+  copy:
+    src: fastd-query
     dest: /usr/local/bin/fastd-query
     mode: '0755'
