@@ -2,6 +2,8 @@
 batman_algo:       BATMAN_IV
 mtu:               1374 
 fastd_port_pref:   11
+respondd_ll_mcg:   "ff02::2:1001"
+letsencrypt_email: "kontakt@freifunk-nordheide.de"
                      
 ntp_servers:
 - 0.de.pool.ntp.org
@@ -56,17 +58,30 @@ sites:
     ipv6_prefix2: "fd8f:14c7:d318:"
     ipv6_prefix:  "2a07:59c6:ec06:"
     hwadr_prefix: "fe:ed:be:42:"
+    asn:          "64889"
   ffcux:
     sname:        ffcux
     name:         Freifunk Cuxhaven
     domain:       freifunk-nordheide.de
     domain2:      nordheide.freifunk.net
+    ipv4_prefix:  "10.115"
+    ipv6_prefix2: "fdec:c0f1:afda:"
+    ipv6_prefix:  "2a07:59c6:ec06:"
+    hwadr_prefix: "fe:ed:be:43:"
+    asn:          "65115"
+  ffstd:
+    sname:        ffstd
+    name:         Freifunk Stade
+    domain:       freifunk-nordheide.de
+    domain2:      nordheide.freifunk.net
     ipv4_prefix:  "10.72"
     ipv6_prefix2: "fd8f:14c7:d318:"
     ipv6_prefix:  "2a07:59c6:ec06:"
-    hwadr_prefix: "fe:ed:be:42:"
+    hwadr_prefix: "fe:ed:be:44:"
+    asn:          "64889"
 
 hoods:
+# ffnh
   "49":
     number:       "49"
     sname:        default
@@ -134,6 +149,42 @@ hoods:
     fastd_inst:   2
     fastd_p_lim:  70
 
+# ffcux
+  "21":
+    number:       "21"
+    sname:        ffcuxhv
+    name:         FFCUX-Cuxhaven
+    comment:      Cuxhaven Stadt
+    site:         ffcux
+    dhcp_range:   "10.115.16.0/21"
+    fastd_anonym: true
+    fastd_bind:   any
+    fastd_inst:   2
+    fastd_p_lim:  70
+  "22":
+    number:       "22"
+    sname:        ffcuxln
+    name:         FFCUX-Cuxland-Nord
+    comment:      Cuxland Nord ohne Stadt
+    site:         ffcux
+    dhcp_range:   "10.115.32.0/21"
+    fastd_anonym: true
+    fastd_bind:   any
+    fastd_inst:   2
+    fastd_p_lim:  70
+  "23":
+    number:       "23"
+    sname:        ffcuxls
+    name:         FFCUX-Cuxland-Sued
+    comment:      Cuxland Sued
+    site:         ffcux
+    dhcp_range:   "10.115.48.0/21"
+    fastd_anonym: true
+    fastd_bind:   any
+    fastd_inst:   2
+    fastd_p_lim:  70
+
+# ffnh - gateways
 gateways:
   "11":
     number:       "11"
@@ -294,4 +345,34 @@ gateways:
     div_gwv4:     10.100.0.1
     div_ipv4:     10.100.0.5
     div_ipv6:     "{{ sites[hoods['14'].site].ipv6_prefix }}ff14::fd64/48" 
+
+# ffcux gateways:
+  "21":
+    number:       "21"
+    name:         21gw
+    lname:        "21.gw.{{ sites[hoods['21'].site].domain }}"
+    ipv4:         "xxx.50.19.104"
+    if:           "ens18"
+    bat_ipv4:     "10.115.1.21"
+    bat_ipv6:     "2a07:59c6:ec06:ff21::ff21"
+    host:         "xx"
+    hood:         "21"
+    dhcp_first:   "10.115.16.2"
+    dhcp_last:    "10.115.23.253"
+    nextnode4:    "10.115.31.254"
+    nextnode6:    "2a07:59c6:ec06:ff21::ffff"
+    div_type:     "vlannw"
+    div_if:       "ens19"
+    div_gwv4:     10.100.0.x
+    div_ipv4:     10.100.0.y
+    div_ipv6:     "{{ sites[hoods['21'].site].ipv6_prefix }}ff21::fd21/48" 
+
+# maps:
+  "tmap":
+    number:       "tmap"
+    name:         tmap
+    lname:        "tmap.{{ sites[hoods['14'].site].domain }}"
+    host:         "05"
+    ipv4:         "194.50.19.110"
+    if:           "ens18"
 

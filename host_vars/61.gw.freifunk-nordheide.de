@@ -41,6 +41,7 @@ name_server:                    "{{ batman_ipv4 }}"
 
 batman_interface:               "bat-{{ site_code }}"
 batman_ipv4_range:              "{{ site_range_ipv4_prefix }}.0.0/16"
+batman_ipgw_range:              "{{ site_range_ipv4_prefix }}.1.0/24"
 batman_ipv4:                    "{{ site_range_ipv4_prefix }}.1.{{ unit_id }}/16"
 batman_ipv6:                    "{{ site_range_ipv6_prefix }}{{ hood_id }}ff::ff{{ unit_id }}/48"
 batman_ipv6_global:             "{{ site_range_ipv6_global_prefix }}{{ hood_id }}ff::ff{{ unit_id }}/48"

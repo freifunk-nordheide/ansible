@@ -10,15 +10,6 @@
     group: root
     mode: 0644
 
-- name: Show fields
-  debug: 
-    var: gateways[unit_id]
-- name: Show fields1
-  debug: 
-    var: sites[hoods[gateways[unit_id].hood].site]
-#   var: site_domain
-  
-
 - name: Hostname für IPv4 in /etc/hosts setzen
   lineinfile:
     dest: /etc/hosts
@@ -48,6 +39,7 @@
     insertafter: "^127.0.1.1"
     line: "{{ batman_ipv4 | ipaddr('address')}}{{'\t'}}{{ site_code }}"
     state: present
+  when: unit_type == "gateway"
 
 - name: Adresse (IPv6) setzen
   lineinfile:
@@ -55,3 +47,5 @@
     regexp: "^{{ batman_ipv6_global | ipaddr('address')}}"
     line: "{{ batman_ipv6_global | ipaddr('address')}}{{'\t'}}{{ site_code }}"
     state: present
+  when: unit_type == "gateway"
+

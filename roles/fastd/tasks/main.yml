@@ -53,7 +53,7 @@
   loop:        "{{ gateways|dict2items }}"
   loop_control:
     loop_var:  igw
-  when:        igw.value.hood == hood_id
+  when:        igw.value.hood is defined and igw.value.hood == hood_id and igw.value.number != unit_id
 
 - name: Configure fastd
   template: 

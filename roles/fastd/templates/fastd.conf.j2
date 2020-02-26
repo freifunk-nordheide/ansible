@@ -39,7 +39,7 @@ peer group "nodes" {
 # include backbone
 {% if item|int == (fastd_instances|int -1) %}
 peer group "backbone" {
-#        peer limit 20;
+        peer limit 5;
         include peers from "backbone";
 }
 {% endif %}

@@ -2,13 +2,12 @@
 
 [Unit]
 Description=respondd
-After=network-online.target
+After=network.target
 
 [Service]
-ExecStart=/opt/{{ site_code }}/respondd-announce/respondd.py -b bat-{{ site_code }} -i br-{{ site_code }} -d /opt/{{ site_code }}/respondd-announce/
+ExecStart=/opt/{{ site_code }}/respondd-announce/respondd.py -g {{ respondd_ll_mcg }} -d /opt/{{ site_code }}/respondd-announce/providers -i br-{{ site_code }} -i vpn-{{ site_code }}0 -b bat-{{ site_code }} -m {{ batman_ipv4 | ipaddr('address') }}
 Restart=always
 Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-WorkingDirectory=/opt/{{ site_code }}/respondd-announce
 
 [Install]
 WantedBy=multi-user.target

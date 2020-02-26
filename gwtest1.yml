@@ -1,8 +1,9 @@
 ---
 
-- name: Setup common roles on all hosts
+- name: Testing roles on hosts
   hosts: 
-  - 13.gw.freifunk-nordheide.de
+  - all
+  become: True
   roles:
   - hostname
   - common

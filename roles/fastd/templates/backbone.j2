@@ -2,6 +2,6 @@
 
 {{ fastd_keys[igw.value.name]['public'] | regex_replace('^public', 'key') }}
 #remote "{{ igw.value.number }}.gw.{{ sites[hoods[gateways[igw.value.number].hood].site].domain }}" port {{ (fastd_port|int + fastd_instances|int -1)|string }};
-remote ipv4 "{{ igw.value.ipv4 }}" port {{ (fastd_port|int + fastd_instances|int -1)|string }};
+remote ipv4 "{{ igw.value.bat_ipv4 }}" port {{ (fastd_port|int + fastd_instances|int -1)|string }};
 #remote ipv6 "2a07:59c6:ec06:b4ff::ff11" port {{ (fastd_port|int + fastd_instances|int -1)|string }};
 

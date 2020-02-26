@@ -13,18 +13,18 @@ $ORIGIN {{ site_code }}.
 
 ; Hosts
 {% for igw in gateways|dict2items %}
-{% if igw.value.hood == hood_id %}
-{{ igw.key }}.gw				86400	IN	A	{{ igw.value.bat_ipv4 }}
-							AAAA	{{ igw.value.bat_ipv6 }}
+{% if igw.value.hood is defined and igw.value.hood == hood_id %}
+{{ igw.key }}.gw				86400	IN	A	{{ igw.value.ipv4 }}
+;							AAAA	{{ igw.value.bat_ipv6 }}
 {% endif %}
 {% endfor %}
 
 ; NTP Server
-{{ unit_id }}.gw				86400	IN	A	{{ gateways[unit_id].bat_ipv4 }}
-						AAAA	{{ gateways[unit_id].bat_ipv6 }}
+{{ unit_id }}.gw				86400	IN	A	{{ gateways[unit_id].ipv4 }}
+;						AAAA	{{ gateways[unit_id].bat_ipv6 }}
 ; Nextnode
 node				86400	IN	A	{{ gateways[unit_id].nextnode4 }}
-						AAAA	{{ gateways[unit_id].nextnode6 }}
+;						AAAA	{{ gateways[unit_id].nextnode6 }}
 						
 local-node			86400	IN	CNAME node
 localnode			86400	IN	CNAME node

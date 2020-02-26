@@ -1,48 +1,92 @@
 ---
 
-- name: Install nginx
-  apt: name=nginx-light
+- name: Install nginx und certbot
+  apt:
+    name:        ['nginx', 'python-simplejson', 'certbot', 'python3-certbot-nginx']
 
-- name: Create certificate directory
-  file: path=/etc/nginx/ssl state=directory mode=0750
-  when: nginx_ssl == True
+- name: Generate dhparams
+  shell:         openssl dhparam -out /etc/nginx/dhparams.pem 2048
+  args:
+    creates:     /etc/nginx/dhparams.pem
 
-- name: Ensure certificates are available
-  command: openssl req -x509 -nodes -newkey rsa:2048 -keyout /etc/nginx/ssl/{{ ansible_fqdn }}.key -out /etc/nginx/ssl/{{ ansible_fqdn }}.crt -days 730 -subj "/CN={{ ansible_fqdn }}" creates=/etc/nginx/ssl/{{ ansible_fqdn }}.crt
-  when: nginx_ssl == True
-  notify: Restart nginx
+- name: create letsencrypt directory
+  file: 
+    name:        /var/lib/letsencrypt
+    state:       directory
+    owner:       www-data
+    group:       www-data
+    mode:        g+s
 
-- name: Ensure correct certificate permissions
-  file: path=/etc/nginx/ssl/{{ ansible_fqdn }}.key owner=root mode=0400
-  when: nginx_ssl == True
-  notify: Restart nginx
+- name: create .well-known directory
+  file: 
+    name:        /var/lib/letsencrypt/.well-known
+    state:       directory
+    owner:       www-data
+    group:       www-data
 
-- name: Create DH parameters
-  command: openssl dhparam -outform PEM -out {{ item }} 2048 creates={{ item }}
-  when: nginx_ssl == True
-  with_items:
-  - /etc/nginx/dhparam.pem
+- name: create .acme-challenge directory
+  file: 
+    name:        /var/lib/letsencrypt/.well-known/acme-challenge
+    state:       directory
+    owner:       www-data
+    group:       www-data
 
-- name: Create directories
-  file: path={{ item }}/ state=directory owner=www-data
-  with_items:
-  - /var/www
-  - /var/www/html
+- name: Remove default nginx config
+  file: 
+    name:        /etc/nginx/sites-enabled/default 
+    state:       absent
 
-- name: Configure nginx
-  copy: src=nginx.conf dest=/etc/nginx/nginx.conf
-  notify: Restart nginx
+- name: Install system nginx config
+  copy:
+    src:         nginx.conf
+    dest:        /etc/nginx/nginx.conf
 
-- name: Configure default vhost
-  template: src=default.j2 dest=/etc/nginx/sites-available/default
-  when: nginx_ssl == True
-  notify: Restart nginx
+- name: Create snippet letsencrypt.conf
+  template:
+    src:         templates/letsencrypt.conf.j2
+    dest:        /etc/nginx/snippets/letsencrypt.conf
 
-- name: Ensure network and dns are available before nginx
-  lineinfile:
-    dest: /lib/systemd/system/nginx.service
-    line: "After=network-online.target nss-lookup.target"
-    regexp: "^After="
+- name: Create snippet ssl.conf
+  template:
+    src:         templates/ssl.conf.j2
+    dest:        /etc/nginx/snippets/ssl.conf
 
-- name: Start nginx
-  service: name=nginx state=started enabled=yes
+# test, whether certificate already exist
+- name: Check certs exist
+  stat:          path=/etc/letsencrypt/live/{{ unit_name }}/fullchain.pem
+  register:      st
+
+- name: Install nginx site for specified site
+  template:
+    src:         templates/default_nokey.j2
+    dest:        /etc/nginx/sites-enabled/default
+  when:          not st.stat.exists
+
+- name: Reload nginx to activate letsencrypt site
+  command:       systemctl restart nginx
+  when:          not st.stat.exists
+
+- name: Create letsencrypt certificate
+  shell:         certbot certonly --agree-tos --email {{ letsencrypt_email }} --webroot -w /var/lib/letsencrypt/ -d {{ unit_name }}
+  when:          not st.stat.exists
+
+- name: Install nginx site for specified site
+  template:
+    src:         templates/default_std.j2
+    dest:        /etc/nginx/sites-enabled/default
+
+- name: Reload nginx to activate letsencrypt site
+  command:       systemctl restart nginx
+
+
+# To Do: create cronjob for cert renewal
+
+#- name: Add cronjob for cert renewal
+#  cron:
+#    name: letsencrypt_renewal
+#    special_time: weekly
+#    job:       letsencrypt --renew certonly -n --webroot -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ unit_name }} && service nginx reload
+
+
+
+

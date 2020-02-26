@@ -19,8 +19,8 @@
   - dhcp
  # - firewall
  # - bird
- # - nginx
- # - yanic
+  - nginx
+  - yanic
   - maintenance
 
 - name: Reboot gateways
