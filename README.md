@@ -58,6 +58,14 @@ Die Datenstruktur der wichtigsten Dirs und Dateien auf der VM ist wie folgt:
 
 Die jeweiligen Konfigurationsdaten befinden sich unter "hostvars".
 
+```javascript
+function fancyAlert(arg) {
+  if(arg) {
+    $.facebox({div:'#foo'})
+  }
+}
+```
+
 Zur Anzeige der derzeit unterstützten Bereiche, werden zusätzliche Geodaten zur Verfügung gestellt. Diese Geodaten (im Wsentlichen Polygone zur Abgrenzung der einzelnen Hoods) werden in der Datei "areafeatures.json" im Dir. data/geodata/ bereitgestellt.
 
 ### 3.2.2 Ansible roles
@@ -69,7 +77,7 @@ Für den Aufbau und die Konfiguration des Map-servers sind derzeit zwei Rollen v
 - meshviewer-config 	(Durchführung von Konfigurationsänderungen - einmal zu Beginn und bei Änderung der config.js bzw. Anderung der Daten (hostvars) oder areafeatures)
 ```
 
-Weitere Beschreibungen findet man dort...(Vielleicht ;-) - wann immer ich dazu komme....)
+Weitere Beschreibungen findet man dort...(Vielleicht 😉️ - wann immer ich dazu komme....)
 
 ## 3.4: Statistik-Server
 ### 3.4.1. Überblick
