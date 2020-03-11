@@ -17,13 +17,6 @@
     group:       www-data
     mode:        g+s
 
-- name: create .well-known directory
-  file: 
-    name:        /var/lib/letsencrypt/.well-known
-    state:       directory
-    owner:       www-data
-    group:       www-data
-
 - name: create .acme-challenge directory
   file: 
     name:        /var/lib/letsencrypt/.well-known/acme-challenge
@@ -51,6 +44,11 @@
     src:         templates/ssl.conf.j2
     dest:        /etc/nginx/snippets/ssl.conf
 
+- name: Create snippet cors.conf
+  template:
+    src:         templates/cors.conf.j2
+    dest:        /etc/nginx/snippets/cors.conf
+
 # test, whether certificate already exist
 - name: Check certs exist
   stat:          path=/etc/letsencrypt/live/{{ unit_name }}/fullchain.pem
@@ -76,17 +74,22 @@
     dest:        /etc/nginx/sites-enabled/default
 
 - name: Reload nginx to activate letsencrypt site
-  command:       systemctl restart nginx
+  command:       "systemctl restart nginx"
 
+# Auto-renew certificates and reload nginx
+- name: Add crontab to renew certificates
+  cron: 
+    minute:      "30" 
+    hour:        "3" 
+    weekday:     "1"
+    job:         "certbot renew >> /var/log/le-renew.log"
 
-# To Do: create cronjob for cert renewal
-
-#- name: Add cronjob for cert renewal
-#  cron:
-#    name: letsencrypt_renewal
-#    special_time: weekly
-#    job:       letsencrypt --renew certonly -n --webroot -w /var/www/letsencrypt -m {{ letsencrypt_email }} --agree-tos -d {{ unit_name }} && service nginx reload
-
+- name: Add crontab to reload server
+  cron: 
+    minute:      "35"
+    hour:        "3" 
+    weekday:     "1" 
+    job:         "systemctl restart nginx"
 
 
 

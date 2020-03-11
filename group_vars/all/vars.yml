@@ -184,6 +184,19 @@ hoods:
     fastd_inst:   2
     fastd_p_lim:  70
 
+# ffstd
+  "31":
+    number:       "31"
+    sname:        ffstd
+    name:         ffstd-Lk Stade
+    comment:      Landkreis Stade
+    site:         ffnh
+    dhcp_range:   "10.72.xx.0/21"
+    fastd_anonym: true
+    fastd_bind:   any
+    fastd_inst:   2
+    fastd_p_lim:  70
+
 # ffnh - gateways
 gateways:
   "11":
@@ -371,8 +384,51 @@ gateways:
   "tmap":
     number:       "tmap"
     name:         tmap
-    lname:        "tmap.{{ sites[hoods['14'].site].domain }}"
+    hood:         "none"
+    lname:        "tmap.{{ sites['ffnh'].domain }}"
     host:         "05"
     ipv4:         "194.50.19.110"
     if:           "ens18"
+    areas:        # these areas are going to be shown on the map 
+  #   ffnh
+      "11":
+        id:       "11"
+        type:     "hood"
+      "12":
+        id:       "12"
+        type:     "region"
+        name:     "12 gw ohne https"
+        address:  "http://12.gw.freifunk-nordheide.de/yanic"
+      "13":
+        id:       "13"
+        type:     "hood"
+      "14":
+        id:       "14"
+        type:     "hood"
+  #   ffcux
+      "21":
+        id:       "21"
+        type:     "hood"
+      "22":
+        id:       "22"
+        type:     "hood"
+      "23":
+        id:       "23"
+        type:     "hood"
+  #   ffstd
+      "31":
+        id:       "31"
+        type:     "hood"
 
+  #   Sonstige
+      "a1":
+        id:       "a1"
+        type:     "region"
+        name:     "old map data"
+        address:  "http://map.freifunk-nordheide.de/data"
+
+#     "x1":
+#       id:       "x1"
+#       type:     "region"
+#       name:     "straussmann"
+#       address:  "http://freifunk-unifi.isp-serverfarm.com/data"

@@ -1,6 +1,6 @@
 ---
 
-# maintenance
+# maintenance / fastd-query
 - name: Creates file etc/{{ site_code }}
   copy:
     content: "MAINTENANCE=0\n" 
