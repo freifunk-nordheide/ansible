@@ -43,17 +43,17 @@ Diese Aktionen erfolgen per Script, welches bei der Konfiguration (siehe Unten) 
 Die Datenstruktur der wichtigsten Dirs und Dateien auf der VM ist wie folgt:
 
 ```
-- Basis Directory: 	-> /var/www/html/meshviewer/
-- Verweis in nginx auf: 	-> /var/www/html/meshviewer/build/ (Zum Aufruf des MV)
-- Meshviewer-Konfig:    	-> /var/www/html/meshviewer/config.js
-- Daten Directory: 		-> /var/www/html/meshviewer/data/ (Directory wird auch über nginx zur Verfügung gestellt)
-- Hood/Domain Dir.: 	/var/www/html/meshviewer/data/XX/ (XX=Nummer der Hood - Altdaten liegen z.Zt unter "A1")
-- meshviewer.json:	/var/www/html/meshviewer/data/XX/meshviewer.json
-- Ausnahme Dir.:	/var/www/html/meshviewer/data/XX/offline/
-- Ausnahme meshv...json	/var/www/html/meshviewer/data/XX/offline/meshviewer.json
-- Geodaten:             /var/www/html/meshviewer/data/geodata/areafeatures.json
+- Basis Directory: 	/var/www/html/meshviewer/
+- Verweis in nginx auf: 	/var/www/html/meshviewer/build/ (Zum Aufruf des MV)
+- Meshviewer-Konfig:    	/var/www/html/meshviewer/config.js
+- Daten Directory: 		/var/www/html/meshviewer/data/ (Directory wird auch über nginx zur Verfügung gestellt)
+- Hood/Domain Dir.: 			/var/www/html/meshviewer/data/XX/ (XX=Nummer der Hood - Altdaten liegen z.Zt unter "A1")
+- meshviewer.json:				/var/www/html/meshviewer/data/XX/meshviewer.json
+- Ausnahme Dir.:				/var/www/html/meshviewer/data/XX/offline/
+- Ausnahme meshv...json					/var/www/html/meshviewer/data/XX/offline/meshviewer.json
+- Geodaten:             		/var/www/html/meshviewer/data/geodata/areafeatures.json
 
-- Script: /usr/local/bin/get_nodevalues
+- Script: 		/usr/local/bin/get_nodevalues
 ```
 
 Die jeweiligen Konfigurationsdaten befinden sich unter "hostvars".
@@ -64,8 +64,10 @@ Zur Anzeige der derzeit unterstützten Bereiche, werden zusätzliche Geodaten zu
 
 Für den Aufbau und die Konfiguration des Map-servers sind derzeit zwei Rollen verantworlich:
 
-- meshviewer-install (Basis-Installation)
-- meshviewer-config (Durchführung von Konfigurationsänderungen - einmal zu Beginn und bei Änderung der config.js bzw. Anderung der Daten (hostvars) oder areafeatures)
+```
+- meshviewer-install 	(Basis-Installation)
+- meshviewer-config 	(Durchführung von Konfigurationsänderungen - einmal zu Beginn und bei Änderung der config.js bzw. Anderung der Daten (hostvars) oder areafeatures)
+```
 
 Weitere Beschreibungen findet man dort...(Vielleicht ;-) - wann immer ich dazu komme....)
 
