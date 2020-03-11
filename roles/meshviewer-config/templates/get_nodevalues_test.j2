@@ -1,0 +1,37 @@
+#!/bin/bash
+
+{% for i_area in gateways[unit_id].areas if i_area.type == "hood" %}
+	{% for i_gw in gateways if i_gw.hood == i_area.id %}
+		{% if loop.first %}
+
+wget -N -q -O /var/www/html/meshviewer/data/{{i_gw.hood}}/meshviewer.json https://{{i_gw.lname}}/meshviewer.json
+if [[ $? -ne 0 ]]; then
+
+		{% endif %}
+		{% if loop.last %}
+
+	wget -N -q -O /var/www/html/meshviewer/data/{{i_gw.hood}}/meshviewer.json https://{{i_gw.lname}}/meshviewer.json
+	if [[ $? -ne 0 ]]; then
+	        cp /var/www/html/meshviewer/data/{{i_area.id}}/offline/meshviewer.json /var/www/html/meshviewer/data/{{i_area.id}}/meshviewer.json
+	fi
+fi
+		{% endif %}
+	{% endfor %}  
+
+{% endfor %}
+
+{% for i_area in gateways[unit_id].areas if i_area.type == "region" %}
+
+wget -N -q -O /var/www/html/meshviewer/data/{{i_area.id}}/meshviewer.json https://{{i_area.address}}/meshviewer.json
+if [[ $? -eq 0 ]]; then
+	echo "wget ok"
+else
+        cp /var/www/html/meshviewer/data/{{i_area.id}}/offline/meshviewer.json /var/www/html/meshviewer/data/{{i_area.id}}/meshviewer.json
+fi
+
+{% endfor %}  
+
+
+
+
+

@@ -1,0 +1,9 @@
+# {{ ansible_managed }}
+
+server {
+	listen 80 default_server;
+
+	server_name {{ unit_name }};
+	include snippets/letsencrypt.conf;
+}
+

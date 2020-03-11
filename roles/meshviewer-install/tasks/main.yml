@@ -1,0 +1,59 @@
+---
+
+# Install meshviewer
+
+- name: Install curl / wget
+  apt:
+    name:
+    - curl
+    - wget
+
+- name: Get nodejs
+  shell: "curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -"
+
+- name: Install node_js
+  apt:
+    name: nodejs
+
+- name: Remove "cmdtest" package # to remove wrong yarn
+  apt:
+    name: cmdtest
+    state: absent
+
+- name: Remove "yarn" package # to remove wrong yarn
+  apt:
+    name: yarn
+    state: absent
+
+- name: Get yarn
+  shell: "curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -"
+
+- name: Prepare yarn
+  shell: 'echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list'
+
+- name: Install yarn
+  apt:
+    name: yarn
+    update_cache: yes
+
+- name: Create directories
+  file: 
+    path: "{{ item }}/" 
+    state: directory 
+    owner: www-data
+    group: www-data 
+  with_items:
+  - /var/www/html/meshviewer
+
+- name: Get meshviewer 
+  git: 
+    repo: "https://github.com/ffsh/meshviewer.git"
+    dest: "/var/www/html/meshviewer"
+    force: yes
+
+- name: Run yarn after changing directory
+  shell: "yarn"
+  args:
+    chdir: "/var/www/html/meshviewer"
+
+

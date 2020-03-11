@@ -1,0 +1,51 @@
+# {{ ansible_managed }}
+
+server {
+	listen 80 default_server;
+
+	server_name {{ unit_name }};
+	include snippets/letsencrypt.conf;
+	return 301 https://$host$request_uri;
+}
+
+server {
+	listen 443 ssl http2;
+	server_name {{ unit_name }};
+
+	ssl_certificate /etc/letsencrypt/live/{{ unit_name }}/fullchain.pem;
+	ssl_certificate_key /etc/letsencrypt/live/{{ unit_name }}/privkey.pem;
+	ssl_trusted_certificate /etc/letsencrypt/live/{{ unit_name }}/chain.pem;
+	include snippets/ssl.conf;
+	include snippets/letsencrypt.conf;
+
+{% if unit_type == 'gateway' %}
+	location / {
+		root /var/www/html/yanic/;
+		autoindex on;
+                include snippets/cors.conf;
+		try_files $uri $uri/ =404;
+	}
+
+	location /yanic {
+		autoindex on;
+		root /var/www/html/yanic/;
+                include snippets/cors.conf;
+		try_files $uri $uri/ =404;
+	}
+
+{% elif unit_type == 'mapserver' %}
+	location / {
+		root /var/www/html/meshviewer/build/;
+                include snippets/cors.conf;
+		try_files $uri $uri/ =404;
+	}
+
+	location /data {
+		autoindex on;
+		root /var/www/html/meshviewer/data/;
+                include snippets/cors.conf;
+		try_files $uri $uri/ =404;
+	}
+{% endif %}
+
+}

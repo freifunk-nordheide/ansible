@@ -1,0 +1,69 @@
+---
+
+# Configure meshviewer
+
+
+- name: Config directories for meshviewer data
+  file: 
+    path:      "/var/www/html/meshviewer/data/{{ igw.value.id }}/offline/"
+    state:     directory 
+    owner:     www-data
+    group:     www-data
+  loop:        "{{ gateways[unit_id].areas|dict2items  }}"
+  loop_control:
+    loop_var:  igw
+
+- name: Build offline meshviewer.json for each area
+  template: 
+    src:       offline_meshviewer.json.j2
+    dest:      /var/www/html/meshviewer/data/{{ igw.value.id }}/offline/meshviewer.json
+    owner:     www-data
+    group:     www-data
+  loop:        "{{ gateways[unit_id].areas|dict2items  }}"
+  loop_control:
+    loop_var:  igw
+
+- name: reate geojson directory
+  file: 
+    path:      "/var/www/html/meshviewer/data/geodata/"
+    state:     directory 
+    owner:     www-data
+    group:     www-data
+
+- name: Copy geojson data
+  template: 
+    src:       area_features.json.j2
+    dest:      /var/www/html/meshviewer/data/geodata/areafeatures.json
+    owner:     www-data
+    group:     www-data
+
+- name: Create wget data script
+  template: 
+    src:       get_nodevalues.j2
+    dest:      /usr/local/bin/get_nodevalues
+    mode:      "755"
+
+- name: Ensure updating data each minute. Creates an entry like "* * * * ls -alh > /dev/null"
+  cron:
+    name:      "get data"
+    minute:    "*"
+    job:       "/usr/local/bin/get_nodevalues"
+
+
+- name: Configure meshviewer1
+  template: 
+    src:       config.js.j2
+    dest:      /var/www/html/meshviewer/config.js
+
+- name: Configure meshviewer2
+  template: 
+    src:       index.html.j2
+    dest:      /var/www/html/meshviewer/html/index.html
+
+- name: Compile meshviewer
+  shell:       "yarn run gulp"
+  args:
+    chdir: /var/www/html/meshviewer
+
+
+

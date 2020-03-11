@@ -15,14 +15,24 @@ server {
 	location / {
 		# First attempt to serve request as file, then
 		# as directory, then fall back to displaying a 404.
-		alias /var/www/html/yanic/;
+{% if unit_type == "gateway" %}
 		autoindex on;
+		alias /var/www/html/yanic;
+{% elif unit_type == "mapserver" %}
+		alias /var/www/html/meshviewer/build;
+{% endif %}
 		try_files $uri $uri/ =404;
 	}
 
+{% if unit_type == "gateway" %}
 	location /yanic/ {
 		autoindex on;
 		alias /var/www/html/yanic/;
+{% elif unit_type == "mapserver" %}
+	location /data/ {
+		autoindex on;
+		alias /var/www/html/meshviewer/data/;
+{% endif %}
 		try_files $uri $uri/ =404;
 	}
 }
@@ -39,14 +49,25 @@ server {
 	location / {
 		# First attempt to serve request as file, then
 		# as directory, then fall back to displaying a 404.
-		alias /var/www/html/yanic/;
+{% if unit_type == "gateway" %}
 		autoindex on;
+		alias /var/www/html/yanic;
+{% elif unit_type == "mapserver" %}
+		alias /var/www/html/meshviewer/build;
+{% endif %}
 		try_files $uri $uri/ =404;
 	}
 
+{% if unit_type == "gateway" %}
 	location /yanic/ {
 		autoindex on;
 		alias /var/www/html/yanic/;
+{% elif unit_type == "mapserver" %}
+	location /data/ {
+		autoindex on;
+		alias /var/www/html/meshviewer/data/;
+{% endif %}
 		try_files $uri $uri/ =404;
 	}
 }
+
