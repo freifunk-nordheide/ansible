@@ -1,0 +1,13 @@
+---
+
+- name: Testing roles on hosts
+  hosts: 
+  - all
+  roles:
+  - hostname
+  - common
+  - ntp
+  - meshviewer-install
+  - meshviewer-config
+  - nginx
+
