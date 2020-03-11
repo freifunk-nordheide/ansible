@@ -8,7 +8,7 @@ Aufsetzen von Servern für Freifunk-Nordheide
 # Teil 1: Voraussetzungen auf den VMs
 
 ## 1.1: Debian 10 - Buster
-## 1.2: Python installieren (Voraussetzung für ansible)
+## 1.2: Python(3) installieren (Voraussetzung für ansible)
 ## 1.3: User: Muss ohne Passworteingabe sudo su können
 ## 1.4: Keyfile bereitstellen (ssh ohne Passwort)
 
@@ -30,21 +30,29 @@ Aufsetzen von Servern für Freifunk-Nordheide
 ## 3.2: Map-Server
 ### 3.2.1. Überblick
 
+```
+Hinweis: Befindet sich in der Testphase! Derzeit ein Mapserver aktiv (tmap.freifunk-nordheide.de)
+```
+
 Ein Map-Server nutzt zur Zeit den meshviewer und wird hier ohne fastd aufgebaut. 
 Der Map-Server holt sich die Daten per wget von den Gateways (jedes Gateway erzeugt seine eigene "meshviewer.json", die als Voraussetzung vorhanden sein muss); außerdem können auch noch weitere "meshviewer.json" eingebunden werden.
 Da es doch ab und zu vorkam, dass ein wget nicht erfolgreich durchgeführt werden konnte (Gateway down, Datei leer), wird dieser Zustand abgefangen. Je Hood (domain) werden im Normalfall redundant zwei "meshviewer.json" (eine je Gateway) erzeugt; wenn mindestens eine der Dateien per wget erreichbar ist und diese Datei nicht leer ist, werden die Inhalte angezeigt. Ist keine gültige Datei vorhanden, wird ein Dummy-Knoten (mit Positionsdaten in der Nordsee vor Cuxhaven) angezeigt; der Name des Knoten zeigt dann das Problem ;-) - alle weiteren gezeigten Daten sind irrelevant! Eine "meshviewer.json" wird für diesen Fall wärend der Konfiguration des Map-Servers vorbereitet und im Fehlerfall herangezogen.
 
 Diese Aktionen erfolgen per Script, welches bei der Konfiguration (siehe Unten) des Map-Servers erzeugt wird. 
 
-Die Datenstruktur ist wie folgt:
+Die Datenstruktur der wichtigsten Dirs und Dateien auf der VM ist wie folgt:
 
-- Basis Directory: 	/var/www/html/meshviewer/data
+- Basis Directory: 	/var/www/html/meshviewer/
+- Verweis in nginx auf: /var/www/html/meshviewer/build/ (Zum Aufruf des MV)
+- Meshviewer-Konfig:    /var/www/html/meshviewer/config.js
+- Daten Directory: 	/var/www/html/meshviewer/data/ (Directory wird auch über nginx zur Verfügung gestellt)
 - Hood/Domain Dir.: 	/var/www/html/meshviewer/data/XX/ (XX=Nummer der Hood - Altdaten liegen z.Zt unter "A1")
 - meshviewer.json:	/var/www/html/meshviewer/data/XX/meshviewer.json
 - Ausnahme Dir.:	/var/www/html/meshviewer/data/XX/offline/
 - Ausnahme meshv...json	/var/www/html/meshviewer/data/XX/offline/meshviewer.json
+- Geodaten:             /var/www/html/meshviewer/data/geodata/areafeatures.json
 
-- Script:			/usr/local/bin/get_nodevalues
+- Script: /usr/local/bin/get_nodevalues
 
 Die jeweiligen Konfigurationsdaten befinden sich unter "hostvars".
 
@@ -56,6 +64,8 @@ Für den Aufbau und die Konfiguration des Map-servers sind derzeit zwei Rollen v
 
 - meshviewer-install (Basis-Installation)
 - meshviewer-config (Durchführung von Konfigurationsänderungen - einmal zu Beginn und bei Änderung der config.js bzw. Anderung der Daten (hostvars) oder areafeatures)
+
+Weitere Beschreibungen findet man dort...(Vielleicht ;-) - wann immer ich dazu komme....)
 
 ## 3.4: Statistik-Server
 ### 3.4.1. Überblick
