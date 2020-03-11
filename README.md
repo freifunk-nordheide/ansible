@@ -42,7 +42,7 @@ Die Datenstruktur ist wie folgt:
 - Hood/Domain Dir.: 	/var/www/html/meshviewer/data/XX/ (XX=Nummer der Hood - Altdaten liegen z.Zt unter "A1")
 - meshviewer.json:	/var/www/html/meshviewer/data/XX/meshviewer.json
 - Ausnahme Dir.:	/var/www/html/meshviewer/data/XX/offline/
-- Ausnahme meshv...json	/var/www/html/meshviewer/data/XX/meshviewer.json
+- Ausnahme meshv...json	/var/www/html/meshviewer/data/XX/offline/meshviewer.json
 
 - Script:			/usr/local/bin/get_nodevalues
 
