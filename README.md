@@ -38,13 +38,13 @@ Diese Aktionen erfolgen per Script, welches bei der Konfiguration (siehe Unten) 
 
 Die Datenstruktur ist wie folgt:
 
-Basis Directory:	/var/www/html/meshviewer/data
-Hood/Domain Dir.:		/var/www/html/meshviewer/data/XX/ (XX=Nummer der Hood - Altdaten liegen z.Zt unter "A1")
-meshviewer.json	:			/var/www/html/meshviewer/data/XX/meshviewer.json
-Ausnahme Dir.:				/var/www/html/meshviewer/data/XX/offline/
-Ausnahme meshviewer.json			/var/www/html/meshviewer/data/XX/meshviewer.json
+- Basis Directory: 	/var/www/html/meshviewer/data
+- Hood/Domain Dir.: 	/var/www/html/meshviewer/data/XX/ (XX=Nummer der Hood - Altdaten liegen z.Zt unter "A1")
+- meshviewer.json:	/var/www/html/meshviewer/data/XX/meshviewer.json
+- Ausnahme Dir.:	/var/www/html/meshviewer/data/XX/offline/
+- Ausnahme meshv...json	/var/www/html/meshviewer/data/XX/meshviewer.json
 
-Script:			/usr/local/bin/get_nodevalues
+- Script:			/usr/local/bin/get_nodevalues
 
 Die jeweiligen Konfigurationsdaten befinden sich unter "hostvars".
 
