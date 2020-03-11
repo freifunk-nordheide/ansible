@@ -42,10 +42,11 @@ Diese Aktionen erfolgen per Script, welches bei der Konfiguration (siehe Unten) 
 
 Die Datenstruktur der wichtigsten Dirs und Dateien auf der VM ist wie folgt:
 
-- Basis Directory: 	/var/www/html/meshviewer/
-- Verweis in nginx auf: /var/www/html/meshviewer/build/ (Zum Aufruf des MV)
-- Meshviewer-Konfig:    /var/www/html/meshviewer/config.js
-- Daten Directory: 	/var/www/html/meshviewer/data/ (Directory wird auch über nginx zur Verfügung gestellt)
+```
+- Basis Directory: 	-> /var/www/html/meshviewer/
+- Verweis in nginx auf: 	-> /var/www/html/meshviewer/build/ (Zum Aufruf des MV)
+- Meshviewer-Konfig:    	-> /var/www/html/meshviewer/config.js
+- Daten Directory: 		-> /var/www/html/meshviewer/data/ (Directory wird auch über nginx zur Verfügung gestellt)
 - Hood/Domain Dir.: 	/var/www/html/meshviewer/data/XX/ (XX=Nummer der Hood - Altdaten liegen z.Zt unter "A1")
 - meshviewer.json:	/var/www/html/meshviewer/data/XX/meshviewer.json
 - Ausnahme Dir.:	/var/www/html/meshviewer/data/XX/offline/
@@ -53,6 +54,7 @@ Die Datenstruktur der wichtigsten Dirs und Dateien auf der VM ist wie folgt:
 - Geodaten:             /var/www/html/meshviewer/data/geodata/areafeatures.json
 
 - Script: /usr/local/bin/get_nodevalues
+```
 
 Die jeweiligen Konfigurationsdaten befinden sich unter "hostvars".
 
