@@ -58,13 +58,7 @@ Die Datenstruktur der wichtigsten Dirs und Dateien auf der VM ist wie folgt:
 
 Die jeweiligen Konfigurationsdaten befinden sich unter "hostvars".
 
-```javascript
-function fancyAlert(arg) {
-  if(arg) {
-    $.facebox({div:'#foo'})
-  }
-}
-```
+---
 
 Zur Anzeige der derzeit unterstützten Bereiche, werden zusätzliche Geodaten zur Verfügung gestellt. Diese Geodaten (im Wsentlichen Polygone zur Abgrenzung der einzelnen Hoods) werden in der Datei "areafeatures.json" im Dir. data/geodata/ bereitgestellt.
 
