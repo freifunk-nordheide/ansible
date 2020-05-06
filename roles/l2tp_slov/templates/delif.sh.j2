@@ -1,0 +1,4 @@
+#!/bin/bash
+INTERFACE="$3"
+echo $(date) "Verbindung von Knoten "$8" abgebaut. Interface: "$3 >> /var/log/tunneldigger-broker_{{ site_code }}{{ item | string }}.log
+brctl delif br-{{ site_code }}{{ item | string }} $INTERFACE

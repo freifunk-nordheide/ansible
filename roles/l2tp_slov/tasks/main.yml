@@ -1,0 +1,117 @@
+- name: Install dependencies for this role
+  apt:
+    pkg:            ['bridge-utils', 'ebtables', 'python-pip', 'python-virtualenv', 'libnfnetlink-dev', 'libnetfilter-conntrack-dev', 'libffi-dev']
+    state:          present
+  when:             btm_conntype == "td_slovenia"
+
+- name: Install Ubuntu / Debian 10  dependencies for this role
+  apt:
+    pkg:            ['iproute2', 'libnetfilter-conntrack3', 'python-dev', 'libevent-dev', 'libnl-3-dev']
+    state:          present
+  when:             (ansible_distribution == 'Ubuntu' and ansible_distribution_version == '18.04') or (ansible_distribution == 'Debian' and ansible_distribution_version == '10') and btm_conntype == "td_slovenia"
+
+- name: Get all enabled tunneldigger (domain specific) instances
+  shell:            '/bin/ls /etc/systemd/system/multi-user.target.wants/tunneldigger@{{ site_code }}* | grep -oE "[0-9]+"'
+  changed_when:     False
+  failed_when:      False
+  check_mode:       no
+  register:         _td_domain_instances
+  when:             btm_conntype == "td_slovenia"
+
+- name: Stop and disable obsolete td instances
+  service:          name="tunneldigger@{{ site_code }}{{ item | int }}.service" enabled=no state=stopped
+  with_items:       "{{_td_domain_instances.stdout_lines}}"
+  when:             btm_conntype == "td_slovenia" and item | int >= td_instances) 
+
+- name: Clone tunneldigger 
+  git:
+    repo:           https://github.com/wlanslovenija/tunneldigger
+    dest:           /srv/tunneldigger
+    force:          yes
+    update:         yes
+#    version: 18f365f329795400f4d7a101a6d45bc859100144
+  when:             btm_conntype == "td_slovenia"
+
+- name: generate virtualenv.
+  shell:            "virtualenv env_tunneldigger"
+  args:
+    chdir:          /srv/tunneldigger/
+    creates:        "/srv/tunneldigger/env_tunneldigger/bin/python"
+  when:             btm_conntype == "td_slovenia"
+
+- name: Install python dependencies
+  command:          "/srv/tunneldigger/env_tunneldigger/bin/python setup.py install"
+  args:
+    chdir:          /srv/tunneldigger/broker
+  when:             btm_conntype == "td_slovenia"
+
+- name: Deploy addif.sh for each domain
+  template:
+    src:            addif.sh.j2 
+    dest:           "/srv/tunneldigger/broker/scripts/addif_{{ site_code }}{{ item | string }}.sh" 
+    mode:           0755
+  with_sequence: 
+    start:          0 
+    count:          "{{ td_instances }}"
+  when:             btm_conntype == "td_slovenia"
+
+- name: Deploy delif.sh for each domain
+  template: 
+    src:            delif.sh.j2 
+    dest:           "/srv/tunneldigger/broker/scripts/delif_{{ site_code }}{{ item | string }}.sh" 
+    mode:           0755
+  with_sequence: 
+    start:          0 
+    count:          "{{ td_instances }}"
+  when:             btm_conntype == "td_slovenia"
+
+- name: Create sperrliste.txt if not exists
+  command:          touch /srv/tunneldigger/broker/scripts/sperrliste.txt
+  args:
+    creates:        /srv/tunneldigger/broker/scripts/sperrliste.txt
+  when:             btm_conntype == "td_slovenia"
+
+- name: Deploy tunneldigger.conf to /etc/modules-load.d/
+  copy: 
+    src:            tunneldigger.conf 
+    dest:           /etc/modules-load.d/tunneldigger.conf
+  notify:           load kernel modules
+  when:             btm_conntype == "td_slovenia"
+
+- name: Deploy l2tp_broker.cfg for each domain
+  template:   
+    src:            "l2tp_broker.cfg.j2" 
+    dest:           "/srv/tunneldigger/broker/l2tp_broker_{{ site_code }}{{ item | string }}.cfg"
+  notify:           restart tunneldigger per domain
+  with_sequence: 
+    start:          0 
+    count:          "{{ td_instances }}"
+  when:             btm_conntype == "td_slovenia"
+
+- name: Deploy tunneldigger@.service template file
+  copy: 
+    src:            tunneldigger@.service 
+    dest:           /etc/systemd/system/tunneldigger@.service
+  register:         _domain_td_systemd
+  notify:           restart tunneldigger per domain
+  when:             btm_conntype == "td_slovenia"
+
+- name: reload systemd
+  shell:            systemctl daemon-reload
+  when:             btm_conntype == "td_slovenia" and _domain_td_systemd.changed
+
+- name: enable all tunneldigger instances
+  service: 
+    name:           "tunneldigger@{{ site_code }}{{ item | string }}.service" 
+    enabled:        yes
+  with_sequence: 
+    start:          0 
+    count:          "{{ td_instances }}"
+  when:             btm_conntype == "td_slovenia"
+
+- name: Logrotate Rotationszyklus und Anzahl anpassen
+  template:
+    src:            logrotate-tunneldigger.j2
+    dest:           /etc/logrotate.d/tunneldigger
+  when:             btm_conntype == "td_slovenia"
+

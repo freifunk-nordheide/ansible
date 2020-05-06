@@ -1,0 +1,85 @@
+# {{ ansible_managed }}
+[respondd]
+enable           = true
+synchronize      = "1m"
+collect_interval = "1m"
+
+[respondd.sites.{{ gateways[unit_id].site }}]
+domains          = ["{% for item in gateways[unit_id].domains | dict2items %}{{ hoods[item.key].sname }}{% if loop.last %}{% else %}, {% endif %}{% endfor %}"]
+
+{% for item in gateways[unit_id].domains | dict2items %}
+[[respondd.interfaces]]
+ifname = "br-{{ hoods[item.key].sname }}"
+port = 10010
+
+{% endfor %}
+
+[webserver]
+enable  = false
+bind    = "{{ gateways[unit_id].ipv4 }}:80"
+webroot = "/var/www/html/"
+
+[nodes]
+state_path    = "/var/lib/yanic/state.json"
+prune_after   = "7d"
+save_interval = "5s"
+offline_after = "10m"
+
+[[nodes.output.meshviewer-ffrgb]]
+enable   = true
+path = "/var/www/html/yanic/meshviewer.json"
+
+[nodes.output.meshviewer-ffrgb.filter]
+no_owner = true
+#blacklist = []
+#sites = ["{{ gateways[unit_id].site }}"]
+#has_location = true
+
+#[nodes.output.meshviewer-ffrgb.filter.in_area]
+#latitude_min = 34.30
+#latitude_max = 71.85
+#longitude_min = -24.96
+#longitude_max = 39.72
+
+[[nodes.output.meshviewer]]
+enable         = true
+version        = 2
+nodes_path = "/var/www/html/yanic/nodes.json"
+graph_path = "/var/www/html/yanic/graph.json"
+
+[nodes.output.meshviewer.filter]
+no_owner = true
+
+[[nodes.output.nodelist]]
+enable   = true
+path = "/var/www/html/yanic/nodelist.json"
+
+[nodes.output.nodelist.filter]
+no_owner = true
+
+[database]
+delete_after = "5000d"
+delete_interval = "1d"
+
+[[database.connection.influxdb]]
+enable   = false
+#address  = ""
+#database = ""
+#username = ""
+#password = "{"
+
+[database.connection.influxdb.tags]
+
+[[database.connection.graphite]]
+enable   = false
+#address  = ""
+#prefix   = ""
+
+[[database.connection.respondd]]
+enable   = false
+#type     = "udp6"
+#address  = ""
+
+[[database.connection.logging]]
+enable   = false
+path     = "/var/log/yanic.log"

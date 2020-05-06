@@ -1,0 +1,83 @@
+{
+    "timestamp": "2999-12-31T22:22:22+0100",
+    "nodes": [
+        {
+            "firstseen": "1111-01-11T11:11:11+0100",
+            "lastseen": "1111-11-11T11:11:11+0100",
+            "is_online": false,
+            "is_gateway": false,
+            "clients": 0,
+            "clients_wifi24": 0,
+            "clients_wifi5": 0,
+            "clients_other": 0,
+            "rootfs_usage": 0.0,
+            "loadavg": 0.0,
+            "memory_usage": 0.0,
+            "uptime": "2999-12-21T22:22:22+0100",
+            "gateway_nexthop": "feedbe42{{ igw.key }}20",
+            "gateway": "feedbe42{{ igw.key }}20",
+            "node_id": "feedbe42ee{{ igw.key }}",
+            "mac": "fe:ed:be:42:ee:{{ igw.key }}",
+            "addresses": [
+                "2a07:59c6:ec06:{{ igw.key }}ff::ffee",
+                "fe80::fced:beff:fe42:ee{{ igw.key }}",
+                "fd8f:14c7:d318::fced:beff:fe42:ee20"
+            ],
+{%- if igw.value.type == "hood" %}
+            "domain": "{{ hoods[igw.key].sname }}",
+            "hostname": "{{ igw.value.type }} {{ igw.key }} {{ hoods[igw.key].sname }} offline? No data!",
+{% else %}
+            "domain": "{{ igw.value.name }}",
+            "hostname": "{{ igw.value.type }} {{ igw.key }} {{ igw.value.name }} offline? No data!",
+{% endif %}
+
+
+
+
+{% for iigw in gateways[unit_id].areas|dict2items %}
+{%- if iigw.key == igw.key %}
+           "location": {
+           "longitude": 8.6,
+           "latitude":  54.00{{ 10+loop.index|int }}
+{% endif -%}
+{% endfor %}
+            },
+            "firmware": {},
+            "autoupdater": {
+                "enabled": false
+            },
+            "nproc": 1
+        },
+        {
+            "firstseen": "2020-02-15T12:13:00+0100",
+            "lastseen": "2020-03-04T07:26:30+0100",
+            "is_online": false,
+            "is_gateway": true,
+            "clients": 0,
+            "clients_wifi24": 0,
+            "clients_wifi5": 0,
+            "clients_other": 0,
+            "rootfs_usage": 0,
+            "loadavg": 0,
+            "memory_usage": 0.0,
+            "uptime": "2020-02-13T13:47:15+0100",
+            "node_id": "feedbe42{{ igw.key }}20",
+            "mac": "fe:ed:be:42:{{ igw.key }}:20",
+            "addresses": [
+                "2a07:59c6:ec06:{{ igw.key }}ff::ff{{ igw.key }}",
+                "fe80::a0cd:a7ff:fe2f:fb68",
+                "fe80::fced:beff:fe42:{{ igw.key }}20"
+            ],
+            "domain": "",
+            "hostname": "{{ igw.key }}gw",
+            "firmware": {},
+            "autoupdater": {
+                "enabled": false
+            },
+            "nproc": 1
+        }
+    ],
+    "links": []
+}
+
+

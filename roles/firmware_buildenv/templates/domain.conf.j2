@@ -1,0 +1,125 @@
+-- {{ ansible_managed }}
+
+{
+  -- multiple codes/names can be defined, the first one is the primary name
+  -- additional aliases can be defined
+  domain_names = {
+    {{ hoods[item].sname }} = '{{ hoods[item].name }} - {{ hoods[item].comment }}',
+  },
+
+  timezone = 'CET-1CEST,M3.5.0,M10.5.0/3', -- Europe/Berlin
+  ntp_servers = {
+{% for igw in gateways if gateways[igw].domains is defined and gateways[igw].domains[item] is defined %}
+      '{{ gateways[igw].domains[item].bat_ipv6 }}'{% if not loop.last %},
+{% else %} 
+{% endif %}
+{% endfor %}
+  },
+
+
+  -- 32 byte random data in hexadecimal encoding
+  -- Can be generated using: echo $(hexdump -v -n 32 -e '1/1 "%02x"' </dev/urandom)
+  domain_seed = '{{ domain_seeds[item] }}',
+
+  -- unique network prefixes per domain
+  prefix4 = '{{ hoods[item].dhcp_range }}',
+  prefix6 = '{{ hoods[item].dhcp6_range }}',
+
+  next_node = {
+    ip4 = '{{ hoods[item].nextnode4 }}',
+    ip6 = '{{ hoods[item].nextnode6 }}',
+  },
+
+  -- ### Marcus ### 
+  -- names are currently domain specific, to test all features....
+  -- this is valid for the client ssid and the mesh id
+  -- ### End Marcus ###
+
+  wifi24 = {
+    --disables 802.11b rates
+    supported_rates = {6000, 9000, 12000, 18000, 24000, 36000, 48000, 54000},
+    basic_rate = {6000, 9000, 18000, 36000, 54000},
+    ap = {
+      ssid = "{{ hoods[item].sname }}.freifunk.net-2",
+      channel = 5,
+    },
+    mesh = {
+      id = 'ue3H3uX{{ hoods[item].sname }}{{item}}2', 
+      mcast_rate = 12000,      
+    },
+  },
+
+  wifi5 = {
+    ap = {
+      ssid = "{{ hoods[item].sname }}.freifunk.net-5",
+      channel = 44,
+    },
+    mesh = {
+      id = "ue3H3uX{{ hoods[item].sname }}{{item}}5",
+      mcast_rate = 12000,      
+    },
+  },
+
+  dns = {
+    cacheentries = 5000,
+    servers = {
+{% for igw in gateways if gateways[igw].domains is defined and gateways[igw].domains[item] is defined %}
+      '{{ gateways[igw].domains[item].bat_ipv6 }}'{% if not loop.last %},
+{% else %} 
+{% endif %}
+{% endfor %}
+    }
+  },
+
+  mesh = {
+{% if item == targetdefault %}
+    vxlan = false,
+{% else %}
+    vxlan = true,
+{% endif %}
+    filter_membership_reports = true,
+    batman_adv = {
+      routing_algo = 'BATMAN_IV',
+      gw_sel_class = 1,
+    }
+  },
+
+  mesh_vpn = {
+    enabled = true,
+    mtu = 1374,
+{% if hoods[item].btm_conntype == "fastd" %}
+    fastd = {
+      -- methods = {'salsa2012+umac'},
+      -- configurable = true,
+      -- syslog_level = 'warn',
+      groups = {
+        backbone = {
+          limit = 1,
+          peers = {
+{% for igw in gateways if gateways[igw].domains is defined and gateways[igw].domains[item] is defined %}
+            {{gateways[igw].site}}_vpn{{ igw }}{{ item }} = {
+              {{ fastd_keys[gateways[igw].name].domains[item].public | regex_replace('^public', 'key =') | regex_replace(';$', '')}},
+              remotes = {
+                '"{{ gateways[igw].lname }}" port {{ hoods[item].fastd_port }}'
+              }
+            }{% if not loop.last %},
+{% else %} 
+{% endif %}
+{% endfor %}
+          },
+        },
+      },
+    },
+{% else %}
+    tunneldigger = {
+      brokers = {
+{% for igw in gateways if gateways[igw].domains is defined and gateways[igw].domains[item] is defined %}
+        '{{ gateways[igw].lname }}:{{ hoods[item].td_port }}'{% if not loop.last %},
+{% else %} 
+{% endif %}
+{% endfor %}
+      },
+    },
+{% endif %}
+  }
+}
