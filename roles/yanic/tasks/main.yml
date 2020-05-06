@@ -1,41 +1,72 @@
 ---
 
-- name: Stop a running yanic service
+- name:                 Stop a running yanic service
   service:
-    name: "yanic.service"
-    state: stopped
-  ignore_errors: True
+    name:               "yanic@{{ hoods[item.key].sname }}.service"
+    state:              stopped
+  loop:                 "{{ gateways[unit_id].domains | dict2items }}"
+  ignore_errors:        True
+
+#- name:                 Reboot immediately
+#  shell:                "sleep 5 && reboot"
+#  async:                1
+#  poll:                 0
+
+#- name:                 Wait for the reboot to complete
+#  wait_for_connection:
+#    connect_timeout:    20
+#    sleep:              5
+#    delay:              5
+#    timeout:            300
 
 - name: Create user
   user: 
-    name: yanic
-    create_home: no
+    name:               yanic
+    create_home:        no
 
 - name: Install yanic
-  shell: /usr/local/go/bin/go get -t -f -u -fix {{ yanic_source }}
+  shell:                /usr/local/go/bin/go get -t -f -u -fix {{ yanic_source }}
   args:
-    creates: /opt/go/bin/yanic
+    creates:            /opt/go/bin/yanic
   environment:
-    GOPATH: /opt/go
-  notify: Restart yanic
-  ignore_errors: true
+    GOPATH:             /opt/go
+#  notify:               Restart yanic
+  ignore_errors:        true
 
 - name: Configure yanic
-  template: src=yanic.conf.j2 dest=/etc/yanic.conf
-  notify: Restart yanic
+  template: 
+    src:                yanic.conf.j2
+    dest:               /etc/yanic_{{ hoods[item.key].sname }}.conf
+  loop:                 "{{ gateways[unit_id].domains | dict2items }}"
+#  notify: Restart yanic
 
 - name: Create directories
-  file: path={{ item }}/ state=directory owner=yanic
-  with_items:
-  - /var/www/html/yanic
-  - /var/lib/yanic
+  file:                 
+    path:               "/var/www/html/yanic/{{ hoods[item.key].sname }}/" 
+    state:              directory
+    owner:              yanic
+  loop:                 "{{ gateways[unit_id].domains | dict2items }}"
+
+- name: Create directories
+  file:                 
+    path:               "/var/lib/yanic/{{ hoods[item.key].sname }}/" 
+    state:              directory
+    owner:              yanic
+  loop:                 "{{ gateways[unit_id].domains | dict2items }}"
 
 - name: Install systemd unit
-  copy: src=yanic.service dest=/lib/systemd/system/yanic.service
+  template: 
+    src:                yanic.service.j2 
+    dest:               /lib/systemd/system/yanic@{{ hoods[item.key].sname }}.service
+  loop:                 "{{ gateways[unit_id].domains | dict2items }}"
   notify:
   - Reload systemd
   - Restart yanic
 
 - name: Enable yanic
-  service: name=yanic enabled=yes
+  service:              
+    name:               yanic@{{ hoods[item.key].sname }}.service 
+    enabled:            yes
+  loop:                 "{{ gateways[unit_id].domains | dict2items }}"
+
 ...

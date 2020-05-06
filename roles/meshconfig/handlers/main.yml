@@ -12,7 +12,7 @@
   ignore_errors: True
 
 - name: Run ip mesh config
-  command: /bin/sh /etc/fastd/iptables_{{ site }}.sh
+  command: /bin/sh /etc/fastd/iptables_{% for idm in gateways[unit_id].domains | dict2items %}{% if loop.first %}{{hoods[idm.key].site}}{% endif %}{% endfor %}.sh
 
 - name: Reload systemd
   command: systemctl daemon-reload

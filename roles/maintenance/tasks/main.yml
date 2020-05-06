@@ -1,10 +1,10 @@
 ---
 
 # maintenance / fastd-query
-- name: Creates file etc/{{ site_code }}
+- name: Creates file etc/{{ gateways[unit_id].site }}
   copy:
     content: "MAINTENANCE=0\n" 
-    dest: "/etc/{{ site_code }}"
+    dest: "/etc/{{ gateways[unit_id].site }}"
     mode: 0644
 
 - name: Create excutable file (maintenance)

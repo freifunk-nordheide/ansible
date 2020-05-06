@@ -1,7 +1,10 @@
 ---
+      
+- name:         Restart respondd
+  service:  
+    name:       "respondd@{{ hoods[item.key].sname }}" 
+    state:      restarted
+  loop:         "{{ gateways[unit_id]['domains'] | dict2items }}"
 
-- name: Restart respondd
-  service: name=respondd state=restarted
-
-- name: Reload systemd
-  command: systemctl daemon-reload
+- name:         Reload systemd
+  command:      systemctl daemon-reload

@@ -1,11 +1,17 @@
 ---
 
-- name: Install radvd
-  apt: name=radvd
+- name:          Install radvd
+  apt:           
+    name:        radvd
 
-- name: Configure radvd
-  template: src=radvd.conf.j2 dest=/etc/radvd.conf
-  notify: Restart radvd
+- name:          Configure radvd
+  template:      
+    src:         radvd.conf.j2 
+    dest:        /etc/radvd.conf
+  notify:        Restart radvd
 
-- name: Start the radvd service
-  service: name=radvd state=started enabled=yes
+- name:          Start the radvd service
+  service: 
+    name:        radvd 
+    state:       started 
+    enabled:     yes

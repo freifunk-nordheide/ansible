@@ -1,17 +1,22 @@
 #!/bin/sh
 # {{ ansible_managed }}
-/sbin/ip route add default via {{ divert_ipv4 }} table 42
-/sbin/ip route add {{ batman_ipv4_range }} dev br-{{ site_code }} src {{ batman_ipv4 | ipaddr('address')}} table 42
-/sbin/ip route del default via {{ divert_ipv4 }} table 42
-/sbin/ip route add {{ batman_ipgw_range }} via {{ base_ipv4 }} table 42
+/sbin/ip route add default via {{ gateways[unit_id].div_ipv4 }} table 42
+{% for item in gateways[unit_id].domains %}
+/sbin/ip route add {{ gateways[unit_id].domains[item].bat_ipv4 | ipaddr('network') }} dev br-{{ hoods[item].sname }} src {{ gateways[unit_id].domains[item].bat_ipv4 | ipaddr('address')}} table 42
+{% endfor %}
+/sbin/ip route del default via {{ gateways[unit_id].div_ipv4 }} table 42
+/sbin/ip route add {% for idm in gateways[unit_id].domains | dict2items %}{% if loop.first %}{{sites[hoods[idm.key].site].ipv4_prefix}}{% endif %}{% endfor %}.0.0/16 via {{ gateways[unit_id].ipv4 }} table 42
 
-/sbin/iptables -t nat -D POSTROUTING -s 0/0 -d 0/0 -j SNAT --to-source {{ divert_ipv4 }} > /dev/null 2>&1
-/sbin/iptables -t nat -I POSTROUTING -s 0/0 -d 0/0 -j SNAT --to-source {{ divert_ipv4 }}
-/sbin/iptables -t nat -D POSTROUTING -s {{ batman_ipgw_range }} -d {{ batman_ipgw_range }} -j SNAT --to-source {{ batman_ipv4 | ipaddr('address')}} > /dev/null 2>&1
-/sbin/iptables -t nat -I POSTROUTING -s {{ batman_ipgw_range }} -d {{ batman_ipgw_range }} -j SNAT --to-source {{ batman_ipv4 | ipaddr('address')}}
+/sbin/iptables -t nat -D POSTROUTING -s 0/0 -d 0/0 -j SNAT --to-source {{ gateways[unit_id].div_ipv4 }} > /dev/null 2>&1
+/sbin/iptables -t nat -I POSTROUTING -s 0/0 -d 0/0 -j SNAT --to-source {{ gateways[unit_id].div_ipv4 }}
 
-/sbin/iptables -t mangle -D PREROUTING -s {{ batman_ipv4_range }} -j MARK --set-mark 0x1 > /dev/null 2>&1
-/sbin/iptables -t mangle -I PREROUTING -s {{ batman_ipv4_range }} -j MARK --set-mark 0x1
-/sbin/iptables -t mangle -D OUTPUT -s {{ batman_ipv4_range }} -j MARK --set-mark 0x1 > /dev/null 2>&1
-/sbin/iptables -t mangle -I OUTPUT -s {{ batman_ipv4_range }} -j MARK --set-mark 0x1
+{% for item in gateways[unit_id].domains %}
+/sbin/iptables -t nat -D POSTROUTING -s {{ gateways[unit_id].domains[item].bat_ipv4 | ipaddr('address')}}/30 -d {{ gateways[unit_id].domains[item].bat_ipv4 | ipaddr('address')}}/30 -j SNAT --to-source {{ gateways[unit_id].domains[item].bat_ipv4 | ipaddr('address')}} > /dev/null 2>&1
+/sbin/iptables -t nat -I POSTROUTING -s {{ gateways[unit_id].domains[item].bat_ipv4 | ipaddr('address')}}/30 -d {{ gateways[unit_id].domains[item].bat_ipv4 | ipaddr('address')}}/30 -j SNAT --to-source {{ gateways[unit_id].domains[item].bat_ipv4 | ipaddr('address')}}
+{% endfor %}
+
+/sbin/iptables -t mangle -D PREROUTING -s {% for idm in gateways[unit_id].domains | dict2items %}{% if loop.first %}{{sites[hoods[idm.key].site].ipv4_prefix}}{% endif %}{% endfor %}.0.0/16 -j MARK --set-mark 0x1 > /dev/null 2>&1
+/sbin/iptables -t mangle -I PREROUTING -s {% for idm in gateways[unit_id].domains | dict2items %}{% if loop.first %}{{sites[hoods[idm.key].site].ipv4_prefix}}{% endif %}{% endfor %}.0.0/16 -j MARK --set-mark 0x1
+/sbin/iptables -t mangle -D OUTPUT -s {% for idm in gateways[unit_id].domains | dict2items %}{% if loop.first %}{{sites[hoods[idm.key].site].ipv4_prefix}}{% endif %}{% endfor %}.0.0/16 -j MARK --set-mark 0x1 > /dev/null 2>&1
+/sbin/iptables -t mangle -I OUTPUT -s {% for idm in gateways[unit_id].domains | dict2items %}{% if loop.first %}{{sites[hoods[idm.key].site].ipv4_prefix}}{% endif %}{% endfor %}.0.0/16 -j MARK --set-mark 0x1
 

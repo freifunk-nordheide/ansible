@@ -3,7 +3,7 @@
 server {
 	listen 80 default_server;
 
-	server_name {{ unit_name }};
+	server_name {{ unit_id }}.gw.{{ sites[gateways[unit_id].site].domain }};
 	include snippets/letsencrypt.conf;
 }
 

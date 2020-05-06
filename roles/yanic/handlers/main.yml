@@ -1,10 +1,15 @@
 ---
 
 - name: Restart yanic
-  service: name=yanic state=restarted
+  service: 
+    name:               yanic@{{ hoods[item.key].sname }} 
+    state:              restarted
+  loop:                 "{{ gateways[unit_id].domains | dict2items }}"
 
-- name: Restart yanic-publish
-  service: name=yanic-publish.timer state=restarted
+#- name: Restart yanic-publish
+#  service: 
+#    name:               yanic-publish.timer 
+#    state:              restarted
 
 - name: Reload systemd
-  command: systemctl daemon-reload
+  command:             systemctl daemon-reload

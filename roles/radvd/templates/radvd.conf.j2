@@ -1,22 +1,23 @@
 # {{ ansible_managed }}
-
-interface br-{{ site_code }} {
+{% for item in gateways[unit_id].domains | dict2items %}
+interface br-{{ hoods[item.key].sname }} {
   AdvSendAdvert on;
   IgnoreIfMissing on;
   AdvManagedFlag off;
   AdvOtherConfigFlag on;
   MaxRtrAdvInterval 200;
   AdvLinkMTU {{ (mtu | int) }};
-  prefix {{ batman_ipv6_global | ipaddr('address') | ipsubnet(64) }} {
+  prefix {{ item.value.bat_ipv6 | ipaddr('address') | ipsubnet(64) }} {
     AdvOnLink on;
     AdvAutonomous on;
     AdvRouterAddr on;
   };
-  prefix {{ batman_ipv6 | ipaddr('network') | ipsubnet(64) }} {
+  prefix {{ item.value.bat_ipv6_l | ipaddr('address') | ipsubnet(64) }} {
     AdvOnLink on;
     AdvAutonomous on;
     AdvRouterAddr on;
   };
-  RDNSS {{ batman_ipv6_global | ipaddr('address')}} {
+  RDNSS {{  item.value.bat_ipv6 | ipaddr('address')}} {
   };
 };
+{% endfor %}

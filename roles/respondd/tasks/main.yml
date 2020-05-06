@@ -6,28 +6,33 @@
 
 - name: Stop and disable respondd service
   service:
-    name:          "respondd.service"
+    name:          "respondd@{{ hoods[item.key].sname }}.service"
     enabled:       no
     state:         stopped
+  loop:            "{{ gateways[unit_id]['domains'] | dict2items }}"
   ignore_errors:   True
 
 - name: Clone respondd announce repository
   git: 
     repo:          "{{ respondd_announce_git_root }}" 
-    dest:          "/opt/{{ site_code }}/respondd-announce/" 
+    dest:          "/opt/{{ hoods[item.key].sname }}/respondd-announce/" 
 #   version: "{{ respondd_announce_git_version }}"
+  loop:            "{{ gateways[unit_id]['domains'] | dict2items }}"
   notify:          Restart respondd
 
 - name: Install systemd unit
   template: 
     src:           respondd.service.j2 
-    dest:          /lib/systemd/system/respondd.service
+    dest:          /lib/systemd/system/respondd@{{ hoods[item.key].sname }}.service
+  loop:            "{{ gateways[unit_id]['domains'] | dict2items }}"
   notify:
   - Reload systemd
   - Restart respondd
 
 - name: Enable respondd
   service: 
-    name:          respondd 
+    name:          "respondd@{{ hoods[item.key].sname }}"
     state:         started 
     enabled:       yes
+  loop:            "{{ gateways[unit_id]['domains'] | dict2items }}"
+

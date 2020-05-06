@@ -1,41 +1,47 @@
 ---
 
-- name: Install dhcp server
-  apt: name=isc-dhcp-server
+- name:                Install dhcp server
+  apt: 
+    name:              isc-dhcp-server
 
-- name: Configure dhcp server
-  template: src=dhcpd.conf.j2 dest=/etc/dhcp/dhcpd.conf
-  notify: Restart isc-dhcp-server
+- name:                Configure dhcp server
+  template: 
+    src:               dhcpd.conf.j2 
+    dest:              /etc/dhcp/dhcpd.conf
+  notify:              Restart isc-dhcp-server
 
-- name: Create empty static.conf
+- name:                Create empty static.conf
   copy:
-    content: ""
-    dest: /etc/dhcp/static.conf
-    force: no
-    group: root
-    owner: root
-    mode: 0644
+    content:           ""
+    dest:              /etc/dhcp/static.conf
+    force:             no
+    group:             root
+    owner:             root
+    mode:              0644
 
-- name: Specify dhcp interfaces
+- name:                Specify dhcp interfaces
   lineinfile:
-    dest: /etc/default/isc-dhcp-server
-    line: "INTERFACES=\"{{ dhcpd_interfaces }}\""
-    regexp: "^INTERFACES="
-  notify: Restart isc-dhcp-server
+    dest:              /etc/default/isc-dhcp-server
+    line:              "INTERFACES=\"{% for item in gateways[unit_id].domains | dict2items %}br-{{ hoods[item.key].sname }}{% if loop.index < loop.length %} {% endif %}{% endfor %}\""
+    regexp:            "^INTERFACES="
+  notify:              Restart isc-dhcp-server
 
-- name: Reboot immediately if there was a change.
-  shell: "sleep 5 && reboot"
-  async: 1
-  poll: 0
-  when: task_result is changed
+- name:                Reboot immediately if there was a change.
+  shell:               "sleep 5 && reboot"
+  async:               1
+  poll:                0
+#  when:                task_result is changed
 
-- name: Wait for the reboot to complete if there was a change.
+- name:                Wait for the reboot to complete if there was a change.
   wait_for_connection:
-    connect_timeout: 20
-    sleep: 5
-    delay: 5
-    timeout: 300
-  when: task_result is changed
+    connect_timeout:   20
+    sleep:             5
+    delay:             5
+    timeout:           300
+#  when:                task_result is changed
 
-- name: Start the dhcp server
-  service: name=isc-dhcp-server state=started enabled=yes
+- name:                Start the dhcp server
+  service: 
+    name:              isc-dhcp-server 
+    state:             started 
+    enabled:           yes

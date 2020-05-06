@@ -3,18 +3,18 @@
 server {
 	listen 80 default_server;
 
-	server_name {{ unit_name }};
+	server_name {{ unit_id }}.gw.{{ sites[gateways[unit_id].site].domain }};
 	include snippets/letsencrypt.conf;
 	return 301 https://$host$request_uri;
 }
 
 server {
 	listen 443 ssl http2;
-	server_name {{ unit_name }};
+	server_name {{ unit_id }}.gw.{{ sites[gateways[unit_id].site].domain }};
 
-	ssl_certificate /etc/letsencrypt/live/{{ unit_name }}/fullchain.pem;
-	ssl_certificate_key /etc/letsencrypt/live/{{ unit_name }}/privkey.pem;
-	ssl_trusted_certificate /etc/letsencrypt/live/{{ unit_name }}/chain.pem;
+	ssl_certificate /etc/letsencrypt/live/{{ unit_id }}.gw.{{ sites[gateways[unit_id].site].domain }}/fullchain.pem;
+	ssl_certificate_key /etc/letsencrypt/live/{{ unit_id }}.gw.{{ sites[gateways[unit_id].site].domain }}/privkey.pem;
+	ssl_trusted_certificate /etc/letsencrypt/live/{{ unit_id }}.gw.{{ sites[gateways[unit_id].site].domain }}/chain.pem;
 	include snippets/ssl.conf;
 	include snippets/letsencrypt.conf;
 

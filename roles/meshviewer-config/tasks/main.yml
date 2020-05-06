@@ -1,7 +1,9 @@
 ---
 
 # Configure meshviewer
-
+- name: Schalter für Copy der Geo-Daten
+  set_fact: 
+    update_geo: false
 
 - name: Config directories for meshviewer data
   file: 
@@ -23,12 +25,13 @@
   loop_control:
     loop_var:  igw
 
-- name: reate geojson directory
+- name: Create geojson directory
   file: 
     path:      "/var/www/html/meshviewer/data/geodata/"
     state:     directory 
     owner:     www-data
     group:     www-data
+  when:        update_geo == True
 
 - name: Copy geojson data
   template: 
@@ -36,7 +39,23 @@
     dest:      /var/www/html/meshviewer/data/geodata/areafeatures.json
     owner:     www-data
     group:     www-data
+  when:        update_geo == True
 
+- name: Copy geojson files for hoods
+  copy:
+    src:       ../templates/borders/hoods
+    dest:      /var/www/html/meshviewer/data/geodata
+    owner:     www-data
+    group:     www-data
+  when:        update_geo == True
+
+- name: Modify json
+  modify_json_areaparms:
+    datadir:   "/var/www/html/meshviewer/data/geodata/hoods/"
+    sites:     "{{ sites }}"
+    hoods:     "{{ hoods }}"
+  when:        update_geo == True
+  
 - name: Create wget data script
   template: 
     src:       get_nodevalues.j2
@@ -50,12 +69,12 @@
     job:       "/usr/local/bin/get_nodevalues"
 
 
-- name: Configure meshviewer1
+- name: Configure meshviewer1 - config.js
   template: 
     src:       config.js.j2
     dest:      /var/www/html/meshviewer/config.js
 
-- name: Configure meshviewer2
+- name: Configure meshviewer2 - index.html
   template: 
     src:       index.html.j2
     dest:      /var/www/html/meshviewer/html/index.html

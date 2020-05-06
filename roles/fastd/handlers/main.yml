@@ -1,8 +1,13 @@
 ---
 
 - name: Restart fastd
-  service: name=fastd@{{ site_code }}{{ item }} state=restarted
-  with_sequence: start=0 count={{ fastd_instances }}
+  service: 
+    name:      fastd@{{ hoods[item[0].key]['sname'] }}{{ item[1] }} 
+    state:     restarted
+  with_nested:
+    -          "{{ gateways[unit_id]['domains'] | dict2items }}"
+    -          [0,1,2,3]
+  when:        gateways[unit_id].btm_conntype == "fastd" and item[1] | int < hoods[item[0].key].fastd_inst | int
 
 - name: Reload systemd
   command: systemctl daemon-reload

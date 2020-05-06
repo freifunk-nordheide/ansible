@@ -5,7 +5,7 @@ Description=respondd
 After=network.target
 
 [Service]
-ExecStart=/opt/{{ site_code }}/respondd-announce/respondd.py -g {{ respondd_ll_mcg }} -d /opt/{{ site_code }}/respondd-announce/providers -i br-{{ site_code }} -i vpn-{{ site_code }}0 -b bat-{{ site_code }} -m {{ batman_ipv4 | ipaddr('address') }}
+ExecStart=/opt/{{ hoods[item.key].sname }}/respondd-announce/respondd.py -g {{ respondd_ll_mcg }} -d /opt/{{ hoods[item.key].sname }}/respondd-announce/providers -i br-{{ hoods[item.key].sname }} -i vpn-{{ hoods[item.key].sname }}0 -b bat-{{ hoods[item.key].sname }} -m {{ item.value.bat_ipv4 | ipaddr('address') }}
 Restart=always
 Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 

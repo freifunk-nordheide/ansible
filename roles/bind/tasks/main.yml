@@ -1,40 +1,43 @@
 ---
 
-- name: install bind9
+- name:                install bind9
   apt:
-    pkg: bind9
-    state: present
+    pkg:               bind9
+    state:             present
 
-- name: Load bind options
+- name:                Load bind options
   template: 
-    src: named.conf.options.j2 
-    dest: /etc/bind/named.conf.options
+    src:               named.conf.options.j2 
+    dest:              /etc/bind/named.conf.options
 
-- name: Load bind options
+- name:                Load bind options
   template: 
-    src: named.conf.local.j2 
-    dest: /etc/bind/named.conf.local
-    force: yes
+    src:               named.conf.local.j2 
+    dest:              /etc/bind/named.conf.local
+    force:             yes
 
-- name: Creates directory zones
+- name:                Creates directory zones
   file:
-    path: /etc/bind/zones
-    state: directory
+    path:              /etc/bind/zones
+    state:             directory
 
-- name: Creates directory zone
+- name:                Creates directory zone
   file:
-    path: /etc/bind/zones/{{ site_code }}
-    state: directory
+    path:              /etc/bind/zones/{{ hoods[item.key].sname }}
+    state:             directory
+  loop:                "{{ gateways[unit_id].domains | dict2items }}"
 
-- name: Load zone.conf
+- name:                Load zone.conf
   template: 
-    src: zone.conf.j2 
-    dest: /etc/bind/zones/{{ site_code }}/{{ site_code }}.conf
+    src:               zone.conf.j2 
+    dest:              /etc/bind/zones/{{ hoods[item.key].sname }}/{{ hoods[item.key].sname }}.conf
+  loop:                "{{ gateways[unit_id].domains | dict2items }}"
  
-- name: Load db.zone
+- name:                Load db.zone
   template: 
-    src: db.xxxx.j2 
-    dest: /etc/bind/zones/{{ site_code }}/db.{{ site_code }}
+    src:               db.xxxx.j2 
+    dest:              /etc/bind/zones/{{ hoods[item.key].sname }}/db.{{ hoods[item.key].sname }}
+  loop:                "{{ gateways[unit_id].domains | dict2items }}"
   notify: 
   - reload daemon
   - restart bind9

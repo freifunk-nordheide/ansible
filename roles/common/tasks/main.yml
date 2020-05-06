@@ -6,6 +6,9 @@
     dest: /root/.bashrc
     force: yes
 
+- name: first try apt update
+  command: apt update
+
 - name: Install misc software
   apt: 
     name:

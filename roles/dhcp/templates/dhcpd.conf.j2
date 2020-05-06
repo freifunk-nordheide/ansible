@@ -1,7 +1,7 @@
 # {{ ansible_managed }}
 
 # option definitions common to all supported networks...
-option domain-name "{{ site_domain }}";
+option domain-name "{{ sites[gateways[unit_id].site].domain }}";
 
 default-lease-time 120;
 max-lease-time 600;
@@ -17,10 +17,15 @@ authoritative;
 # have to hack syslog.conf to complete the redirection).
 log-facility local7;
 
+
 # Freifunk Nordheide
-subnet {{ batman_ipv4 | ipaddr('network') }} netmask {{ batman_ipv4 | ipaddr('netmask') }} {
-  option routers {{ batman_ipv4 | ipaddr('address') }};
-  option domain-name-servers {{nextnode4}}, {{ batman_ipv4 | ipaddr('address') }};
-  range {{ dhcpd_first }} {{ dhcpd_last }};
+{% for item in gateways[unit_id].domains | dict2items %}
+subnet {{ hoods[item.key].dhcp_range | ipaddr('network') }} netmask {{ hoods[item.key].dhcp_range | ipaddr('netmask') }} {
+  option routers {{ item.value.bat_ipv4 | ipaddr('address') }};
+  option domain-name-servers {{item.value.nextnode4}}, {{ item.value.bat_ipv4 | ipaddr('address') }};
+  interface br-{{hoods[item.key].sname}};
+  range {{ item.value.dhcp_first }} {{ item.value.dhcp_last }};
 }
+
+{% endfor %}
 include "/etc/dhcp/static.conf";

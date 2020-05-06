@@ -20,8 +20,8 @@
  # - firewall
  # - bird
   - nginx
-  - yanic
   - maintenance
+  - yanic
 
 - name: Reboot gateways
   hosts: all

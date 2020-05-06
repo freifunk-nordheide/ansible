@@ -1,104 +1,171 @@
 ---
 - name: Include fastd_keys
   include_vars:
-    file: tasks/../../../../ansible-keys/fastd_keys.yml
+    file:      tasks/../../../../ansible-keys/fastd_keys.yml
+  when:        gateways[unit_id].btm_conntype == "fastd"
 
 - name: Create group
-  group: name=fastd
+  group: 
+    name:      fastd
+  when:        gateways[unit_id].btm_conntype == "fastd"
 
 - name: Create user
-  user: name=fastd group=fastd
+  user:
+    name:      fastd 
+    group:     fastd
+  when:        gateways[unit_id].btm_conntype == "fastd"
 
 - name: Install fastd
-  apt: name=fastd state=latest
+  apt: 
+    name:      fastd
+    state:     latest
+  when:        gateways[unit_id].btm_conntype == "fastd"
 
 - name: Install haveged (to create entropy)
-  apt: name=haveged
+  apt:          
+    name:      haveged
 
 - name: Systemd unit for fastd
-  copy: src=fastd@.service dest=/etc/systemd/system/fastd@.service
+  copy: 
+    src:       fastd@.service 
+    dest:      /etc/systemd/system/fastd@.service
   notify:
   - Reload systemd
   - Restart fastd
+  when:        gateways[unit_id].btm_conntype == "fastd"
+
 
 - name: Disable fastd default instance
   service: 
     name:      fastd 
     enabled:   no
+  when:        gateways[unit_id].btm_conntype == "fastd"
 
 - name: Display facts
   debug: 
-    var:       fastd_keys['{{ unit_idn }}']['secret']
+    var:       gateways[unit_id]
 
 - name: Create config directory
   file:     
-    path:      /etc/fastd/{{ site_code }} 
+    path:      /etc/fastd/{{ hoods[igw.key]['sname'] }} 
     state:     directory
+  loop:        "{{ gateways[unit_id]['domains'] | dict2items }}"
+  loop_control:
+    loop_var:  igw
+  when:        gateways[unit_id].btm_conntype == "fastd"
 
 - name: Create config directories peers
   file: 
-    path:      /etc/fastd/{{ site_code }}{{ item }}/peers 
+    path:      /etc/fastd/{{ hoods[item[0].key]['sname'] }}{{ item[1] }}/peers 
     state:     directory
-  with_sequence: start=0 count={{ fastd_instances }}
+  with_nested:
+    -          "{{ gateways[unit_id]['domains'] | dict2items }}"
+    -          [0,1,2,3]
+  when:        gateways[unit_id].btm_conntype == "fastd" and item[1] | int < hoods[item[0].key].fastd_inst | int
 
 - name: Create config directory backbone
   file: 
-    path:      /etc/fastd/{{ site_code }}{{ fastd_instances|int -1 }}/backbone 
+    path:      /etc/fastd/{{ hoods[igw.key]['sname'] }}{{ hoods[igw.key].fastd_inst | int -1 }}/backbone 
     state:     directory
+  loop:        "{{ gateways[unit_id]['domains'] | dict2items }}"
+  loop_control:
+    loop_var:  igw
+  when:        gateways[unit_id].btm_conntype == "fastd"
 
 - name: Config backbone
   template: 
     src:       backbone.j2 
-    dest:      /etc/fastd/{{ site_code }}{{ fastd_instances|int -1 }}/backbone/{{ igw.value.lname }}
-  loop:        "{{ gateways|dict2items }}"
-  loop_control:
-    loop_var:  igw
-  when:        igw.value.hood is defined and igw.value.hood == hood_id and igw.value.number != unit_id
+    dest:      /etc/fastd/{{ hoods[item[0].key]['sname'] }}{{ hoods[item[0].key].fastd_inst | int -1 }}/backbone/{{ item[1].value.lname }}
+  with_nested:
+    -          "{{ gateways[unit_id]['domains'] | dict2items }}"
+    -          "{{ gateways | dict2items }}"
+  when:        gateways[unit_id].btm_conntype == "fastd" and item[1].value.domains is defined and item[1].value.domains[item[0].key] is defined and item[1].key != unit_id
 
 - name: Configure fastd
   template: 
     src:       fastd.conf.j2 
-    dest:      /etc/fastd/{{ site_code }}{{ item }}/fastd.conf
-  with_sequence: start=0 count={{ fastd_instances }}
-  notify:      Restart fastd
+    dest:      /etc/fastd/{{ hoods[item[0].key]['sname'] }}{{ item[1] | string }}/fastd.conf
+  with_nested:
+    -          "{{ gateways[unit_id]['domains'] | dict2items }}"
+    -          [0,1,2,3]
+  when:        gateways[unit_id].btm_conntype == "fastd" and item[1] | int < hoods[item[0].key].fastd_inst | int
 
 - name: Copy existing fastd secret
   copy:
-    content:   "{{ fastd_keys[unit_idn]['secret'] }}\n" 
-    dest:      /etc/fastd/{{ site_code }}/secret.conf
+    content:   "{{ fastd_keys[unit_idn].domains[item.key]['secret'] }}\n" 
+    dest:      /etc/fastd/{{ hoods[item.key]['sname'] }}/secret.conf
     mode:      0600
-  when:        fastd_keys[unit_idn]['secret'] is defined and fastd_keys[unit_idn]['secret'] != '' and fastd_keys[unit_idn]['public'] is defined and fastd_keys[unit_idn]['public'] != ''
-  ignore_errors: True
+  loop:        "{{ gateways[unit_id]['domains'] | dict2items }}"
+  when:        gateways[unit_id].btm_conntype == "fastd" and fastd_keys[unit_idn].domains[item.key]['secret'] is defined and fastd_keys[unit_idn].domains[item.key]['secret'] != '' and fastd_keys[unit_idn].domains[item.key]['public'] is defined and fastd_keys[unit_idn].domains[item.key]['public'] != ''
+#  ignore_errors: True
   notify: Restart fastd 
 
-- name: Generate fastd secret
-  fastd_key: path=/etc/fastd/{{ site_code }}/secret.conf
-  notify: Restart fastd
+#- name: Generate fastd secret
+#  fastd_key: 
+#    path:      /etc/fastd/{{ site_code }}/secret.conf
+#  notify:      Restart fastd
+#  when:        gateways[unit_id].btm_conntype == "fastd"
 
 - name: Permissions (secret)
-  file: owner=fastd group=fastd path=/etc/fastd/{{ site_code }}/secret.conf
+  file:       
+    owner:     fastd 
+    group:     fastd 
+    path:      /etc/fastd/{{ hoods[item.key]['sname'] }}/secret.conf
+  loop:        "{{ gateways[unit_id]['domains'] | dict2items }}"
+  when:        gateways[unit_id].btm_conntype == "fastd"
 
 - name: Create symlinks (secret)
-  file: src=/etc/fastd/{{ site_code }}/secret.conf dest=/etc/fastd/{{ site_code }}{{ item }}/secret.conf state=link
-  with_sequence: start=0 count={{ fastd_instances }}
+  file: 
+    src:       /etc/fastd/{{ hoods[item[0].key]['sname'] }}/secret.conf 
+    dest:      /etc/fastd/{{ hoods[item[0].key]['sname'] }}{{ item[1] }}/secret.conf 
+    state:     link
+  with_nested:
+    -          "{{ gateways[unit_id]['domains'] | dict2items }}"
+    -          [0,1,2,3]
+  when:        gateways[unit_id].btm_conntype == "fastd" and item[1] | int < hoods[item[0].key].fastd_inst | int
 
 - name: Create Blacklist Script
-  copy: src=blacklist.sh dest=/etc/fastd/{{ site_code }}/blacklist.sh mode=0755 force=yes
+  copy:        
+    src:       blacklist.sh 
+    dest:      /etc/fastd/{{ hoods[item.key]['sname'] }}/blacklist.sh 
+    mode:      0755 
+    force:     yes
+  loop:        "{{ gateways[unit_id]['domains'] | dict2items }}"
+  when:        gateways[unit_id].btm_conntype == "fastd"
 
 - name: Create symlinks (blacklist)
-  file: src=/etc/fastd/{{ site_code }}/blacklist.sh dest=/etc/fastd/{{ site_code }}{{ item }}/blacklist.sh state=link
-  with_sequence: start=0 count={{ fastd_instances }}
+  file:        
+    src:       /etc/fastd/{{ hoods[item[0].key]['sname'] }}/blacklist.sh 
+    dest:      /etc/fastd/{{ hoods[item[0].key]['sname'] }}{{ item[1] }}/blacklist.sh 
+    state:     link
+  with_nested:
+    -          "{{ gateways[unit_id]['domains'] | dict2items }}"
+    -          [0,1,2,3]
+  when:        gateways[unit_id].btm_conntype == "fastd" and item[1] | int < hoods[item[0].key].fastd_inst | int
 
 - name: Create Blacklist directory
-  file: path=/etc/fastd/{{ site_code }}/vpn-blacklist/ state=directory
+  file: 
+    path:      /etc/fastd/{{ hoods[item.key]['sname'] }}/vpn-blacklist/ 
+    state:     directory
+  loop:        "{{ gateways[unit_id]['domains'] | dict2items }}"
+  when:        gateways[unit_id].btm_conntype == "fastd"
 
 - name: Create Blacklist file
-  copy: src=blacklist.json dest=/etc/fastd/{{ site_code }}/vpn-blacklist/blacklist.json mode=0644
+  copy: 
+    src:       blacklist.json 
+    dest:      /etc/fastd/{{ hoods[item.key]['sname'] }}/vpn-blacklist/blacklist.json 
+    mode:      0644
+  loop:        "{{ gateways[unit_id]['domains'] | dict2items }}"
+  when:        gateways[unit_id].btm_conntype == "fastd"
 
 - name: Enable fastd {{ site_code }}
   service: 
-    name=fastd@{{ site_code }}{{ item }}
-    enabled=yes
-  with_sequence: start=0 count={{ fastd_instances }}
+    name:      fastd@{{ hoods[item[0].key]['sname'] }}{{ item[1] }}
+    enabled:   yes
+  with_nested:
+    -          "{{ gateways[unit_id]['domains'] | dict2items }}"
+    -          [0,1,2,3]
+  when:        gateways[unit_id].btm_conntype == "fastd" and item[1] | int < hoods[item[0].key].fastd_inst | int
+  notify: Restart fastd 
 
 

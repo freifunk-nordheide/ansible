@@ -1,8 +1,10 @@
 ---
 
-- name: restart bind9
-  service: name=bind9 state=restarted
+- name:                      restart bind9
+  service: 
+    name:                    bind9 
+    state:                   restarted
 
-- name: reload daemon
+- name:                      reload daemon
   systemd:
-    daemon_reload: yes
+    daemon_reload:           yes

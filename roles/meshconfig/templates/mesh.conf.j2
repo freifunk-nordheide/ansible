@@ -2,51 +2,52 @@
 
 
 # Zweite Schnittstelle für Ausleitung falls anders als die Erste
-{% if divert_if != base_if %}
-auto {{ divert_if }}
-iface {{ divert_if }} inet static
-	address {{ divert_ipv4 }}/32
+{% if gateways[unit_id].div_if != gateways[unit_id].if %}
+auto {{ gateways[unit_id].div_if }}
+iface {{ gateways[unit_id].div_if }} inet static
+	address {{ gateways[unit_id].div_ipv4 }}/32
         netmask 255.255.255.255
-        post-up ip route add {{ divert_gwv4 }} dev {{ divert_if }}
-        post-up ip route add {{ divert_gwv4 }} dev {{ divert_if }} table 19
-        post-up ip route add default via {{ divert_gwv4 }} dev {{ divert_if }} table 19
-        pre-down ip route del default via {{ divert_gwv4 }} dev {{ divert_if }} table 19
-        pre-down ip route del {{ divert_gwv4 }} dev {{ divert_if }} table 19
-        pre-down ip route del {{ divert_gwv4 }} dev {{ divert_if }}
+        post-up ip route add {{ gateways[unit_id].div_gwv4 }} dev {{ gateways[unit_id].div_if }}
+        post-up ip route add {{ gateways[unit_id].div_gwv4 }} dev {{ gateways[unit_id].div_if }} table 19
+        post-up ip route add default via {{ gateways[unit_id].div_gwv4 }} dev {{ gateways[unit_id].div_if }} table 19
+        pre-down ip route del default via {{ gateways[unit_id].div_gwv4 }} dev {{ gateways[unit_id].div_if }} table 19
+        pre-down ip route del {{ gateways[unit_id].div_gwv4 }} dev {{ gateways[unit_id].div_if }} table 19
+        pre-down ip route del {{ gateways[unit_id].div_gwv4 }} dev {{ gateways[unit_id].div_if }}
 {% endif %}
 
-auto br-{{ site_code }} 
-iface br-{{ site_code }} inet static
-	bridge_ports	bat-{{ site_code }}
-	address		{{ batman_ipv4 }}
-	netmask		255.255.0.0
+{% for item in gateways[unit_id].domains %}
+auto br-{{ hoods[item].sname }} 
+iface br-{{ hoods[item].sname }} inet static
+	bridge_ports	bat-{{ hoods[item].sname }}
+	address		{{ gateways[unit_id].domains[item].bat_ipv4 | ipaddr('address')}}
+	netmask		{{ gateways[unit_id].domains[item].bat_ipv4 | ipaddr('netmask')}}
 
-iface br-{{ site_code }} inet6 static
-	address		{{ batman_ipv6_global }}
+iface br-{{ hoods[item].sname }} inet6 static
+	address		{{ gateways[unit_id].domains[item].bat_ipv6 }}
 	netmask		64
-	post-up /sbin/ip rule add iif br-{{ site_code }} table 42
-	pre-down /sbin/ip rule del iif br-{{ site_code }} table 42
+	post-up /sbin/ip rule add iif br-{{ hoods[item].sname }} table 42
+	pre-down /sbin/ip rule del iif br-{{ hoods[item].sname }} table 42
 
-# bat-{{ site_code }}
+# bat-{{ hoods[item].sname }}
 
-allow-hotplug bat-{{ site_code }}
-iface bat-{{ site_code }} inet6 manual
+allow-hotplug bat-{{ hoods[item].sname }}
+iface bat-{{ hoods[item].sname }} inet6 manual
 
 	pre-up modprobe batman-adv
-{% for icnt in range(fastd_instances|int) %}
-	post-up batctl -m bat-{{ site_code }} if add vpn-{{ site_code }}{{ icnt|int }}
+{% for icnt in range(hoods[item].fastd_inst|int) %}
+	post-up batctl -m bat-{{ hoods[item].sname }} if add vpn-{{ hoods[item].sname }}{{ icnt|int }}
 {% endfor %}
 
-	post-up ip link set address {{ hw_address_prefix }}{{ unit_id }}:20 dev bat-{{ site_code }}
-	post-up ip link set dev bat-{{ site_code }} up
-	post-up	brctl addif br-{{ site_code }} bat-{{ site_code }}
-	post-up batctl -m bat-{{ site_code }} it 10000
-	post-up batctl -m bat-{{ site_code }} gw server 1000mbit/1000mbit
-	post-up batctl -m bat-{{ site_code }} ra {{ batman_algo }}
+	post-up ip link set address {{ sites[hoods[item].site].hwadr_prefix }}{{ unit_id }}:0{{gateways[unit_id].domains[item].cnt }} dev bat-{{ hoods[item].sname }}
+	post-up ip link set dev bat-{{ hoods[item].sname }} up
+	post-up	brctl addif br-{{ hoods[item].sname }} bat-{{ hoods[item].sname }}
+	post-up batctl -m bat-{{ hoods[item].sname }} it 10000
+	post-up batctl -m bat-{{ hoods[item].sname }} gw server 1000mbit/1000mbit
+	post-up batctl -m bat-{{ hoods[item].sname }} ra {{ batman_algo }}
 
 	post-up ip rule add from all fwmark 0x1 table 42
 
-	pre-down brctl delif br-{{ site_code }} bat-{{ site_code }} || true
+	pre-down brctl delif br-{{ hoods[item].sname }} bat-{{ hoods[item].sname }} || true
 
-
+{% endfor %}
 

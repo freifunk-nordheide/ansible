@@ -1,8 +1,8 @@
 # Zones WE have authority over!
 
-zone "{{ site_code }}" IN {
+zone "{{ hoods[item.key].sname }}" IN {
   type master;
-  file "/etc/bind/zones/{{ site_code }}/db.{{ site_code }}";
+  file "/etc/bind/zones/{{ hoods[item.key].sname }}/db.{{ hoods[item.key].sname }}";
 };
 
 

@@ -1,21 +1,21 @@
 #!/bin/bash
 
 ##This is small script that stops the radvd service and puts a timestamp in the
-##/etc/{{ site_code }} file. This timestamp is read out when ask for status. So we know
+##/etc/{{ gateways[unit_id].site }} file. This timestamp is read out when ask for status. So we know
 ##when the maintenance mode was activated.
 
-. /etc/{{ site_code }}
+. /etc/{{ gateways[unit_id].site }}
 
 case $1 in
   on)
-    sed -i -e 's/^MAINTENANCE=.*$/MAINTENANCE='$(date +%s)'/' /etc/{{ site_code }}
+    sed -i -e 's/^MAINTENANCE=.*$/MAINTENANCE='$(date +%s)'/' /etc/{{ gateways[unit_id].site }}
     /etc/init.d/radvd stop
     /etc/init.d/isc-dhcp-server stop
     update-rc.d radvd remove
     update-rc.d isc-dhcp-server remove
     ;;
   off)
-    sed -i -e 's/^MAINTENANCE=.*$/MAINTENANCE=0/' /etc/{{ site_code }}
+    sed -i -e 's/^MAINTENANCE=.*$/MAINTENANCE=0/' /etc/{{ gateways[unit_id].site }}
     /etc/init.d/radvd start
     /etc/init.d/isc-dhcp-server start
     update-rc.d radvd defaults

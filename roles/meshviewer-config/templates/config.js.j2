@@ -40,12 +40,12 @@ module.exports = function () {
       //       ' Month require libs like moment, access config ' + config.siteName);
       //   }
       //},
-      {
-         'name': 'Neighbour first seen',
-         'value': function (d, nodeDict) {
-            return nodeDict[d.gateway_nexthop].firstseen.format();
-         }
-      },
+      //{
+      //   'name': 'Neighbour first seen',
+      //   'value': function (d, nodeDict) {
+      //      return nodeDict[d.gateway_nexthop].firstseen.format();
+      //   }
+      //},
       {
         'name': 'node.hardware',
         'value': 'model'
@@ -238,8 +238,16 @@ module.exports = function () {
         'name': 'Nordheide-SuedOst'
       },
       {
-        'domain': 'ffcux',
-        'name': 'Cuxhaven'
+        'domain': 'ffcuxhv',
+        'name': 'Cuxhaven Stadt'
+      },
+      {
+        'domain': 'ffcuxln',
+        'name': 'Cuxland Nord'
+      },
+      {
+        'domain': 'ffcuxls',
+        'name': 'Cuxland Sued'
       },
       {
         'domain': '',
@@ -250,31 +258,37 @@ module.exports = function () {
     ],
     geo: [
       {
-        json:  function () {
-          return require('helper').getJSON('./data/geodata/areafeatures.json').then(function (result) {
-            result.features.forEach(function (item) {
-            });
-            return result.features ? result.features : false;
-          }, function () {
-            return false;
-          });
+        json: function () {
+            return require('helper').getJSON('./data/geodata/hoods/areafeatures.json');
         },
-
-        onEachFeature: function onEachFeature(feature, layer) {
-          layer.bindPopup('Area: ' + feature.properties.name);
-        },
- 
+        
         option: {
+
+          onEachFeature: function onEachFeature(feature, layer) {
+            if (feature.properties && feature.properties.freifunk) {
+              var t = L.tooltip({permanent: false, interactive: true, sticky: false, direction: "auto" }, layer)
+                      .setContent(
+	                "<strong>Region: " + feature.properties.name + "<br />" +
+                        "zur Zeit zugeordnet zu: " + feature.properties.freifunk.sitename + "<br />" +
+                        "Domäne: " + feature.properties.freifunk.hood + " - " + feature.properties.freifunk.hoodsname + " - "  + feature.properties.freifunk.hoodname + "</strong><br />" +
+                        "(" + feature.properties.freifunk.remark + ")<br />" +
+                        "<strong><a href='" + feature.properties.freifunk.sitehtml[1] + "'>Lokale Map:     " + feature.properties.freifunk.sitehtml[1] + "</a><br />" +
+                        "<a href='" + feature.properties.freifunk.sitehtml[0] + "'>Lokale Website: " + feature.properties.freifunk.sitehtml[0] + "</a>" + "<br />" +
+                        "<a href='" + feature.properties.freifunk.sitehtml[2] + "'>Freifunk:       " + feature.properties.freifunk.sitehtml[2] + "</a></strong>"
+                      );
+              layer.bindTooltip(t);
+            }
+          },
+
           style: function(feature) {
-            return {color:       feature.properties.style.color, 
-                    weight:      2,
-                    opacity:     feature.properties.style.opacity,
-                    // fillColor:   '#6de922',
-                    fillOpacity: 0.1
-            };
+            return {color:       feature.properties.freifunk.style.color, 
+                    weight:      1.5,
+                    opacity:     feature.properties.freifunk.style.opacity,
+                    fillOpacity: 0.2
+            }
           }
         },
-        pane: 'markerpane'
+        pane: 'markerPane'
       }
     ]
   };

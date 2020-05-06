@@ -38,7 +38,7 @@
 {%- if iigw.key == igw.key %}
            "location": {
            "longitude": 8.6,
-           "latitude":  54.00{{ 10+loop.index|int }}
+           "latitude":  54.00{{ 10 + loop.index0 | int }}
 {% endif -%}
 {% endfor %}
             },

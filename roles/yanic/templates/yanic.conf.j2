@@ -4,32 +4,32 @@ enable           = true
 synchronize      = "1m"
 collect_interval = "1m"
 
-[respondd.sites.{{ site }}]
-domains            = ["{{ site_code }}"]
+[respondd.sites.{{ gateways[unit_id].site }}]
+domains          = ["{{ hoods[item.key].sname }}"]
 
 [[respondd.interfaces]]
-ifname = "br-{{ site_code }}"
+ifname = "br-{{ hoods[item.key].sname }}"
 port = 10010
 
 [webserver]
 enable  = false
-bind    = "{{ base_ipv4 }}:80"
+bind    = "{{ gateways[unit_id].ipv4 }}:80"
 webroot = "/var/www/html/"
 
 [nodes]
-state_path    = "/var/lib/yanic/state.json"
+state_path    = "/var/lib/yanic/{{ hoods[item.key].sname }}/state.json"
 prune_after   = "7d"
 save_interval = "5s"
 offline_after = "10m"
 
 [[nodes.output.meshviewer-ffrgb]]
 enable   = true
-path = "/var/www/html/yanic/meshviewer.json"
+path = "/var/www/html/yanic/{{ hoods[item.key].sname }}/meshviewer.json"
 
 [nodes.output.meshviewer-ffrgb.filter]
 no_owner = true
 #blacklist = []
-#sites = ["{{ site }}"]
+#sites = ["{{ gateways[unit_id].site }}"]
 #has_location = true
 
 #[nodes.output.meshviewer-ffrgb.filter.in_area]
@@ -41,15 +41,15 @@ no_owner = true
 [[nodes.output.meshviewer]]
 enable         = true
 version        = 2
-nodes_path = "/var/www/html/yanic/nodes.json"
-graph_path = "/var/www/html/yanic/graph.json"
+nodes_path = "/var/www/html/yanic/{{ hoods[item.key].sname }}/nodes.json"
+graph_path = "/var/www/html/yanic/{{ hoods[item.key].sname }}/graph.json"
 
 [nodes.output.meshviewer.filter]
 no_owner = true
 
 [[nodes.output.nodelist]]
 enable   = true
-path = "/var/www/html/yanic/nodelist.json"
+path = "/var/www/html/yanic/{{ hoods[item.key].sname }}/nodelist.json"
 
 [nodes.output.nodelist.filter]
 no_owner = true

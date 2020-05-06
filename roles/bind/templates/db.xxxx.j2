@@ -1,8 +1,8 @@
 
 $TTL 86400
-$ORIGIN {{ site_code }}.
+$ORIGIN {{ hoods[item.key].sname }}.
 ;						primary-master admin-mail
-@						IN	SOA	{{ site_domain }} kontakt.{{ site_domain }}. (
+@						IN	SOA	{{ sites[gateways[unit_id].site].domain }} kontakt.{{ sites[gateways[unit_id].site].domain }}. (
 						{{ansible_date_time.epoch}} ; serial
 						1h	; refresh
 						15m	; retry
@@ -12,19 +12,19 @@ $ORIGIN {{ site_code }}.
 					IN	NS	{{ unit_id }}.gw
 
 ; Hosts
-{% for igw in gateways|dict2items %}
-{% if igw.value.hood is defined and igw.value.hood == hood_id %}
-{{ igw.key }}.gw				86400	IN	A	{{ igw.value.ipv4 }}
-;							AAAA	{{ igw.value.bat_ipv6 }}
+{% for igw in gateways | dict2items %}
+{% if igw.value.domains is defined and igw.value.domains[item.key] is defined %}
+{{ igw.key }}.gw				86400	IN	A	{{ igw.value.domains[item.key].bat_ipv4  | ipaddr('address')}}
+;							AAAA	{{ igw.value.domains[item.key].bat_ipv6 }}
 {% endif %}
 {% endfor %}
 
 ; NTP Server
-{{ unit_id }}.gw				86400	IN	A	{{ gateways[unit_id].ipv4 }}
-;						AAAA	{{ gateways[unit_id].bat_ipv6 }}
+{{ unit_id }}.gw				86400	IN	A	{{ gateways[unit_id].domains[item.key].bat_ipv4  | ipaddr('address') }}
+;						AAAA	{{ gateways[unit_id].domains[item.key].bat_ipv6 }}
 ; Nextnode
-node				86400	IN	A	{{ gateways[unit_id].nextnode4 }}
-;						AAAA	{{ gateways[unit_id].nextnode6 }}
+node				86400	IN	A	{{ gateways[unit_id].domains[item.key].nextnode4 }}
+;						AAAA	{{ gateways[unit_id].domains[item.key].nextnode6 }}
 						
 local-node			86400	IN	CNAME node
 localnode			86400	IN	CNAME node

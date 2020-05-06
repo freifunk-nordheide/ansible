@@ -8,3 +8,11 @@
   - hostname
   - common
 
+- name: Setup gateways
+  hosts: all
+  roles:
+  - yanic
+  - bind
+  - dhcp
+   
+

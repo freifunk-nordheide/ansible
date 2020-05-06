@@ -5,9 +5,9 @@ group "fastd";
 
 log to syslog level warn;
 # hide ip addresses yes;
-status socket "/run/fastd/vpn-{{ site_code }}{{ item }}.sock";
+status socket "/run/fastd/vpn-{{ hoods[item[0].key]['sname'] }}{{ item[1] }}.sock";
 
-interface "vpn-{{ site_code }}{{ item }}";
+interface "vpn-{{ hoods[item[0].key]['sname'] }}{{ item[1] }}";
 
 method "null";
 method "salsa2012+umac";
@@ -15,19 +15,19 @@ method "salsa2012+umac";
 # secure handshakes yes;
 mode tap;
 
-bind {{ fastd_bind }}: {{ (fastd_port|int + item|int)|string }};
+bind {{ hoods[item[0].key]['fastd_bind'] }}: {{ (hoods[item[0].key]['fastd_port']|int + item[1]|int)|string }};
 
 include "secret.conf";
 
 mtu {{ mtu }};
 
-{% if fastd_peers_limit|int > -1 %}
-{% if item|int == 0 %}
-	peer limit {{ (fastd_peers_limit|int - 10)|string }};
-{% elif item|int == (fastd_instances|int - 1) %}
-	peer limit {{ (fastd_peers_limit|int + 10)|string }};
+{% if hoods[item[0].key].fastd_p_lim|int > -1 %}
+{% if item[1]|int == 0 %}
+	peer limit {{ (hoods[item[0].key].fastd_p_lim|int - 10)|string }};
+{% elif item[1]|int == (hoods[item[0].key].fastd_inst|int - 1) %}   
+	peer limit {{ (hoods[item[0].key].fastd_p_lim|int + 10)|string }};
 {% else %}
-	peer limit {{ fastd_peers_limit|string }};
+	peer limit {{ hoods[item[0].key].fastd_p_lim|string }};
 {% endif %}
 {% endif %}
 
@@ -37,7 +37,7 @@ peer group "nodes" {
 }
 
 # include backbone
-{% if item|int == (fastd_instances|int -1) %}
+{% if item[1]|int == (hoods[item[0].key].fastd_inst|int -1) %}
 peer group "backbone" {
         peer limit 5;
         include peers from "backbone";
@@ -47,21 +47,21 @@ peer group "backbone" {
 
 on up "
 	ip link set dev $INTERFACE down
-	ip link set dev $INTERFACE address {{ hw_address_prefix }}{{ unit_id }}:{{ (10 + item|int)|string }}
+	ip link set dev $INTERFACE address {{ sites[hoods[item[0].key].site].hwadr_prefix }}{{ unit_id }}:{{ (item[0].value.cnt|int * 10 + item[1]|int)|string }}
 	ip link set dev $INTERFACE up
-	ifup {{ batman_interface }}
-{% if item|int == (fastd_instances|int -1) %}
-	sh /etc/fastd/iptables_{{ site }}.sh
+	ifup bat-{{ hoods[item[0].key]['sname'] }}
+{% if item[1]|int == (hoods[item[0].key].fastd_inst|int -1) %}
+	sh /etc/fastd/iptables_{{ hoods[item[0].key].site }}.sh
 {% endif %}
 ";
 
 on down "
-	ifdown {{ batman_interface }}
+	ifdown bat-{{ hoods[item[0].key]['sname'] }}
 ";
 
 on verify "true";
 
-# {% if fastd_anonymous %}
+# {% if hoods[item[0].key].fastd_anonym %}
 # on verify "true";
 # {% endif %}
 

@@ -5,8 +5,9 @@
 
 include "/etc/bind/zones.rfc1918";
 
-include "/etc/bind/zones/{{ site_code }}/{{ site_code }}.conf";
-
+{% for item in gateways[unit_id].domains | dict2items %}
+include "/etc/bind/zones/{{ hoods[item.key].sname }}/{{ hoods[item.key].sname }}.conf";
+{% endfor %}
 
 
 
