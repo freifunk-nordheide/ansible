@@ -1,0 +1,22 @@
+---
+
+- name: Setup common roles on all hosts
+  hosts: all
+  roles:
+  - hostname
+  - common
+
+- name: Setup gateways
+  hosts: all
+  roles:
+  - ntp
+#  - bind
+  - nginx
+  - yanic
+  - maintenance
+
+- name: Reboot gateways
+  hosts: all
+  roles:
+  - reboot-unit
+

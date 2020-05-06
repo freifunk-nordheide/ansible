@@ -1,0 +1,10 @@
+---
+
+- name: Setup common roles on all hosts
+  remote_user: marcus
+  hosts: 
+  - all
+  roles:
+  - firmware_prep_site_local
+
+

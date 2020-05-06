@@ -1,0 +1,8 @@
+---
+
+- name: Testing roles on hosts
+  hosts: 
+  - all
+  roles:
+  - meshviewer-config
+
