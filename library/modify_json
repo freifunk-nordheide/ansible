@@ -1,0 +1,33 @@
+#!/usr/bin/python3
+
+from ansible.module_utils.basic import *
+
+def main():
+  module = AnsibleModule(
+    argument_spec=dict(
+      data=dict(required=True, type='dict'),
+      pointer=dict(required=True),
+      action=dict(required=True,
+        choices=['append', 'extend', 'update']),
+      update=dict(type='dict'),
+      extend=dict(type='list'),
+      append=dict(type='dict'),
+    ),
+
+    supports_check_mode=True,
+  )
+
+  action = module.params['action']
+  data = module.params['data']
+  pointer = module.params['pointer']
+
+  if isinstance(data, str):
+    data = json.loads(str)
+  
+  data['properties']['freifunk'] = module.params['append']
+
+  module.exit_json(changed=True,
+    result=data)
+
+if __name__ == '__main__':
+  main()

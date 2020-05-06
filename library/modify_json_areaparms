@@ -1,0 +1,96 @@
+#!/usr/bin/python3
+
+from ansible.module_utils.basic import *
+import os
+import re
+import json, codecs
+
+def ffattrib (ihood, ihoods, isites):
+  ffa=dict(
+    site="ffnh",
+    sitename="Freifunk Nordheide",
+    sitehtml=[""],
+    hoodsname="None",
+    hoodname="None",
+    hood="xx",
+    remark="Bisher keiner Domaene zugeordnet!",
+    style=dict(
+      color="#cdcdcd", 
+      weight=1.5,
+      opacity=0.6,
+      fillColor="#6de922",
+      fillOpacity=0.05
+    )
+  )
+  if ihood in ihoods.keys():
+    ffa["hood"]=ihood
+    if "name" in ihoods[ihood].keys():
+      ffa["hoodname"]=ihoods[ihood]["name"]
+    if "comment" in ihoods[ihood].keys():
+      ffa["remark"]=ihoods[ihood]["comment"]
+    if "sname" in ihoods[ihood].keys():
+      ffa["hoodsname"]=ihoods[ihood]["sname"]
+    if "site" in ihoods[ihood].keys():
+      ffa["site"]=ihoods[ihood]["site"]
+      if ihoods[ihood]["site"] in isites.keys():
+        if "name" in isites[ihoods[ihood]["site"]].keys():
+          ffa["sitename"]=isites[ihoods[ihood]["site"]]["name"]
+        if "web" in isites[ihoods[ihood]["site"]].keys():
+          ffa["sitehtml"]={}
+          ffa["sitehtml"]=isites[ihoods[ihood]["site"]]["web"]
+    if "style" in ihoods[ihood].keys():
+      if "color" in ihoods[ihood]["style"].keys():
+         ffa["style"]["color"]=ihoods[ihood]["style"]["color"]
+      if "weight" in ihoods[ihood]["style"].keys():
+        ffa["style"]["weight"]=ihoods[ihood]["style"]["weight"]
+      if "opacity" in ihoods[ihood]["style"].keys():
+         ffa["style"]["opacity"]=ihoods[ihood]["style"]["opacity"]
+      if "fillColor" in ihoods[ihood]["style"].keys():
+        ffa["style"]["fillColor"]=ihoods[ihood]["style"]["fillColor"]
+      if "fillOpacity" in ihoods[ihood]["style"].keys():
+        ffa["style"]["fillOpacity"]=ihoods[ihood]["style"]["fillOpacity"]
+        
+  return ffa;
+
+def main():
+  module = AnsibleModule(
+    argument_spec=dict(
+      datadir=dict(type='str', required=True),
+      sites=dict(type='dict', required=True),
+      hoods=dict(type='dict', required=True),
+    ),
+    supports_check_mode=True,
+  )
+
+  datadir = ""
+  if not(module.params['datadir'].endswith("/")):
+    datadir = module.params['datadir'] + "/"
+  else:
+    datadir = module.params['datadir']
+
+  with open(os.path.join(datadir, "area_featurecoll.GeoJson"), "r") as f:
+    featurecoll = json.load(f)
+  fileno=0
+  r = re.compile("^\d\d$")
+#  for dir in filter(r.match, filter(os.path.isdir, os.listdir(datadir))):
+  for dir in os.listdir(datadir):
+    if os.path.isdir(os.path.join(datadir, dir)) and r.match(dir):
+      ffe = ffattrib(dir, module.params['hoods'], module.params['sites'])
+      for file in os.listdir(os.path.join(datadir, dir)):
+        if file.endswith(".GeoJson"):
+          fileno+=1      
+          if fileno == 1:
+            with open(os.path.join(datadir, "area_featurecoll.GeoJson"), "r") as f:
+              featurecoll = json.load(f)
+          print(os.path.join(datadir, file))
+          with open(os.path.join(datadir, dir, file), "r") as f:
+            feature = json.load(f)
+            feature['properties']['freifunk'] = ffe
+            featurecoll['features'].append(feature)
+  with open(os.path.join(datadir, 'areafeatures.json'), 'w') as f:
+    json.dump(featurecoll, f, indent=4, sort_keys=True) 
+  module.exit_json(changed=True,
+    result=featurecoll);
+
+if __name__ == '__main__':
+  main()
