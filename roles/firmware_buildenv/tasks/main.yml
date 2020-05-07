@@ -1,80 +1,54 @@
 ---
-- name: Include fastd_keys
-  include_vars:
-    file:      "{{ playbook_dir }}/../ansible-keys/fastd_keys.yml"
-
 - name: parameter
   set_fact:
     towner:             marcus
     tgroup:             marcus
-    sitedir:            "{{ playbook_dir }}/../ffnh_t1"
-    targetsite:         ffnh
-    targetdomains:
-    - "00"   # Alte Umgebung
-#    - "01"   # Standardhood
-    - "06"   # l2tp
-#    - "10"   # ffnh Veranstaltungen (intern)
-    - "11"   # ffnh
-    - "12"   # ffnh
-    - "13"   # ffnh
-    - "14"   # ffnh
-#    - "15"   # ffnh Stade
-    - "21"   # ffcux
-    - "22"   # ffcux
-    - "23"   # ffcux
-    targetdefault:      "01"
+    sitedir:            "{{ playbook_dir }}/firmware_site/"
+    gluon_version:      "v2018.2"
+    gluon_dir:		"/home/marcus/ff_firmware/v2018.2/"
+
+- name: Install misc software local
+  apt: 
+    name:
+    - git 
+    - subversion
+    - python
+    - build-essential
+    - gawk
+    - unzip
+    - libncurses-dev
+    - libz-dev
+    - libssl-dev
+    - wget
+    - time
+
+- name: Clone gluon
+  git: 
+    repo:          "https://github.com/freifunk-gluon/gluon.git" 
+    dest:          "{{gluon_dir}}gluon/" 
+    version:       "{{ gluon_version }}"
 
 - name: Create local dir
   file:                 
-    path:               "{{ item }}" 
+    path:               "{{ gluon_dir }}gluon/site/" 
     state:              directory
-    mode:               '1755'
-    owner:              "{{ towner }}"
-    group:              "{{ tgroup }}"
-  with_items:
-  - "{{ sitedir }}/domains/"
-  - "{{ sitedir }}/i18n/"
-      
-- name: Create modules
-  template:
-    src:                modules.j2
-    dest:               "{{ sitedir }}/modules"
-    mode:               '644'
+    mode:               755
     owner:              "{{ towner }}"
     group:              "{{ tgroup }}"
 
-- name: Create site.mk
-  template:
-    src:                site.mk.j2
-    dest:               "{{ sitedir }}/site.mk"
-    mode:               '644'
-    owner:              "{{ towner }}"
-    group:              "{{ tgroup }}"
-
-- name: Create site.conf
-  template:
-    src:                site.conf.j2
-    dest:               "{{ sitedir }}/site.conf"
-    mode:               '644'
-    owner:              "{{ towner }}"
-    group:              "{{ tgroup }}"
-
-- name: Create domain.conf
-  template:
-    src:                domain.conf.j2
-    dest:               "{{ sitedir }}/domains/{{ hoods[item].sname }}.conf"
-    mode:               '644'
-    owner:              "{{ towner }}"
-    group:              "{{ tgroup }}"
-  loop:                 "{{ targetdomains }}"                 
-
-- name: Copy i18n
+- name: Copy site data
   copy:
-    src:                ../templates/i18n/
-    dest:               "{{ sitedir }}/domains/i18n/"
-    recurse:            "true"
-    mode:               '755'
+    src:                "{{ sitedir }}"
+    dest:               "{{ gluon_dir }}gluon/site/"
+    directory_mode:     "true"
     owner:              "{{ towner }}"
     group:              "{{ tgroup }}"
+
+
+
+
+#- name: Build the default target
+#  make:
+#    chdir: "{{gluon_dir}}/gluon/"
 
 ...

@@ -7,20 +7,20 @@
   set_fact:
     towner:             marcus
     tgroup:             marcus
-    sitedir:            "{{ playbook_dir }}/../ffnh_t1"
+    sitedir:            "{{ playbook_dir }}/firmware_site"
     targetsite:         ffnh
     targetdomains:
     - "00"   # Alte Umgebung
     - "01"   # Standardhood
     - "06"   # l2tp
     - "10"   # ffnh Veranstaltungen (intern)
-    - "11"   # ffnh
-    - "12"   # ffnh
-    - "13"   # ffnh
-    - "14"   # ffnh
-    - "21"   # ffcux
-    - "22"   # ffcux
-    - "23"   # ffcux
+    - "11"   # ffnh NW
+    - "12"   # ffnh NO
+    - "13"   # ffnh SO
+    - "14"   # ffnh SW
+    - "21"   # ffcux Stadt
+    - "22"   # ffcux Nord
+    - "23"   # ffcux Süd
     - "31"   # ffnh Stade
     - "41"   # ffnh Diverse
     targetdefault:      "01"

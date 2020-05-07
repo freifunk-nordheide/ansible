@@ -7,7 +7,6 @@
     {{ hoods[item].sname }} = '{{ hoods[item].name }} - {{ hoods[item].comment }}',
   },
 
-  timezone = 'CET-1CEST,M3.5.0,M10.5.0/3', -- Europe/Berlin
   ntp_servers = {
 {% for igw in gateways if gateways[igw].domains is defined and gateways[igw].domains[item] is defined %}
       '{{ gateways[igw].domains[item].bat_ipv6 }}'{% if not loop.last %},
@@ -37,11 +36,10 @@
 
   wifi24 = {
     --disables 802.11b rates
-    supported_rates = {6000, 9000, 12000, 18000, 24000, 36000, 48000, 54000},
     basic_rate = {6000, 9000, 18000, 36000, 54000},
+    channel = 5,
     ap = {
       ssid = "{{ hoods[item].sname }}.freifunk.net-2",
-      channel = 5,
     },
     mesh = {
       id = 'ue3H3uX{{ hoods[item].sname }}{{item}}2', 
@@ -50,9 +48,9 @@
   },
 
   wifi5 = {
+    channel = 44,
     ap = {
       ssid = "{{ hoods[item].sname }}.freifunk.net-5",
-      channel = 44,
     },
     mesh = {
       id = "ue3H3uX{{ hoods[item].sname }}{{item}}5",
@@ -85,9 +83,6 @@
   },
 
   mesh_vpn = {
-    enabled = true,
-    mtu = 1374,
-{% if hoods[item].btm_conntype == "fastd" %}
     fastd = {
       -- methods = {'salsa2012+umac'},
       -- configurable = true,
@@ -96,8 +91,9 @@
         backbone = {
           limit = 1,
           peers = {
+{% if hoods[item].btm_conntype == "fastd" %}
 {% for igw in gateways if gateways[igw].domains is defined and gateways[igw].domains[item] is defined %}
-            {{gateways[igw].site}}_vpn{{ igw }}{{ item }} = {
+            {{ gateways[igw].site}}_vpn{{ igw }}{{ item }} = {
               {{ fastd_keys[gateways[igw].name].domains[item].public | regex_replace('^public', 'key =') | regex_replace(';$', '')}},
               remotes = {
                 '"{{ gateways[igw].lname }}" port {{ hoods[item].fastd_port }}'
@@ -106,20 +102,21 @@
 {% else %} 
 {% endif %}
 {% endfor %}
+{% endif %}
           },
         },
       },
     },
-{% else %}
     tunneldigger = {
       brokers = {
+{% if hoods[item].btm_conntype != "fastd" %}
 {% for igw in gateways if gateways[igw].domains is defined and gateways[igw].domains[item] is defined %}
         '{{ gateways[igw].lname }}:{{ hoods[item].td_port }}'{% if not loop.last %},
 {% else %} 
 {% endif %}
 {% endfor %}
+{% endif %}
       },
     },
-{% endif %}
   }
 }
