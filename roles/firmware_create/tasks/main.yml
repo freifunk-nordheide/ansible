@@ -1,0 +1,42 @@
+---
+- name: parameter
+  set_fact:
+    towner:             freifunker
+    tgroup:             freifunker
+    copy_site:          false
+    sitedir:            "{{ playbook_dir }}/firmware_site/"
+    gluon_dir:		"/home/freifunker/newenv/firmware/v2018.2/"
+
+#- name: Copy site data
+#  copy:
+#    src:                "{{ sitedir }}"
+#    dest:               "{{ gluon_dir }}gluon/site/"
+#    directory_mode:     "true"
+#    owner:              "{{ towner }}"
+#    group:              "{{ tgroup }}"
+#  when: copy_site == true
+
+- name: make listet targets
+  make: 
+    chdir:              "{{ gluon_dir }}gluon"
+    params:		
+      jobs:             6
+    target:             "GLUON_TARGET={{ item }}"
+  with_items:
+#    - "ar71xx-generic"
+#    - "ar71xx-tiny"
+    - "ar71xx-nand"
+    - "brcm2708-bcm2708"
+    - "brcm2708-bcm2709"
+    - "mpc85xx-generic"
+    - "ramips-mt7621"
+    - "sunxi-cortexa7"
+    - "x86-generic"
+    - "x86-geode"
+    - "x86-64"
+    - "ipq40xx"
+#    - "ramips-mt7620"
+    - "ramips-mt76x8"
+    - "ramips-rt305x"
+
+...

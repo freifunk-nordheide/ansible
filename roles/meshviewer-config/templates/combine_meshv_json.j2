@@ -1,0 +1,74 @@
+#!/usr/bin/python3
+
+import json
+
+def main():
+    in_nodes=dict()
+    work_nodes=dict()
+
+    tmp_node=dict()
+    out_json=dict()
+    tmp_domain=dict()
+
+    domain_list = dict(type='list') 
+    domain_list = [{%for gwa in gateways[unit_id].areas %}"{{ gwa }}"{% if not loop.last %},{% endif %}{% endfor %}] 
+    domain_list_file = '{{ meshv_dir }}/data/domain_list.json'
+    out_file = '{{ meshv_dir }}/data/meshviewer.json'
+
+    out_json['nodes'] = []
+    out_json['links'] = []
+    out_json['timestamp'] = ''
+    work_timestr = ''
+    for p in domain_list:
+        print('Domain: ' + p)
+        xi = 0
+        while xi < 5:
+            try:
+                with open('{{ meshv_dir }}/data/' + p + '/meshviewer.json') as mv:
+                    print ('{{ meshv_dir }}/data/' + p + '/meshviewer.json')
+                    tmp = json.load(mv)
+                    if work_timestr == '' or (work_timestr != '' and work_timestr > tmp['timestamp']):
+                        work_timestr = tmp['timestamp']
+                    in_nodes[p] = tmp['nodes']
+                    out_json['links'].extend(tmp['links'])
+                    for n in in_nodes[p]:
+                        tmp_node_id = n['node_id']
+                        if tmp_node_id in work_nodes:
+                            work_nodes[tmp_node_id]['domains'].extend([{'domain':p, 'node':n}])
+                        else:
+                            work_nodes[tmp_node_id] = {'domains' : [{'domain':p, 'node':n}]}
+                    break
+            except:
+                xi += 1
+                print  ('Read-error: ' + p) 
+                print("Unexpected error:", sys.exc_info()[0])
+    for wn in work_nodes:
+        if len(work_nodes[wn]['domains']) < 2:
+            out_json['nodes'].extend([work_nodes[wn]['domains'][0]['node']])
+        else:
+#            print('Input: \n' + json.dumps(work_nodes[wn]['domains'], indent=4))
+            d1 = work_nodes[wn]['domains'][0]
+            for d2 in work_nodes[wn]['domains']:
+                if d1['domain'] != d2['domain']:
+                    if d1['node']['is_online']:
+                        if d2['node']['is_online']:
+                            if d1['node']['lastseen'] < d2['node']['lastseen']:
+                                d1 = d2
+                    else:
+                        if d2['node']['is_online']:
+                            d1 = d2
+                        else:
+                            if d1['node']['lastseen'] < d2['node']['lastseen']:
+                                d1 = d2
+#            print('Choice: \n' + json.dumps(d1, indent=4))
+            out_json['nodes'].extend([d1['node']])
+            out_json['timestamp'] = work_timestr
+    with open(out_file, 'w') as ofile:
+        json.dump(out_json, ofile, indent=4)
+
+
+#    print('Work: \n' + json.dumps(out_json, indent=4))
+
+
+main()
+
