@@ -23,13 +23,12 @@
     - "23"   # ffcux Süd
     - "31"   # ffnh Stade
     - "41"   # ffnh Diverse
-    targetdefault:      "01"
+    targetdefault:      "00"
 
-- name: Create local dir
+- name: Create target dir
   file:                 
     path:               "{{ item }}" 
     state:              directory
-    mode:               '1755'
     owner:              "{{ towner }}"
     group:              "{{ tgroup }}"
   with_items:
@@ -40,7 +39,6 @@
   template:
     src:                modules.j2
     dest:               "{{ sitedir }}/modules"
-    mode:               '644'
     owner:              "{{ towner }}"
     group:              "{{ tgroup }}"
 
@@ -48,7 +46,6 @@
   template:
     src:                site.mk.j2
     dest:               "{{ sitedir }}/site.mk"
-    mode:               '644'
     owner:              "{{ towner }}"
     group:              "{{ tgroup }}"
 
@@ -56,7 +53,6 @@
   template:
     src:                site.conf.j2
     dest:               "{{ sitedir }}/site.conf"
-    mode:               '644'
     owner:              "{{ towner }}"
     group:              "{{ tgroup }}"
 
@@ -64,17 +60,17 @@
   template:
     src:                domain.conf.j2
     dest:               "{{ sitedir }}/domains/{{ hoods[item].sname }}.conf"
-    mode:               '644'
     owner:              "{{ towner }}"
     group:              "{{ tgroup }}"
   loop:                 "{{ targetdomains }}"                 
 
 - name: Copy i18n
   copy:
-    src:                ../templates/i18n/
-    dest:               "{{ sitedir }}/i18n/"
-    directory_mode:     "true"
+    src:                "../templates/i18n/{{ item }}"
+    dest:               "{{ sitedir }}/i18n/{{ item }}"
     owner:              "{{ towner }}"
     group:              "{{ tgroup }}"
-
+  with_items:
+  - "en.po"
+  - "de.po"
 ...

@@ -22,6 +22,7 @@ GLUON_FEATURES := \
 GLUON_MULTIDOMAIN=1
 
 GLUON_SITE_PACKAGES := \
+	gluon-config-mode-domain-select \
 	gluon-web-admin \
 	gluon-radvd \
 	iwinfo \

@@ -1,11 +1,11 @@
 ---
 - name: parameter
   set_fact:
-    towner:             marcus
-    tgroup:             marcus
+    towner:             freifunker
+    tgroup:             freifunker
     sitedir:            "{{ playbook_dir }}/firmware_site/"
     gluon_version:      "v2018.2"
-    gluon_dir:		"/home/marcus/ff_firmware/v2018.2/"
+    gluon_dir:		"/home/freifunker/newenv/firmware/v2018.2/"
 
 - name: Install misc software local
   apt: 
@@ -28,11 +28,10 @@
     dest:          "{{gluon_dir}}gluon/" 
     version:       "{{ gluon_version }}"
 
-- name: Create local dir
+- name: Create dir
   file:                 
     path:               "{{ gluon_dir }}gluon/site/" 
     state:              directory
-    mode:               755
     owner:              "{{ towner }}"
     group:              "{{ tgroup }}"
 
@@ -40,15 +39,8 @@
   copy:
     src:                "{{ sitedir }}"
     dest:               "{{ gluon_dir }}gluon/site/"
-    directory_mode:     "true"
     owner:              "{{ towner }}"
     group:              "{{ tgroup }}"
 
-
-
-
-#- name: Build the default target
-#  make:
-#    chdir: "{{gluon_dir}}/gluon/"
 
 ...

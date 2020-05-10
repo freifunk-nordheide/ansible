@@ -158,12 +158,7 @@ module.exports = function () {
     ],
 // Array of data provider are supported
     'dataPath': [
-{% for igw in gateways[unit_id].areas|dict2items %}
-      './data/{{ igw.key }}/'
-{%- if not loop.last %}
-,
-{% endif -%} 
-{% endfor %}
+      './data/'
     ],
     'siteName': 'Freifunk Nordheide',
     'mapLayers': [

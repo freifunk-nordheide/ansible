@@ -4,10 +4,11 @@
 - name: Schalter für Copy der Geo-Daten
   set_fact: 
     update_geo: false
+    meshv_dir: "/var/www/html/meshviewer"
 
 - name: Config directories for meshviewer data
   file: 
-    path:      "/var/www/html/meshviewer/data/{{ igw.value.id }}/offline/"
+    path:      "{{ meshv_dir }}/data/{{ igw.value.id }}/offline/"
     state:     directory 
     owner:     www-data
     group:     www-data
@@ -17,8 +18,8 @@
 
 - name: Build offline meshviewer.json for each area
   template: 
-    src:       offline_meshviewer.json.j2
-    dest:      /var/www/html/meshviewer/data/{{ igw.value.id }}/offline/meshviewer.json
+    src:       "offline_meshviewer.json.j2"
+    dest:      "{{ meshv_dir }}/data/{{ igw.value.id }}/offline/meshviewer.json"
     owner:     www-data
     group:     www-data
   loop:        "{{ gateways[unit_id].areas|dict2items  }}"
@@ -27,7 +28,7 @@
 
 - name: Create geojson directory
   file: 
-    path:      "/var/www/html/meshviewer/data/geodata/"
+    path:      "{{ meshv_dir }}/data/geodata/"
     state:     directory 
     owner:     www-data
     group:     www-data
@@ -36,7 +37,7 @@
 - name: Copy geojson data
   template: 
     src:       area_features.json.j2
-    dest:      /var/www/html/meshviewer/data/geodata/areafeatures.json
+    dest:      "{{ meshv_dir }}/data/geodata/areafeatures.json"
     owner:     www-data
     group:     www-data
   when:        update_geo == True
@@ -44,14 +45,14 @@
 - name: Copy geojson files for hoods
   copy:
     src:       ../templates/borders/hoods
-    dest:      /var/www/html/meshviewer/data/geodata
+    dest:      "{{ meshv_dir }}/data/geodata"
     owner:     www-data
     group:     www-data
   when:        update_geo == True
 
 - name: Modify json
   modify_json_areaparms:
-    datadir:   "/var/www/html/meshviewer/data/geodata/hoods/"
+    datadir:   "{{ meshv_dir }}/data/geodata/hoods/"
     sites:     "{{ sites }}"
     hoods:     "{{ hoods }}"
   when:        update_geo == True
@@ -62,27 +63,38 @@
     dest:      /usr/local/bin/get_nodevalues
     mode:      "755"
 
-- name: Ensure updating data each minute. Creates an entry like "* * * * ls -alh > /dev/null"
+- name: Ensure updating data every  2 (even) minutes
   cron:
     name:      "get data"
-    minute:    "*"
+    minute:    "*/2"
     job:       "/usr/local/bin/get_nodevalues"
 
+- name: Create combine meshviewer.json - python script
+  template: 
+    src:       combine_meshv_json.j2
+    dest:      /usr/local/bin/combine_meshv_json
+    mode:      "755"
+
+- name: Ensure creating meshviewer.json every 2 (odd) minutes"
+  cron:
+    name:      "combine meshviewer"
+    minute:    "1-59/2"
+    job:       "/usr/bin/python3 /usr/local/bin/combine_meshv_json"
 
 - name: Configure meshviewer1 - config.js
   template: 
     src:       config.js.j2
-    dest:      /var/www/html/meshviewer/config.js
+    dest:      "{{ meshv_dir }}/config.js"
 
 - name: Configure meshviewer2 - index.html
   template: 
     src:       index.html.j2
-    dest:      /var/www/html/meshviewer/html/index.html
+    dest:      "{{ meshv_dir }}/html/index.html"
 
 - name: Compile meshviewer
   shell:       "yarn run gulp"
   args:
-    chdir: /var/www/html/meshviewer
+    chdir:     "{{ meshv_dir }}"
 
 
 

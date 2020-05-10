@@ -122,6 +122,8 @@ hoods:
     nextnode4:              "10.71.183.254"
     nextnode6:              "fd8f:14c7:d318::ffff"
     btm_conntype:           "fastd"
+    ssid:                   "nordheide.freifunk.net"
+    meshid:                 "p312HX-ffnh"
     fastd_port:		    10050
     fastd_anonym:           true
     fastd_bind:             any
@@ -131,14 +133,16 @@ hoods:
   "01":
     number:                 "01"
     sname:                  ffnhbase
-    name:                   FFNH-Veranstaltungen
-    comment:                "Veranstaltungen (nicht öffentlich)"
+    name:                   FFNH-Standarddomain
+    comment:                "Standarddomain (nicht öffentlich)"
     site:                   ffnh
     dhcp_range:             "10.72.16.0/20"
     dhcp6_range:            "2a07:59c6:ec06:ff01::/64"
     nextnode4:              "10.72.31.254"
     nextnode6:              "2a07:59c6:ec06:ff01::01ff"
     btm_conntype:           "fastd"
+    ssid:                   "nordheide.freifunk.net"
+    meshid:                 "ue3H3uXffnh01"
     fastd_port:		    11010
     fastd_anonym:           true
     fastd_bind:             any
@@ -157,6 +161,8 @@ hoods:
     nextnode4:              "10.72.111.254"
     nextnode6:              "2a07:59c6:ec06:ff06::06ff"
     btm_conntype:           "td_slovenia"
+    ssid:                   "nordheide-l2tp.freifunk.net"
+    meshid:                 "ue3H3uXffnh06"
 #    fastd_port:             11060
 #    fastd_anonym:           true
 #    fastd_bind:             any
@@ -181,6 +187,8 @@ hoods:
     nextnode4:              "10.72.175.254"
     nextnode6:              "2a07:59c6:ec06:ff10::10ff"
     btm_conntype:           "fastd"
+    ssid:                   "nordheide-event.freifunk.net"
+    meshid:                 "ue3H3uXffnh10"
     fastd_port:		    11100
     fastd_anonym:           true
     fastd_bind:             any
@@ -198,6 +206,8 @@ hoods:
     nextnode4:              "10.71.191.254"
     nextnode6:              "2a07:59c6:ec06:ff11::11ff"
     btm_conntype:           "fastd"
+    ssid:                   "nordheide.freifunk.net"
+    meshid:                 "ue3H3uXffnh11"
     fastd_port:		    11110
     fastd_anonym:           true
     fastd_bind:             any
@@ -216,6 +226,8 @@ hoods:
     nextnode4:              "10.71.207.254"
     nextnode6:              "2a07:59c6:ec06:ff12::12ff"
     btm_conntype:           "fastd"
+    ssid:                   "nordheide.freifunk.net"
+    meshid:                 "ue3H3uXffnh12"
     fastd_port:		    11120
     fastd_anonym:           true
     fastd_bind:             any
@@ -234,6 +246,8 @@ hoods:
     nextnode4:              "10.71.223.254"
     nextnode6:              "2a07:59c6:ec06:ff13::13ff"
     btm_conntype:           "fastd"
+    ssid:                   "nordheide.freifunk.net"
+    meshid:                 "ue3H3uXffnh13"
     fastd_port:		    11130
     fastd_anonym:           true
     fastd_bind:             any
@@ -252,6 +266,8 @@ hoods:
     nextnode4:              "10.71.239.254"
     nextnode6:              "2a07:59c6:ec06:ff14::14ff"
     btm_conntype:           "fastd"
+    ssid:                   "nordheide.freifunk.net"
+    meshid:                 "ue3H3uXffnh14"
     fastd_port:		    11140
     fastd_anonym:           true
     fastd_bind:             any
@@ -268,6 +284,8 @@ hoods:
     comment:                "Cuxhaven Stadt"
     site:                   ffcux
     btm_conntype:           "fastd"
+    ssid:                   "cuxland.freifunk.net"
+    meshid:                 "ue3H3uXffnh21"
     dhcp_range:             "10.115.16.0/20"
     dhcp6_range:            "2a07:59c6:ec06:ff21::/64"
     nextnode4:              "10.115.31.254"
@@ -290,6 +308,8 @@ hoods:
     nextnode4:              "10.115.47.254"
     nextnode6:              "2a07:59c6:ec06:ff22::22ff"
     btm_conntype:           "fastd"
+    ssid:                   "cuxland.freifunk.net"
+    meshid:                 "ue3H3uXffnh22"
     fastd_port:		    11220
     fastd_anonym:           true
     fastd_bind:             any
@@ -308,6 +328,8 @@ hoods:
     nextnode4:              "10.115.63.254"
     nextnode6:              "2a07:59c6:ec06:ff23::23ff"
     btm_conntype:           "fastd"
+    ssid:                   "cuxland.freifunk.net"
+    meshid:                 "ue3H3uXffnh23"
     fastd_port:		    11230
     fastd_anonym:           true
     fastd_bind:             any
@@ -328,6 +350,8 @@ hoods:
     nextnode4:              "10.72.47.254"
     nextnode6:              "2a07:59c6:ec06:ff31::31ff"
     btm_conntype:           "fastd"
+    ssid:                   "freifunk.net"
+    meshid:                 "ue3H3uXffnh31"
     fastd_port:		    11310
     fastd_anonym:           true
     fastd_bind:             any
@@ -341,13 +365,15 @@ hoods:
     number:                 "41"
     sname:                  ffnhdiv
     name:                   ffnhdiv - Lks (Osterholz, Row, ...)
-    comment:                "Landkreise Osterholz, Row, Hk usw"
+    comment:                "Lk Osterholz, Row, Hk, ..."
     site:                   ffnh
     dhcp_range:             "10.72.48.0/20"
     dhcp6_range:            "2a07:59c6:ec06:ff41::/64"
     nextnode4:              "10.72.63.254"
     nextnode6:              "2a07:59c6:ec06:ff41::41ff"
     btm_conntype:           "fastd"
+    ssid:                   "freifunk.net"
+    meshid:                 "ue3H3uXffnh41"
     fastd_port:		    11410
     fastd_anonym:           true
     fastd_bind:             any
