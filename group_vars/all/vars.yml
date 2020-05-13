@@ -115,7 +115,7 @@ hoods:
     number:                 "00"
     sname:                  ffnh
     name:                   "ffnh_alt"
-    comment:                "FFNH Alte Umgebung"
+    comment:                "FFNH: Alte Umgebung"
     site:                   ffnh
     dhcp_range:             "10.71.0.0/18"
     dhcp6_range:            "fd8f:14c7:d318::/64"
@@ -133,7 +133,7 @@ hoods:
   "01":
     number:                 "01"
     sname:                  ffnhbase
-    name:                   FFNH-Standarddomain
+    name:                   "FFNH: Standard-Domäne"
     comment:                "Standarddomain (nicht öffentlich)"
     site:                   ffnh
     dhcp_range:             "10.72.16.0/20"
@@ -153,7 +153,7 @@ hoods:
   "06":
     number:                 "06"
     sname:                  ffnhl2tp
-    name:                   ffnhl2tp-test
+    name:                   "FFNH: L2TP - Test"
     comment:                "L2TP test domain"
     site:                   ffnh
     dhcp_range:             "10.72.96.0/20"
@@ -179,7 +179,7 @@ hoods:
   "10":
     number:                 "10"
     sname:                  ffnhevent
-    name:                   FFNH-Veranstaltungen
+    name:                   "FFNH: Nordheide-Veranstaltungen"
     comment:                "(nicht öffentlich)"
     site:                   ffnh
     dhcp_range:             "10.72.160.0/20"
@@ -198,7 +198,7 @@ hoods:
   "11":
     number:                 "11"
     sname:                  ffnhnw
-    name:                   FFNH-Nordwest
+    name:                   "FFNH: Nordheide-Nordwest"
     comment:                "Neu Wulmstorf, Rosengarten, Seevetal"
     site:                   ffnh
     dhcp_range:             "10.72.176.0/20"
@@ -218,7 +218,7 @@ hoods:
   "12":
     number:                 "12"
     sname:                  ffnhno
-    name:                   FFNH-Nordost
+    name:                   "FFNH: Nordheide-Nordost"
     comment:                "Elbmarsch, Stelle, Winsen"
     site:                   ffnh
     dhcp_range:             "10.72.192.0/20"
@@ -238,7 +238,7 @@ hoods:
   "13":
     number:                 "13"
     sname:                  ffnhso
-    name:                   FFNH-Suedost
+    name:                   "FFNH: Nordheide-Suedost"
     comment:                "Hanstedt, Jesteburg, Salzhausen"
     site:                   ffnh
     dhcp_range:             "10.72.208.0/20"
@@ -258,7 +258,7 @@ hoods:
   "14":
     number:                 "14"
     sname:                  ffnhsw
-    name:                   FFNH-Suedwest
+    name:                   "FFNH: Nordheide-Suedwest"
     comment:                "Buchholz, Hollenstedt, Tostedt"
     site:                   ffnh
     dhcp_range:             "10.72.224.0/20"
@@ -280,8 +280,8 @@ hoods:
   "21":
     number:                 "21"
     sname:                  ffcuxhv
-    name:                   FFCUX-Cuxhaven
-    comment:                "Cuxhaven Stadt"
+    name:                   "FFCUX: Cuxhaven Stadt"
+    comment:                ""
     site:                   ffcux
     btm_conntype:           "fastd"
     ssid:                   "cuxland.freifunk.net"
@@ -300,7 +300,7 @@ hoods:
   "22":
     number:                 "22"
     sname:                  ffcuxln
-    name:                   FFCUX-Cuxland-Nord
+    name:                   "FFCUX: Cuxland-Nord"
     comment:                "Geestland, Boerde, Lamstedt, Hadeln, Hemmoor, Wurster Nordsk"
     site:                   ffcux
     dhcp_range:             "10.115.32.0/20"
@@ -320,7 +320,7 @@ hoods:
   "23":
     number:                 "23"
     sname:                  ffcuxls
-    name:                   FFCUX-Cuxland-Sued
+    name:                   "FFCUX: Cuxland-Sued"
     comment:                "Beverstedt, Hagen, Loxstedt, Schiffdorf"
     site:                   ffcux
     dhcp_range:             "10.115.48.0/20"
@@ -342,7 +342,7 @@ hoods:
   "31":
     number:                 "31"
     sname:                  ffstd
-    name:                   ffstd-Lk Stade
+    name:                   "FFNH: Stade-Landkreis"
     comment:                "Landkreis Stade"
     site:                   ffnh
     dhcp_range:             "10.72.32.0/20"
@@ -364,7 +364,7 @@ hoods:
   "41":
     number:                 "41"
     sname:                  ffnhdiv
-    name:                   ffnhdiv - Lks (Osterholz, Row, ...)
+    name:                   "FFNH: Osterholz-Row-Hk"
     comment:                "Lk Osterholz, Row, Hk, ..."
     site:                   ffnh
     dhcp_range:             "10.72.48.0/20"
@@ -867,6 +867,16 @@ gateways:
 #    div_gwv4:               10.100.0.1
 #    div_ipv4:               10.100.0.6
 #    div_ipv6:               "{{ sites[hoods['06'].site].ipv6_prefix }}ff06::fd06/48" 
+
+# statistik:
+  "stat01":
+    number:                 "stat01"
+    name:                   "stat01"
+    hood:                   "none"
+    lname:                  "stat.01.{{ sites['ffnh'].domain }}"
+    host:                   "01"
+    ipv4:                   "213.32.41.10"
+    if:                     "eth0"
 
 # maps:
   "tmap":

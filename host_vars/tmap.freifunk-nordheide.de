@@ -2,7 +2,7 @@
 
 #
 
-unit_type:                      mapserver
+unit_type:                      "mapserver"
 unit_id:                        "tmap"
 site:                           "ffnh"
 site_domain_a:                  "{{ sites[site].domain2 }}"
@@ -21,6 +21,7 @@ hood_id:                        "{{ gateways[unit_id].hood }}"
 # ####################################
 
 unit_idn:                       "{{ unit_id }}"
+unit_idnn:                      "{{ unit_id }}"
 unit_name:                      "{{ unit_id }}.{{ site_domain }}"
 
 base_gwv4:                      "{{ hosts[gateways[unit_id].host].ipv4 }}"

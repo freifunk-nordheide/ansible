@@ -9,6 +9,7 @@
     tgroup:             marcus
     sitedir:            "{{ playbook_dir }}/firmware_site"
     targetsite:         ffnh
+    gluon_sver:         "2020.1.2"
     targetdomains:
     - "00"   # Alte Umgebung
     - "01"   # Standardhood

@@ -1,13 +1,14 @@
 -- {{ ansible_managed }}
 
 {
+  authorized_keys = {'ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAt68+FCbqGm2rxLqiFz8/sshAGabgPoxYZvxfYqneJCzo0MKksq/6av/NXVr5tAGxycJjROosdx16Fa6U3k7tbHY3QnXvGSNWqVfLKVWpYLM+sHyk80TzCGqm/xoTDL1ugZupSo2gKBUJ46k64ysai0w2wLX3/xOD5nncF1otrJtbf40+kM9+nqngpD5gHHDmpGrS2lcMpXE77qZZysPgkiSgHBIHq6XEkh0qld+dmmiaaRrY/pgUmnhOkOEM3tIBcNrSK1fXgsFr1f+F5pN6XuQJwwSroy59gk0u+qt8Vub+i8pmU0VfG1LHx8oBpmi7cbqOetOjwo8F81FzqIdRhQ== rsa-key-20180628-ffnh-verein'},
   hostname_prefix = 'Bitte ändere mich! ',
   site_name = '{{ sites[targetsite].name }}',
   site_code = '{{ sites[targetsite].sname }}',
   default_domain = '{{ hoods[targetdefault].sname }}',
 
   opkg = {
-    lede = 'http://[fd8f:14c7:d318::ff15]/lede/snapshots/packages/%A',
+    openwrt = 'http://[fd8f:14c7:d318::ff15]/lede/snapshots/packages/%A',
     extra = {
       gluon = 'http://[fd8f:14c7:d318::ff15]/firmware/experimental/packages/gluon-%GS-%GR/%S',
     },
@@ -36,7 +37,7 @@
   },
   
   wifi24 = {
-    supported_rates = {6000, 9000, 12000, 18000, 24000, 36000, 48000, 54000},
+    -- supported_rates = {6000, 9000, 12000, 18000, 24000, 36000, 48000, 54000},
     mesh = {
       mcast_rate = 12000,
     },

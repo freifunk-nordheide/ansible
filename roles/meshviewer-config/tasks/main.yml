@@ -63,10 +63,10 @@
     dest:      /usr/local/bin/get_nodevalues
     mode:      "755"
 
-- name: Ensure updating data every  2 (even) minutes
+- name: Ensure updating data each minutes
   cron:
     name:      "get data"
-    minute:    "*/2"
+    minute:    "*"
     job:       "/usr/local/bin/get_nodevalues"
 
 - name: Create combine meshviewer.json - python script
@@ -75,11 +75,11 @@
     dest:      /usr/local/bin/combine_meshv_json
     mode:      "755"
 
-- name: Ensure creating meshviewer.json every 2 (odd) minutes"
+- name: Ensure creating meshviewer.json each minute; delay 10 sec"
   cron:
     name:      "combine meshviewer"
-    minute:    "1-59/2"
-    job:       "/usr/bin/python3 /usr/local/bin/combine_meshv_json"
+    minute:    "*"
+    job:       "sleep 10; /usr/bin/python3 /usr/local/bin/combine_meshv_json"
 
 - name: Configure meshviewer1 - config.js
   template: 

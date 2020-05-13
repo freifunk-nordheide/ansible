@@ -10,20 +10,39 @@
     group:          root
     mode:           0644
 
-- name: Hostname für IPv4 in /etc/hosts setzen
+- name: Hostname für IPv4 in /etc/hosts setzen - mapserver / statserver
+  lineinfile:
+    dest:           /etc/hosts
+    regexp:         "^127.0.1.1"
+    line:           "127.0.1.1{{'\t'}}{{ unit_idn }}{{'\t'}}{{ unit_name }}"
+    state:          present
+  when:             unit_type == "mapserver" or unit_type == "statserver" 
+
+- name: Hostname für IPv4 in /etc/hosts setzen - gateways
   lineinfile:
     dest:           /etc/hosts
     regexp:         "^127.0.1.1"
     line:           "127.0.1.1{{'\t'}}{{ unit_idn }}{{'\t'}}{{ unit_id }}.gw.{{ sites[gateways[unit_id].site].domain }}"
     state:          present
+  when:             unit_type == "gateway"
 
-- name: Hostname für IPv4 in /etc/hosts setzen
+- name: Hostname für IPv4 in /etc/hosts setzen map und statserver
+  lineinfile:
+    dest:           /etc/hosts
+    regexp:         "^{{ gateways[unit_id].ipv4 }}"
+    insertafter:    "^127.0.1.1"
+    line:           "{{ gateways[unit_id].ipv4 }}{{'\t'}}{{ unit_name }}{{'\t'}}{{ unit_idn }}"
+    state:          present
+  when:             unit_type == "mapserver"  or unit_type == "statserver"
+
+- name: Hostname für IPv4 in /etc/hosts setzen gateways
   lineinfile:
     dest:           /etc/hosts
     regexp:         "^{{ gateways[unit_id].ipv4 }}"
     insertafter:    "^127.0.1.1"
     line:           "{{ gateways[unit_id].ipv4 }}{{'\t'}}{{ unit_id }}.gw.{{ sites[gateways[unit_id].site].domain }}{{'\t'}}{{ unit_idn }}"
     state:          present
+  when:             unit_type == "gateway"
 
 - name: Hostname für IPv6 in /etc/hosts setzen
   lineinfile:
@@ -31,6 +50,7 @@
     regexp:         "^::1"
     line:           "::1{{'\t'}}{{unit_idn}}{{'\t'}}{{ unit_id }}.gw.{{ sites[gateways[unit_id].site].domain }}{{'\t'}}localhost ip6-localhost ip6-loopback"
     state:          present
+  when:             unit_type == "gateway"
 
 - name: Adresse (IPv4) setzen
   lineinfile:
@@ -39,18 +59,18 @@
     insertafter:    "^127.0.1.1"
     line:           "{{ gateways[unit_id].domains[igw.key].bat_ipv4 | ipaddr('address')}}{{'\t'}}{{ hoods[igw.key].sname }}"
     state:          present
+  when:             unit_type == "gateway"
   loop:             "{{ gateways[unit_id]['domains'] | dict2items }}"
   loop_control:
     loop_var:       igw
-  when:             unit_type == "gateway"
-
+ 
 - name: Adresse2 (IPv6) setzen
   lineinfile:
     dest:           /etc/hosts
     regexp:         "^{{ gateways[unit_id].domains[igw.key].bat_ipv6 | ipaddr('address')}}"
     line:           "{{ gateways[unit_id].domains[igw.key].bat_ipv6 | ipaddr('address')}}{{'\t'}}{{ hoods[igw.key].sname }}"
     state:          present
-  loop:             "{{ gateways[unit_id]['domains'] | dict2items }}"
+  loop:             "{% if exists gateways[unit_id]['domains'] %}{{ gateways[unit_id]['domains'] | dict2items }}{% endif %}"
   loop_control:
     loop_var:       igw
   when:             unit_type == "gateway"

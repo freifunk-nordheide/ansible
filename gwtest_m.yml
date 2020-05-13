@@ -1,9 +1,8 @@
 ---
 
 - name: Setup common roles on all hosts
-  hosts: 
-  - 11.gw.freifunk-nordheide.de
-  - 12.gw.freifunk-nordheide.de 
+  hosts: all
   roles:
-  - maintenance
+  - common
+
 

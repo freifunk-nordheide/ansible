@@ -22,6 +22,8 @@ GLUON_FEATURES := \
 GLUON_MULTIDOMAIN=1
 
 GLUON_SITE_PACKAGES := \
+        respondd-module-airtime \
+        gluon-authorized-keys \
 	gluon-config-mode-domain-select \
 	gluon-web-admin \
 	gluon-radvd \
@@ -47,8 +49,8 @@ GLUON_SITE_PACKAGES += \
 	
 # Always call `make` from the command line with the desired release version!
 # otherwise this is generated:
-DEFAULT_GLUON_RELEASE := 2018.2~exp$(shell date '+%y%m%d%H%M')
-#	DEFAULT_GLUON_RELEASE := 2018.2
+DEFAULT_GLUON_RELEASE := 2020.1.2~exp$(shell date '+%y%m%d%H%M')
+#	DEFAULT_GLUON_RELEASE := 2020.1.2
 
 # Allow overriding the release number from the command line
 GLUON_RELEASE ?= $(DEFAULT_GLUON_RELEASE)
@@ -57,6 +59,9 @@ GLUON_PRIORITY ?= 0
 GLUON_BRANCH ?= experimental
 #GLUON_BRANCH ?= stable
 export GLUON_BRANCH
+
+GLUON_DEPRECATED ?= update
+export GLUON_DEPRECATED
 
 GLUON_TARGET ?= ar71xx-generic
 export GLUON_TARGET
