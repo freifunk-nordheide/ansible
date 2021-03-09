@@ -1,18 +1,36 @@
 ---
 
 - name: Restart network
-  # Restart the network, sleep 3 seconds, return the
-  # exit code returned by "service network restart".
-  # This is to work-around a glitch in Ansible where
-  # it detects a successful network restart as a failure.
-  command: perl -e 'my $exit_code = system("systemctl restart networking"); sleep 3; $exit_code = $exit_code >> 8; exit($exit_code);'
+  service:            
+    name:                networking
+    state:               restarted
+#  # Restart the network, sleep 3 seconds, return the
+#  # exit code returned by "service network restart".
+#  # This is to work-around a glitch in Ansible where
+#  # it detects a successful network restart as a failure.
+#  command: perl -e 'my $exit_code = system("systemctl restart networking"); sleep 3; $exit_code = $exit_code >> 8; exit($exit_code);'
 
-- name: Reload iptables
-  command: /sbin/iptables-restore < /etc/iptables.up.rules 
-  ignore_errors: True
+#- name: Reload iptables
+#  command: /sbin/iptables-restore < /etc/iptables.up.rules 
+#  ignore_errors: True
 
-- name: Run ip mesh config
-  command: /bin/sh /etc/fastd/iptables_{% for idm in gateways[unit_id].domains | dict2items %}{% if loop.first %}{{hoods[idm.key].site}}{% endif %}{% endfor %}.sh
+- name: Run ip mesh config gw
+  command:               /bin/sh /etc/fastd/iptables_{% for idm in gateways[unit_id].domains | dict2items %}{% if loop.first %}{{hoods[idm.key].site}}{% endif %}{% endfor %}.sh
+  when:                  unit_type == 'gateway'
+
+- name: Run ip mesh config coll
+  command:               /bin/sh /etc/fastd/iptables_coll.sh
+  when:                  unit_type == 'collector'
 
 - name: Reload systemd
-  command: systemctl daemon-reload
+  command:               systemctl daemon-reload
+
+- name: Restart fastd
+  service: 
+    name:                fastd@{{ hoods[item[0].key]['sname'] }}{{ item[1] }} 
+    state:               restarted
+  with_nested:
+    -                    "{{ gateways[unit_id]['domains'] | dict2items }}"
+    -                    [0,1,2,3]
+  when:                  gateways[unit_id].btm_conntype == "fastd" and item[1] | int < hoods[item[0].key].fastd_inst | int
+

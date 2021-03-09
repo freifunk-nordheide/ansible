@@ -1,23 +1,11 @@
 ---
 
-- name:                 Stop a running yanic service
+- name: Stop a running yanic service
   service:
-    name:               "yanic@{{ hoods[item.key].sname }}.service"
+    name:               yanic@{{ hoods[item.key].sname }}.service
     state:              stopped
   loop:                 "{{ gateways[unit_id].domains | dict2items }}"
   ignore_errors:        True
-
-#- name:                 Reboot immediately
-#  shell:                "sleep 5 && reboot"
-#  async:                1
-#  poll:                 0
-
-#- name:                 Wait for the reboot to complete
-#  wait_for_connection:
-#    connect_timeout:    20
-#    sleep:              5
-#    delay:              5
-#    timeout:            300
 
 - name: Create user
   user: 
@@ -25,12 +13,12 @@
     create_home:        no
 
 - name: Install yanic
-  shell:                /usr/local/go/bin/go get -t -f -u -fix {{ yanic_source }}
+  shell:                /usr/local/go/bin/go get -v -u {{ yanic_source }}
   args:
     creates:            /opt/go/bin/yanic
   environment:
     GOPATH:             /opt/go
-#  notify:               Restart yanic
+  notify:               Restart yanic
   ignore_errors:        true
 
 - name: Configure yanic
@@ -38,14 +26,14 @@
     src:                yanic.conf.j2
     dest:               /etc/yanic_{{ hoods[item.key].sname }}.conf
   loop:                 "{{ gateways[unit_id].domains | dict2items }}"
-#  notify: Restart yanic
+  notify:               Restart yanic
 
 - name: Create directories
   file:                 
     path:               "/var/www/html/yanic/{{ hoods[item.key].sname }}/" 
     state:              directory
     owner:              yanic
-  loop:                 "{{ gateways[unit_id].domains | dict2items }}"
+  loop:                 "{{ gateways[unit_id].domains | dict2items }}" 
 
 - name: Create directories
   file:                 

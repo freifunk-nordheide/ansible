@@ -37,12 +37,37 @@ iface bat-{{ hoods[item].sname }} inet6 manual
 {% for icnt in range(hoods[item].fastd_inst|int) %}
 	post-up batctl -m bat-{{ hoods[item].sname }} if add vpn-{{ hoods[item].sname }}{{ icnt|int }}
 {% endfor %}
-
+{% if unit_type == "gateway" %}
 	post-up ip link set address {{ sites[hoods[item].site].hwadr_prefix }}{{ unit_id }}:0{{gateways[unit_id].domains[item].cnt }} dev bat-{{ hoods[item].sname }}
+{% elif unit_type == "collector" %}
+{% if gateways[unit_id].domains[item].cnt|int < 10 %}
+	post-up ip link set address {{ sites[hoods[item].site].hwadr_prefix }}{{ unit_hwext }}:0{{gateways[unit_id].domains[item].cnt }} dev bat-{{ hoods[item].sname }}
+{% elif gateways[unit_id].domains[item].cnt|int == 10 %}
+	post-up ip link set address {{ sites[hoods[item].site].hwadr_prefix }}{{ unit_hwext }}:0a dev bat-{{ hoods[item].sname }}
+{% elif gateways[unit_id].domains[item].cnt|int == 11 %}
+	post-up ip link set address {{ sites[hoods[item].site].hwadr_prefix }}{{ unit_hwext }}:0b dev bat-{{ hoods[item].sname }}
+{% elif gateways[unit_id].domains[item].cnt|int == 12 %}
+	post-up ip link set address {{ sites[hoods[item].site].hwadr_prefix }}{{ unit_hwext }}:0c dev bat-{{ hoods[item].sname }}
+{% elif gateways[unit_id].domains[item].cnt|int == 13 %}
+	post-up ip link set address {{ sites[hoods[item].site].hwadr_prefix }}{{ unit_hwext }}:0d dev bat-{{ hoods[item].sname }}
+{% elif gateways[unit_id].domains[item].cnt|int == 14 %}
+	post-up ip link set address {{ sites[hoods[item].site].hwadr_prefix }}{{ unit_hwext }}:0e dev bat-{{ hoods[item].sname }}
+{% elif gateways[unit_id].domains[item].cnt|int == 15 %}
+	post-up ip link set address {{ sites[hoods[item].site].hwadr_prefix }}{{ unit_hwext }}:0f dev bat-{{ hoods[item].sname }}
+{% endif %}
+{% endif %}
 	post-up ip link set dev bat-{{ hoods[item].sname }} up
 	post-up	brctl addif br-{{ hoods[item].sname }} bat-{{ hoods[item].sname }}
 	post-up batctl -m bat-{{ hoods[item].sname }} it 10000
+{% if unit_type == "gateway" %}
+{% if gateways[unit_id].domains[item].cnt|int < 2 %}
 	post-up batctl -m bat-{{ hoods[item].sname }} gw server 1000mbit/1000mbit
+{% else %}
+	post-up batctl -m bat-{{ hoods[item].sname }} gw server 50mbit/50mbit
+{% endif %}
+{% else %}
+	post-up batctl -m bat-{{ hoods[item].sname }} gw server 10mbit/10mbit
+{% endif %}
 	post-up batctl -m bat-{{ hoods[item].sname }} ra {{ batman_algo }}
 
 	post-up ip rule add from all fwmark 0x1 table 42

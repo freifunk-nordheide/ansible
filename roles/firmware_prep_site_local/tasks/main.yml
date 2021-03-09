@@ -9,11 +9,11 @@
     tgroup:             marcus
     sitedir:            "{{ playbook_dir }}/firmware_site"
     targetsite:         ffnh
-    gluon_sver:         "2020.1.2"
+    gluon_sver:         "2020.2.2"
     targetdomains:
     - "00"   # Alte Umgebung
     - "01"   # Standardhood
-    - "06"   # l2tp
+#    - "06"   # l2tp
     - "10"   # ffnh Veranstaltungen (intern)
     - "11"   # ffnh NW
     - "12"   # ffnh NO

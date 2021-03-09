@@ -4,8 +4,11 @@
   -- multiple codes/names can be defined, the first one is the primary name
   -- additional aliases can be defined
   domain_names = {
-    {{ hoods[item].sname }} = '{{ hoods[item].name }} - {{ hoods[item].comment }}',
+    {{ hoods[item].sname }} = '{{ hoods[item].sname }}: {{ hoods[item].name }} - {{ hoods[item].comment }}',
   },
+{% if hoods[item].fw_hide_domain is defined and hoods[item].fw_hide_domain == true %}
+  hide_domain = true,
+{% endif %}
 
   ntp_servers = {
 {% for igw in gateways if gateways[igw].domains is defined and gateways[igw].domains[item] is defined %}

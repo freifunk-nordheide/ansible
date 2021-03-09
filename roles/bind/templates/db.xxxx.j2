@@ -2,29 +2,51 @@
 $TTL 86400
 $ORIGIN {{ hoods[item.key].sname }}.
 ;						primary-master admin-mail
-@						IN	SOA	{{ sites[gateways[unit_id].site].domain }} kontakt.{{ sites[gateways[unit_id].site].domain }}. (
-						{{ansible_date_time.epoch}} ; serial
-						1h	; refresh
-						15m	; retry
-						1w	; expire
-						1d)	; ttl
+@					IN	SOA	{{ sites[gateways[unit_id].site].domain }} kontakt.{{ sites[gateways[unit_id].site].domain }}. (
+							{{ansible_date_time.epoch}} ; serial
+							1h	; refresh
+							15m	; retry
+							1w	; expire
+							1d)	; ttl
 ; Nameserver
-					IN	NS	{{ unit_id }}.gw
-
+{% for igw in gateways | dict2items %}
+{% if igw.value.domains is defined and igw.value.domains[item.key] is defined %}
+{% if igw.key | regex_search('^\d{2}$') %}
+					IN	NS	{{ igw.key }}.gw
+{% else %}
+					IN	NS	{{ igw.key }}
+{% endif %}
+{% endif %}
+{% endfor %}
 ; Hosts
 {% for igw in gateways | dict2items %}
 {% if igw.value.domains is defined and igw.value.domains[item.key] is defined %}
+{% if igw.key | regex_search('^\d{2}$') %}
 {{ igw.key }}.gw				86400	IN	A	{{ igw.value.domains[item.key].bat_ipv4  | ipaddr('address')}}
-;							AAAA	{{ igw.value.domains[item.key].bat_ipv6 }}
+						AAAA	{{ igw.value.domains[item.key].bat_ipv6 }}
+{% else %}
+{{ igw.key }}				86400	IN	A	{{ igw.value.domains[item.key].bat_ipv4  | ipaddr('address')}}
+						AAAA	{{ igw.value.domains[item.key].bat_ipv6 }}
+{% endif %}
 {% endif %}
 {% endfor %}
 
 ; NTP Server
-{{ unit_id }}.gw				86400	IN	A	{{ gateways[unit_id].domains[item.key].bat_ipv4  | ipaddr('address') }}
-;						AAAA	{{ gateways[unit_id].domains[item.key].bat_ipv6 }}
+{% for igw in gateways | dict2items %}
+{% if igw.value.domains is defined and igw.value.domains[item.key] is defined %}
+{% if igw.key | regex_search('^\d{2}$') %}
+{{ igw.key }}.gw				86400	IN	A	{{ igw.value.domains[item.key].bat_ipv4  | ipaddr('address') }}
+						AAAA	{{ igw.value.domains[item.key].bat_ipv6 }}
+{% else %}
+{{ igw.key }}				86400	IN	A	{{ igw.value.domains[item.key].bat_ipv4  | ipaddr('address') }}
+						AAAA	{{ igw.value.domains[item.key].bat_ipv6 }}
+
+{% endif %}
+{% endif %}
+{% endfor %}
 ; Nextnode
-node				86400	IN	A	{{ gateways[unit_id].domains[item.key].nextnode4 }}
-;						AAAA	{{ gateways[unit_id].domains[item.key].nextnode6 }}
+node				86400	IN	A	{{ hoods[item.key].nextnode4 }}
+						AAAA	{{ hoods[item.key].nextnode6 }}
 						
 local-node			86400	IN	CNAME node
 localnode			86400	IN	CNAME node

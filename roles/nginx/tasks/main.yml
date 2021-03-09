@@ -51,9 +51,24 @@
     dest:            /etc/nginx/snippets/cors.conf
 
 # test, whether certificate already exist
+- name: create path text
+  set_fact:
+    xxpath:          /etc/letsencrypt/live/{{ unit_id }}.gw.{{ sites[gateways[unit_id].site].domain }}/fullchain.pem
+  when:              unit_type == "gateway"
+
+- name: create path text
+  set_fact:
+    xxpath:          /etc/letsencrypt/live/{{ unit_id }}.{{ sites[gateways[unit_id].site].domain }}/fullchain.pem
+  when:              unit_type != "gateway"
+
 - name: Check certs exist
-  stat:              path=/etc/letsencrypt/live/{{ unit_id }}.gw.{{ sites[gateways[unit_id].site].domain }}/fullchain.pem
+  stat:              
+    path:            "{{ xxpath }}"
   register:          st
+
+- name: Display facts
+  debug: 
+    var:             st
 
 - name: Install nginx site for specified site
   template:
@@ -65,9 +80,17 @@
   command:           systemctl restart nginx
   when:              not st.stat.exists
 
-- name: Create letsencrypt certificate
+- name: Create letsencrypt certificate for gateways
   shell:             certbot certonly --agree-tos --email {{ letsencrypt_email }} --webroot -w /var/lib/letsencrypt/ -d {{ unit_id }}.gw.{{ sites[gateways[unit_id].site].domain }}
-  when:              not st.stat.exists
+  when:              not st.stat.exists and unit_type == "gateway"
+
+- name: Create letsencrypt certificate for mapserver and statserver
+  shell:             certbot certonly --agree-tos --email {{ letsencrypt_email }} --webroot -w /var/lib/letsencrypt/ -d {{ unit_id }}.{{ sites[gateways[unit_id].site].domain }}
+  when:              not st.stat.exists and (unit_type == "statserver" or unit_type == "mapserver")
+
+- name: Create letsencrypt certificate for collector
+  shell:             certbot certonly --agree-tos --email {{ letsencrypt_email }} --webroot -w /var/lib/letsencrypt/ -d {{ unit_id }}.{{ sites[gateways[unit_id].site].domain }}
+  when:              not st.stat.exists and (unit_type == "collector")
 
 - name: Install nginx site for specified site
   template:
@@ -77,7 +100,7 @@
 - name: Reload nginx to activate letsencrypt site
   command:           "systemctl restart nginx"
 
-# Auto-renew certificates and reload nginx
+# Auto-renew certificates and reload nginx (cron-jobs)
 - name: Add crontab to renew certificates
   cron: 
     minute:          "30" 

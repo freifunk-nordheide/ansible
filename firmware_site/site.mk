@@ -28,8 +28,8 @@ GLUON_SITE_PACKAGES := \
 	gluon-web-admin \
 	gluon-radvd \
 	iwinfo \
-	iptables \
-	haveged
+	iptables
+#	haveged
 
 # from eulenfunk:
 #GLUON_SITE_PACKAGES += \
@@ -44,13 +44,13 @@ GLUON_SITE_PACKAGES += \
 	gluon-ssid-changer
 
 # from ffki-packages:
-GLUON_SITE_PACKAGES += \
-	gluon-config-mode-ppa
+#GLUON_SITE_PACKAGES += \
+#	gluon-config-mode-ppa
 	
 # Always call `make` from the command line with the desired release version!
 # otherwise this is generated:
-DEFAULT_GLUON_RELEASE := 2020.1.2~exp$(shell date '+%y%m%d%H%M')
-#	DEFAULT_GLUON_RELEASE := 2020.1.2
+DEFAULT_GLUON_RELEASE := 2020.2.2~exp$(shell date '+%y%m%d01')
+#	DEFAULT_GLUON_RELEASE := 2020.2.2
 
 # Allow overriding the release number from the command line
 GLUON_RELEASE ?= $(DEFAULT_GLUON_RELEASE)

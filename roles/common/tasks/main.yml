@@ -23,7 +23,9 @@
     - iptables-persistent
     - fail2ban
     - socat
+    - lsb-release
     - jq
+    - traceroute
   register: task_result
 
 - name: Reboot immediately if there was a change.

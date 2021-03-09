@@ -16,14 +16,6 @@
     line:                 "net.ipv6.conf.all.forwarding=1"
     state:                present
 
-# load executable for ip mesh config
-
-- name: create executable for ip mesh config
-  template: 
-     src:                 iptables_xxxx.sh.j2 
-     dest:                /etc/fastd/iptables_{% for idm in gateways[unit_id].domains | dict2items %}{% if loop.first %}{{hoods[idm.key].site}}{% endif %}{% endfor %}.sh
-     mode:                '0755'
-
 # iptables
 
 - name: Define base-rules
@@ -39,16 +31,27 @@
 
 # mesh-interfaces
 
-- name: Configure mesh interfaces
+- name: Configure mesh interfaces gateway
   template: 
     src:                  mesh.conf.j2 
     dest:                 /etc/network/interfaces.d/mesh.conf
   notify: 
-  - Run ip mesh config
   - Reload systemd
   - Restart network
-  - Reload iptables
+  - Run ip mesh config gw
   register:               task_result
+  when:                   unit_type == "gateway"
+
+- name: Configure mesh interfaces collector
+  template: 
+    src:                  mesh.conf.j2 
+    dest:                 /etc/network/interfaces.d/mesh.conf
+  notify: 
+  - Reload systemd
+  - Restart network
+  - Run ip mesh config coll
+  register:               task_result
+  when:                   unit_type == "collector"
 
 
 

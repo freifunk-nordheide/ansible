@@ -1,8 +1,0 @@
----
-
-- name: Setup common roles on all hosts
-  hosts: all
-  roles:
-  - common
-
-

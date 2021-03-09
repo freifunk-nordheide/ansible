@@ -20,7 +20,7 @@ def main():
     out_json['timestamp'] = ''
     work_timestr = ''
     for p in domain_list:
-        print('Domain: ' + p)
+#        print('Domain: ' + p)
         xi = 0
         while xi < 5:
             try:
@@ -41,7 +41,7 @@ def main():
             except:
                 xi += 1
                 print  ('Read-error: ' + p) 
-                print("Unexpected error:", sys.exc_info()[0])
+                print  ("Unexpected error:", sys.exc_info()[0])
     for wn in work_nodes:
         if len(work_nodes[wn]['domains']) < 2:
             out_json['nodes'].extend([work_nodes[wn]['domains'][0]['node']])
@@ -62,7 +62,7 @@ def main():
                                 d1 = d2
 #            print('Choice: \n' + json.dumps(d1, indent=4))
             out_json['nodes'].extend([d1['node']])
-            out_json['timestamp'] = work_timestr
+    out_json['timestamp'] = work_timestr
     with open(out_file, 'w') as ofile:
         json.dump(out_json, ofile, indent=4)
 

@@ -46,13 +46,35 @@ peer group "backbone" {
 
 
 on up "
+
 	ip link set dev $INTERFACE down
+{% if unit_type == "gateway" %}
 	ip link set dev $INTERFACE address {{ sites[hoods[item[0].key].site].hwadr_prefix }}{{ unit_id }}:{{ (item[0].value.cnt|int * 10 + item[1]|int)|string }}
+{% elif unit_type == "collector" %}
+{% if item[0].value.cnt|int < 10 %}
+	ip link set dev $INTERFACE address {{ sites[hoods[item[0].key].site].hwadr_prefix }}{{ unit_hwext }}:{{ (item[0].value.cnt|int * 10 + item[1]|int)|string }}
+{% elif item[0].value.cnt|int == 10 %}
+	ip link set dev $INTERFACE address {{ sites[hoods[item[0].key].site].hwadr_prefix }}{{ unit_hwext }}:a{{ (item[1]|int)|string }}
+{% elif item[0].value.cnt|int == 11 %}
+	ip link set dev $INTERFACE address {{ sites[hoods[item[0].key].site].hwadr_prefix }}{{ unit_hwext }}:b{{ (item[1]|int)|string }}
+{% elif item[0].value.cnt|int == 12 %}
+	ip link set dev $INTERFACE address {{ sites[hoods[item[0].key].site].hwadr_prefix }}{{ unit_hwext }}:c{{ (item[1]|int)|string }}
+{% elif item[0].value.cnt|int == 13 %}
+	ip link set dev $INTERFACE address {{ sites[hoods[item[0].key].site].hwadr_prefix }}{{ unit_hwext }}:d{{ (item[1]|int)|string }}
+{% elif item[0].value.cnt|int == 14 %}
+	ip link set dev $INTERFACE address {{ sites[hoods[item[0].key].site].hwadr_prefix }}{{ unit_hwext }}:e{{ (item[1]|int)|string }}
+{% elif item[0].value.cnt|int == 15 %}
+	ip link set dev $INTERFACE address {{ sites[hoods[item[0].key].site].hwadr_prefix }}{{ unit_hwext }}:f{{ (item[1]|int)|string }}
+{% endif %}
+{% endif %}
 	ip link set dev $INTERFACE up
 	ifup bat-{{ hoods[item[0].key]['sname'] }}
-{% if item[1]|int == (hoods[item[0].key].fastd_inst|int -1) %}
-	sh /etc/fastd/iptables_{{ hoods[item[0].key].site }}.sh
+{% if unit_type == "gateway" %}
+	/bin/sh /etc/fastd/iptables_{{ hoods[item[0].key].site }}.sh
+{% elif unit_type == "collector" %}
+	/bin/sh /etc/fastd/iptables_coll.sh
 {% endif %}
+
 ";
 
 on down "
@@ -61,9 +83,6 @@ on down "
 
 on verify "true";
 
-# {% if hoods[item[0].key].fastd_anonym %}
-# on verify "true";
-# {% endif %}
 
 
 

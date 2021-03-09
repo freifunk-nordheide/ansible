@@ -4,8 +4,8 @@
     towner:             freifunker
     tgroup:             freifunker
     sitedir:            "{{ playbook_dir }}/firmware_site/"
-    gluon_version:      "v2020.1.2"
-    gluon_dir:		"/home/freifunker/newenv/firmware/v2020.1.2/"
+    gluon_version:      "v2020.2.2"
+    gluon_dir:		"/home/freifunker/newenv/firmware/v2020.2.2.1/"
 
 - name: Install misc software local
   apt: 

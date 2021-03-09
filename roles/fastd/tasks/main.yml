@@ -24,6 +24,7 @@
 - name: Install haveged (to create entropy)
   apt:          
     name:      haveged
+  when:        gateways[unit_id].btm_conntype == "fastd"
 
 - name: Systemd unit for fastd
   copy: 
@@ -40,6 +41,22 @@
     name:      fastd 
     enabled:   no
   when:        gateways[unit_id].btm_conntype == "fastd"
+
+# load executable for ip mesh config
+
+- name: create executable for ip mesh config "gateways"
+  template: 
+     src:      iptables_xxxx.sh.j2 
+     dest:     /etc/fastd/iptables_{% for idm in gateways[unit_id].domains | dict2items %}{% if loop.first %}{{hoods[idm.key].site}}{% endif %}{% endfor %}.sh
+     mode:     '0755'
+  when:        unit_type == "gateway"
+
+- name: create executable for ip mesh config "collector"
+  template: 
+     src:      iptables_coll.sh.j2 
+     dest:     /etc/fastd/iptables_coll.sh
+     mode:     '0755'
+  when:        unit_type == "collector"
 
 - name: Display facts
   debug: 
@@ -166,6 +183,6 @@
     -          "{{ gateways[unit_id]['domains'] | dict2items }}"
     -          [0,1,2,3]
   when:        gateways[unit_id].btm_conntype == "fastd" and item[1] | int < hoods[item[0].key].fastd_inst | int
-  notify: Restart fastd 
+  notify:      Restart fastd 
 
 

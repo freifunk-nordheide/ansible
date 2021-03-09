@@ -5,8 +5,9 @@ Description=respondd
 After=network.target
 
 [Service]
-ExecStart=/opt/{{ hoods[item.key].sname }}/respondd-announce/respondd.py -g {{ respondd_ll_mcg }} -d /opt/{{ hoods[item.key].sname }}/respondd-announce/providers -i br-{{ hoods[item.key].sname }} -i vpn-{{ hoods[item.key].sname }}0 -b bat-{{ hoods[item.key].sname }} -m {{ item.value.bat_ipv4 | ipaddr('address') }}
-Restart=always
+ExecStart=/opt/{{ hoods[item.key].sname }}/respondd-announce/respondd.py -f /opt/{{ hoods[item.key].sname }}/respondd-announce/respondd.config -d /opt/{{ hoods[item.key].sname }}/respondd-announce/providers
+#ExecStart=/opt/{{ hoods[item.key].sname }}/respondd-announce/respondd.py -g {{ respondd_ll_mcg }} -d /opt/{{ hoods[item.key].sname }}/respondd-announce/providers -i br-{{ hoods[item.key].sname }} -i vpn-{{ hoods[item.key].sname }}0 -b bat-{{ hoods[item.key].sname }} -m {{ item.value.bat_ipv4 | ipaddr('address') }}
+# ExecStart=/opt/{{ hoods[item.key].sname }}/respondd-announce/respondd.py -g {{ respondd_ll_mcg }} -d /opt/{{ hoods[item.key].sname }}/respondd-announce/providers -i br-{{ hoods[item.key].sname }} -i vpn-{{ hoods[item.key].sname }}0 -b bat-{{ hoods[item.key].sname }}
 Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 [Install]

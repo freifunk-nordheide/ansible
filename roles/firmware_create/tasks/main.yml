@@ -3,65 +3,71 @@
   set_fact:
     towner:             freifunker
     tgroup:             freifunker
-    copy_site:          false
     sitedir:            "{{ playbook_dir }}/firmware_site/"
-    gluon_dir:		"/home/freifunker/newenv/firmware/v2020.2.2/"
+    gluon_dir:		"/home/freifunker/newenv/firmware/v2020.2.2.1/"
 
-#- name: Copy site data
-#  copy:
-#    src:                "{{ sitedir }}"
-#    dest:               "{{ gluon_dir }}gluon/site/"
-#    directory_mode:     "true"
-#    owner:              "{{ towner }}"
-#    group:              "{{ tgroup }}"
-#  when: copy_site == true
+- name: make update
+  make:
+    chdir:              "{{ gluon_dir }}gluon"
+    target:             "update"
+  become:               false
 
-#- name: Change owner of files
-#  file:
-#    path:                "{{ gluon_dir }}"
-#    owner:               "{{ towner }}"
-#    group:               "{{ tgroup }}"
-#    state:               "directory"
-#    recurse:             "yes"
+- name: make ar71xx-generic
+  make: 
+    chdir:              "{{ gluon_dir }}gluon"
+    params:		
+      jobs:             2
+    target:             "GLUON_TARGET=ar71xx-generic"
+  become:               false
 
-#- name
+#- name: make ar71xx-tiny
+#  make: 
+#    chdir:              "{{ gluon_dir }}gluon"
+#    params:		
+#      jobs:             8
+#    target:             "GLUON_TARGET=ar71xx-tiny"
 
+#- name: make ar71xx-nand
+#  make: 
+#    chdir:              "{{ gluon_dir }}gluon"
+#    params:		
+#      jobs:             8
+#    target:             "GLUON_TARGET=ar71xx-nand"
 
-
-# - make update
-# - make GLUON_TARGET=x86-64 -j8
-# - make GLUON_TARGET=x86-geode -j8;
-# - make GLUON_TARGET=x86-generic -j8; 
-# - make GLUON_TARGET=ar71xx-tiny -j8; 
-# - make GLUON_TARGET=ar71xx-generic -j8; 
-# - make GLUON_TARGET=ramips-mt76x8 -j8; 
-# - make GLUON_TARGET=ramips-rt305x -j8; 
-# - make GLUON_TARGET=ipq40xx -j8;
-
-
-
-
-# - name: make listet targets
+#- name: make ipq40xx-generic
+#  make: 
+#    chdir:              "{{ gluon_dir }}gluon"
+#    params:		
+#      jobs:             8
+#    target:             "GLUON_TARGET=ipq40xx-generic"
+#  
+#- name: make listet targets
 #  make: 
 #    chdir:              "{{ gluon_dir }}gluon"
 #    params:		
 #      jobs:             8
 #    target:             "GLUON_TARGET={{ item }}"
 #  with_items:
-#    - "ar71xx-generic"
-#    - "ar71xx-tiny"
-#    - "ar71xx-nand"
-#    - "brcm2708-bcm2708"
-#    - "brcm2708-bcm2709"
-#    - "mpc85xx-generic"
-#    - "ramips-mt7621"
-#    - "sunxi-cortexa7"
+##    - "ar71xx-generic"
+##   - "ar71xx-tiny"
+##   - "ar71xx-nand"
+#    - "ath79-generic"    # e.g. devolos
+##    - "brcm2708-bcm2708" # raspberry pi1 
+##    - "brcm2708-bcm2709" # raspberry pi2
+##   - "ipq40xx-generic"  # e.g. avm 4040
+#    - "ipq806x-generic"  # netgear R7800
+#    - "lantiq-xrx200"
+#    - "lantiq-xway"
+##    - "mpc85xx-generic"
+##    - "mpc85xx-p1020"
+##    - "ramips-mt7621"
+##    - "ramips-mt7620"
+##    - "ramips-mt76x8"
+##    - "ramips-rt305x"
+##    - "sunxi-cortexa7"
 #    - "x86-generic"
 #    - "x86-geode"
+#    - "x86-legacy"
 #    - "x86-64"
-#    - "ipq40xx"
-#    - "ramips-mt7620"
-#    - "ramips-mt76x8"
-#    - "ramips-rt305x"
 
 ...

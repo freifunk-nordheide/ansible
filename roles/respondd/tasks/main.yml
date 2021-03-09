@@ -16,9 +16,14 @@
   git: 
     repo:          "{{ respondd_announce_git_root }}" 
     dest:          "/opt/{{ hoods[item.key].sname }}/respondd-announce/" 
-#   version: "{{ respondd_announce_git_version }}"
+#   version:       "{{ respondd_announce_git_version }}"
   loop:            "{{ gateways[unit_id]['domains'] | dict2items }}"
-  notify:          Restart respondd
+
+- name: Create config-file
+  template: 
+    src:           respondd.config.j2 
+    dest:          /opt/{{ hoods[item.key].sname }}/respondd-announce/respondd.config
+  loop:            "{{ gateways[unit_id]['domains'] | dict2items }}"
 
 - name: Install systemd unit
   template: 

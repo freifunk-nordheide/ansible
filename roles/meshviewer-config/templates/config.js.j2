@@ -212,63 +212,22 @@ module.exports = function () {
       ]
     ],
     'domainNames': [
-{% for xarea in gateways[unit_id].areas | dict2items if xarea.value.type = "hood" %}
       {
-        'domain': {{ hoods[xarea.key].sname }}
-        'name': {{ hoods[xarea.key].sname }} - {{ hoods[xarea.key].name }}
-      }
-{% if not loop.last %},
+        'domain': '',
+        'name': 'Nordheide-Gateways'
+      },
+      {
+        'domain': 'ffnh',
+        'name': 'Nordheide-Gesamt (Alt)'
+      },
+{% for xarea in gateways[unit_id].areas | dict2items if xarea.value.type == "hood" %}
+      {
+        'domain': '{{ hoods[xarea.key].sname }}',
+        'name': '{{ hoods[xarea.key].sname }} - {{ hoods[xarea.key].name }}'
+      }{% if not loop.last %},
 {% else %} 
 {% endif %}
-{% endfor %}    
-//      {
-//        'domain': 'ffnh',
-//        'name': 'ffnh: Nordheide'
-//      },
-//      {
-//        'domain': 'ffnhbase',
-//        'name': 'ffnhbase: Nordheide Standard-Gateway'
-//      },
-//      {
-//        'domain': 'ffnhevent',
-//        'name': 'ffnhevent: Nordheide events'
-//      },
-//      {
-//        'domain': 'ffnhnw',
-//        'name': 'ffnhnw Nordheide-NordWest'
-//      },
-//      {
-//        'domain': 'ffnhno',
-//        'name': 'ffnhno: Nordheide-NordOst'
-//      },
-//      {
-//        'domain': 'ffnhsw',
-//        'name': 'ffnhsw: Nordheide-SuedWest'
-//      },
-//      {
-//        'domain': 'ffnhso',
-//        'name': 'ffnhso: Nordheide-SuedOst'
-//      },
-//      {
-//        'domain': 'ffcuxhv',
-//        'name': 'ffcuxhv: Cuxhaven-Stadt'
-//      },
-//      {
-//        'domain': 'ffcuxln',
-//        'name': 'ffcuxln: Cuxland-Nord'
-//      },
-//      {
-//        'domain': 'ffcuxls',
-//        'name': 'ffcuxls: Cuxland-Sued'
-//      },
-//      {
-//        'domain': 'ffstd',
-//        'name': 'ffstd: Stade-Landkreis'
-//      },
-//      {
-//        'domain': '',
-//        'name': 'Nordheide-Gateways'
-//      }
+{% endfor %}   
     ],
     'linkList': [
     ],

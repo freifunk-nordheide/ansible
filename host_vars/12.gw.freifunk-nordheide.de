@@ -1,37 +1,32 @@
 ---
 
-# Unit id's 01-15 und 51-65 only!)
-# Units 01 and 51 up to 15 and 65 are always bulding pairs of gateways for one site_code 
-# f.e.: 11gw und 61gw are belonging to site_code ffnhsw - hood_id: 11
-# - 12gw und 62gw are belonging to ffnhso - hood_id: 12 )
-
 unit_type:                      gateway
 unit_id:                        "12"
+unit_idn:                       "{{ unit_id }}gw"
+unit_name:                      "{{ unit_id }}.gw.{{ sites[gateways[unit_id].site].domain }}"
 
 # ####################################
 # Basiseinstellungen - Ab hier nicht ändern!
 # ####################################
 
-host_id:                        "{{ gateways[unit_id].host }}"
-hood_id:                        "{{ gateways[unit_id].hood }}"
+# host_id:                        "{{ gateways[unit_id].host }}"
+# hood_id:                        "{{ gateways[unit_id].hood }}"
 
-site:                           "{{ hoods[gateways[unit_id].hood].site }}"
-site_domain_a:                  "{{ sites[site].domain2 }}"
-site_domain:                    "{{ sites[site].domain }}"
+# site:                           "{{ gateways[unit_id].site }}"
+# site_domain_a:                  "{{ sites[site].domain2 }}"
+# site_domain:                    "{{ sites[site].domain }}"
 
 site_range_ipv4_prefix: 	"{{ sites[hoods[gateways[unit_id].hood].site].ipv4_prefix }}"
 site_range_ipv6_prefix: 	"{{ sites[hoods[gateways[unit_id].hood].site].ipv6_prefix2 }}"
 site_range_ipv6_global_prefix: 	"{{ sites[hoods[gateways[unit_id].hood].site].ipv6_prefix }}"
 site_code: 			"{{ hoods[gateways[unit_id].hood].sname }}"
 
-hw_address_prefix: 		"{{ sites[hoods[gateways[unit_id].hood].site].hwadr_prefix }}"
+# hw_address_prefix: 		"{{ sites[hoods[gateways[unit_id].hood].site].hwadr_prefix }}"
 
 # ####################################
 # Basiseinstellungen
 # ####################################
 
-unit_idn:                       "{{ unit_id }}gw"
-unit_name:                      "{{ unit_id }}.gw.{{ site_domain }}"
 
 base_gwv4:                      "{{ hosts[gateways[unit_id].host].ipv4 }}"
 base_ipv4:                      "{{ gateways[unit_id].ipv4 }}"
@@ -39,18 +34,12 @@ base_if:                        "{{ gateways[unit_id].if}}"
 
 name_server:                    "{{ batman_ipv4 }}"
 
-batman_interface:               "bat-{{ site_code }}"
-batman_ipv4_range:              "{{ site_range_ipv4_prefix }}.0.0/16"
-batman_ipgw_range:              "{{ site_range_ipv4_prefix }}.1.0/24"
-batman_ipv4:                    "{{ site_range_ipv4_prefix }}.1.{{ unit_id }}/16"
-batman_ipv6:                    "{{ site_range_ipv6_prefix }}{{ hood_id }}ff::ff{{ unit_id }}/48"
-batman_ipv6_global:             "{{ site_range_ipv6_global_prefix }}{{ hood_id }}ff::ff{{ unit_id }}/48"
-
-# ####################################
-# Fastd / L2tp
-# ####################################
-
-btm_conntype:		        "{{ gateways[unit_id].btm_conntype }}"	
+# batman_interface:               "bat-{{ site_code }}"
+# batman_ipv4_range:              "{{ site_range_ipv4_prefix }}.0.0/16"
+# batman_ipgw_range:              "{{ site_range_ipv4_prefix }}.1.0/24"
+# batman_ipv4:                    "{{ site_range_ipv4_prefix }}.1.{{ unit_id }}/16"
+# batman_ipv6:                    "{{ site_range_ipv6_prefix }}{{ hood_id }}ff::ff{{ unit_id }}/48"
+# batman_ipv6_global:             "{{ site_range_ipv6_global_prefix }}{{ hood_id }}ff::ff{{ unit_id }}/48"
 
 # ####################################
 # Ausleiten
@@ -65,18 +54,24 @@ divert_ipv4:                    "{{ gateways[unit_id].div_ipv4 }}"
 divert_ipv6:                    "{{ gateways[unit_id].div_ipv6 }}"
 
 # ####################################
+# Fastd / L2tp
+# ####################################
+
+btm_conntype:		        "{{ gateways[unit_id].btm_conntype }}"	
+
+# ####################################
 # Fastd
 # ####################################
 
 # Fastd-Port: jeweils zwei Gateways haben den gleichen fastd-Port: z.b. 01 und 51, 12 und 62. (Diese bilden pro Hood ein Pärchen) 
 #
-fastd_port:                     "{{ fastd_port_pref }}{{ hood_id }}0"
+# fastd_port:                     "{{ fastd_port_pref }}{{ hood_id }}0"
 #
 # weitere fastd-Einstellungen
-fastd_anonymous:                "{{ hoods[gateways[unit_id].hood].fastd_anonym }}"
-fastd_bind:                     "{{ hoods[gateways[unit_id].hood].fastd_bind }}"
-fastd_instances:                "{{ hoods[gateways[unit_id].hood].fastd_inst }}"
-fastd_peers_limit:              "{{ hoods[gateways[unit_id].hood].fastd_p_lim }}"
+# fastd_anonymous:                "{{ hoods[gateways[unit_id].hood].fastd_anonym }}"
+# fastd_bind:                     "{{ hoods[gateways[unit_id].hood].fastd_bind }}"
+# fastd_instances:                "{{ hoods[gateways[unit_id].hood].fastd_inst }}"
+# fastd_peers_limit:              "{{ hoods[gateways[unit_id].hood].fastd_p_lim }}"
 
 # ####################################
 # Dhcp

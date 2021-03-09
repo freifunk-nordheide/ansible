@@ -58,12 +58,30 @@ no_owner = true
 delete_after = "5000d"
 delete_interval = "1d"
 
+{% if item.value.cnt|int == 1 %}
+[[database.connection.influxdb]]
+enable   = true
+address  = "http://statistik.freifunk-nordheide.de:8086"
+database = "ffnh"
+username = ""
+password = ""
+{% else %}
 [[database.connection.influxdb]]
 enable   = false
-#address  = ""
-#database = ""
+#password = ""
+{% endif %}
+
+{% if item.value.cnt|int == 1 %}
+#[[database.connection.influxdb]]
+#enable   = true
+#address  = "https://stat01.freifunk-nordheide.de/influxdb"
+#database = "ffnh"
 #username = ""
-#password = "{"
+#password = ""
+{% else %}
+#[[database.connection.influxdb]]
+#enable   = false
+{% endif %}
 
 [database.connection.influxdb.tags]
 

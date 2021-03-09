@@ -3,22 +3,51 @@
 server {
 	listen 80 default_server;
 
+{% if unit_type == 'gateway' %}
 	server_name {{ unit_id }}.gw.{{ sites[gateways[unit_id].site].domain }};
 	include snippets/letsencrypt.conf;
 	return 301 https://$host$request_uri;
+
+{% elif unit_type == 'mapserver' %}
+	server_name {{ unit_id }}.{{ sites[gateways[unit_id].site].domain }};
+	include snippets/letsencrypt.conf;
+	return 301 https://$host$request_uri;
+
+{% elif unit_type == 'collector' %}
+	server_name {{ unit_id }}.{{ sites[gateways[unit_id].site].domain }};
+	include snippets/letsencrypt.conf;
+	location / {
+		return 301 https://$host$request_uri;
+	}
+	location /firmware {
+		return 301 https://$host$request_uri;
+	}
+
+	location /fxware {
+		proxy_pass http://localhost/firmware/;
+	}
+
+{% elif unit_type == 'statserver' %}
+	server_name {{ unit_id }}.{{ sites[gateways[unit_id].site].domain }};
+	include snippets/letsencrypt.conf;
+	if ($server_port = 80) {
+		return 301 https://$host$request_uri;
+	}
+
+{% endif %}
+
 }
 
 server {
 	listen 443 ssl http2;
-	server_name {{ unit_id }}.gw.{{ sites[gateways[unit_id].site].domain }};
-
+{% if unit_type == 'gateway' %}
+	server_name {{ unit_id }}.{{ sites[gateways[unit_id].site].domain }};
 	ssl_certificate /etc/letsencrypt/live/{{ unit_id }}.gw.{{ sites[gateways[unit_id].site].domain }}/fullchain.pem;
 	ssl_certificate_key /etc/letsencrypt/live/{{ unit_id }}.gw.{{ sites[gateways[unit_id].site].domain }}/privkey.pem;
 	ssl_trusted_certificate /etc/letsencrypt/live/{{ unit_id }}.gw.{{ sites[gateways[unit_id].site].domain }}/chain.pem;
 	include snippets/ssl.conf;
 	include snippets/letsencrypt.conf;
 
-{% if unit_type == 'gateway' %}
 	location / {
 		root /var/www/html/yanic/;
 		autoindex on;
@@ -34,6 +63,13 @@ server {
 	}
 
 {% elif unit_type == 'mapserver' %}
+	server_name {{ unit_id }}.{{ sites[gateways[unit_id].site].domain }};
+	ssl_certificate /etc/letsencrypt/live/{{ unit_id }}.{{ sites[gateways[unit_id].site].domain }}/fullchain.pem;
+	ssl_certificate_key /etc/letsencrypt/live/{{ unit_id }}.{{ sites[gateways[unit_id].site].domain }}/privkey.pem;
+	ssl_trusted_certificate /etc/letsencrypt/live/{{ unit_id }}.{{ sites[gateways[unit_id].site].domain }}/chain.pem;
+	include snippets/ssl.conf;
+	include snippets/letsencrypt.conf;
+
 	location / {
 		root /var/www/html/meshviewer/build/;
                 include snippets/cors.conf;
@@ -42,10 +78,51 @@ server {
 
 	location /data {
 		autoindex on;
-		root /var/www/html/meshviewer/data/;
+		alias /var/www/html/meshviewer/data/;
                 include snippets/cors.conf;
 		try_files $uri $uri/ =404;
 	}
+
+{% elif unit_type == 'collector' %}
+	server_name {{ unit_id }}.{{ sites[gateways[unit_id].site].domain }};
+	ssl_certificate /etc/letsencrypt/live/{{ unit_id }}.{{ sites[gateways[unit_id].site].domain }}/fullchain.pem;
+	ssl_certificate_key /etc/letsencrypt/live/{{ unit_id }}.{{ sites[gateways[unit_id].site].domain }}/privkey.pem;
+	ssl_trusted_certificate /etc/letsencrypt/live/{{ unit_id }}.{{ sites[gateways[unit_id].site].domain }}/chain.pem;
+	include snippets/ssl.conf;
+	include snippets/letsencrypt.conf;
+
+	location / {
+		root /var/www/html/yanic/;
+                include snippets/cors.conf;
+		try_files $uri $uri/ =404;
+	}
+
+	location /firmware {
+		autoindex on;
+		alias /home/freifunker/firmware/;
+                include snippets/cors.conf;
+		try_files $uri $uri/ =404;
+	}
+
+{% elif unit_type == 'statserver' %}
+	server_name {{ unit_id }}.{{ sites[gateways[unit_id].site].domain }};
+	ssl_certificate /etc/letsencrypt/live/{{ unit_id }}.{{ sites[gateways[unit_id].site].domain }}/fullchain.pem;
+	ssl_certificate_key /etc/letsencrypt/live/{{ unit_id }}.{{ sites[gateways[unit_id].site].domain }}/privkey.pem;
+	ssl_trusted_certificate /etc/letsencrypt/live/{{ unit_id }}.{{ sites[gateways[unit_id].site].domain }}/chain.pem;
+	include snippets/ssl.conf;
+	include snippets/letsencrypt.conf;
+
+	location / {
+		proxy_pass http://localhost:3000/;
+	}
+
+#	location /firmware {
+#		autoindex on;
+#		root /var/www/html/meshviewer/data/;
+#		include snippets/cors.conf;
+#		try_files $uri $uri/ =404;
+#	}
+
 {% endif %}
 
 }

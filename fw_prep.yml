@@ -1,6 +1,6 @@
 ---
 
-- name: Setup common roles on all hosts
+- name: Prepare firmware envireonment locally
   remote_user: marcus
   hosts: 
   - all

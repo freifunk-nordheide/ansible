@@ -19,7 +19,7 @@ hosts:
     name:                   proxmox01.freifunk-nordheide.de
     proxmox:                proxmox01.freifunk-nordheide.de
     ipv4:                   "37.59.18.229"
-    ipv4_range:	
+    ipv4_range:	            "213.32.41.8/29"
   "02":
     number:                 "02"
     provider:               vserver.site
@@ -94,15 +94,15 @@ sites:
     hwadr_prefix:           "fe:ed:be:44:"
     asn:                    "64889"
 
-  ffother:
-    sname:                  ffother
-    name:                   Freifunk ???
-    domain:                 freifunk-nordheide.de
-    domain2:                nordheide.freifunk.net
-    web:
-    - "https://nordheide.freifunk.net"
-    - "http://map.freifunk-nordheide.de"
-    - "https://freifunk.net"
+#  ffother:
+#    sname:                  ffother
+#    name:                   Freifunk ???
+#    domain:                 freifunk-nordheide.de
+#    domain2:                nordheide.freifunk.net
+#    web:
+#    - "https://nordheide.freifunk.net"
+#    - "http://map.freifunk-nordheide.de"
+#    - "https://freifunk.net"
 
 ##################################################################
 ##### HOODS (Domains)
@@ -114,6 +114,7 @@ hoods:
   "00":
     number:                 "00"
     sname:                  ffnh
+    fw_hide_domain:         false
     name:                   "ffnh_alt"
     comment:                "FFNH: Alte Umgebung"
     site:                   ffnh
@@ -134,6 +135,7 @@ hoods:
     number:                 "01"
     sname:                  ffnhbase
     name:                   "FFNH: Standard-Domäne"
+    fw_hide_domain:         true
     comment:                "Standarddomain (nicht öffentlich)"
     site:                   ffnh
     dhcp_range:             "10.72.16.0/20"
@@ -146,39 +148,41 @@ hoods:
     fastd_port:		    11010
     fastd_anonym:           true
     fastd_bind:             any
-    fastd_inst:             2
+    fastd_inst:             1
     fastd_p_lim:            70
 
 # L2TP-Test
-  "06":
-    number:                 "06"
-    sname:                  ffnhl2tp
-    name:                   "FFNH: L2TP - Test"
-    comment:                "L2TP test domain"
-    site:                   ffnh
-    dhcp_range:             "10.72.96.0/20"
-    dhcp6_range:            "2a07:59c6:ec06:ff06::/64"
-    nextnode4:              "10.72.111.254"
-    nextnode6:              "2a07:59c6:ec06:ff06::06ff"
-    btm_conntype:           "td_slovenia"
-    ssid:                   "nordheide-l2tp.freifunk.net"
-    meshid:                 "ue3H3uXffnh06"
+#  "06":
+#    number:                 "06"
+#    sname:                  ffnhl2tp
+#    fw_hide_domain:         true
+#    name:                   "FFNH: L2TP - Test"
+#    comment:                "L2TP test domain"
+#    site:                   ffnh
+#    dhcp_range:             "10.72.96.0/20"
+#    dhcp6_range:            "2a07:59c6:ec06:ff06::/64"
+#    nextnode4:              "10.72.111.254"
+#    nextnode6:              "2a07:59c6:ec06:ff06::06ff"
+#    btm_conntype:           "td_slovenia"
+#    ssid:                   "nordheide-l2tp.freifunk.net"
+#    meshid:                 "ue3H3uXffnh06"
 #    fastd_port:             11060
 #    fastd_anonym:           true
 #    fastd_bind:             any
 #    fastd_inst:             1
 #    fastd_p_lim:            70
-    td_per_domain:          true
-    td_inst:                1
-    td_max_tunnels:         1024
-    td_port_base:           20000
-    td_port:                21060
-    td_pmtu_discovery:      false
-    td_timeout:             60
+#    td_per_domain:          true
+#    td_inst:                1
+#    td_max_tunnels:         1024
+#    td_port_base:           20000
+#    td_port:                21060
+#    td_pmtu_discovery:      false
+#    td_timeout:             60
 
   "10":
     number:                 "10"
-    sname:                  ffnhevent
+    sname:                  ffnhevnt
+    fw_hide_domain:         true
     name:                   "FFNH: Nordheide-Veranstaltungen"
     comment:                "(nicht öffentlich)"
     site:                   ffnh
@@ -192,12 +196,13 @@ hoods:
     fastd_port:		    11100
     fastd_anonym:           true
     fastd_bind:             any
-    fastd_inst:             2
+    fastd_inst:             1
     fastd_p_lim:            70
 
   "11":
     number:                 "11"
     sname:                  ffnhnw
+    fw_hide_domain:         false
     name:                   "FFNH: Nordheide-Nordwest"
     comment:                "Neu Wulmstorf, Rosengarten, Seevetal"
     site:                   ffnh
@@ -211,13 +216,14 @@ hoods:
     fastd_port:		    11110
     fastd_anonym:           true
     fastd_bind:             any
-    fastd_inst:             2
+    fastd_inst:             1
     fastd_p_lim:            70
     style:
       color:                "#6363cd"
   "12":
     number:                 "12"
     sname:                  ffnhno
+    fw_hide_domain:         false
     name:                   "FFNH: Nordheide-Nordost"
     comment:                "Elbmarsch, Stelle, Winsen"
     site:                   ffnh
@@ -231,13 +237,14 @@ hoods:
     fastd_port:		    11120
     fastd_anonym:           true
     fastd_bind:             any
-    fastd_inst:             2
+    fastd_inst:             1
     fastd_p_lim:            70
     style:
       color:                "#cd63cd" 
   "13":
     number:                 "13"
     sname:                  ffnhso
+    fw_hide_domain:         false
     name:                   "FFNH: Nordheide-Suedost"
     comment:                "Hanstedt, Jesteburg, Salzhausen"
     site:                   ffnh
@@ -251,13 +258,14 @@ hoods:
     fastd_port:		    11130
     fastd_anonym:           true
     fastd_bind:             any
-    fastd_inst:             2
+    fastd_inst:             1
     fastd_p_lim:            70
     style:
       color:                "#cdcd63" 
   "14":
     number:                 "14"
     sname:                  ffnhsw
+    fw_hide_domain:         false
     name:                   "FFNH: Nordheide-Suedwest"
     comment:                "Buchholz, Hollenstedt, Tostedt"
     site:                   ffnh
@@ -271,7 +279,7 @@ hoods:
     fastd_port:		    11140
     fastd_anonym:           true
     fastd_bind:             any
-    fastd_inst:             2
+    fastd_inst:             1
     fastd_p_lim:            70
     style:
       color:                "#63cd63" 
@@ -280,6 +288,7 @@ hoods:
   "21":
     number:                 "21"
     sname:                  ffcuxhv
+    fw_hide_domain:         false
     name:                   "FFCUX: Cuxhaven Stadt"
     comment:                ""
     site:                   ffcux
@@ -293,13 +302,14 @@ hoods:
     fastd_port:		    11210
     fastd_anonym:           true
     fastd_bind:             any
-    fastd_inst:             2
+    fastd_inst:             1
     fastd_p_lim:            70
     style:
       color:                "#cd63cd" 
   "22":
     number:                 "22"
     sname:                  ffcuxln
+    fw_hide_domain:         false
     name:                   "FFCUX: Cuxland-Nord"
     comment:                "Geestland, Boerde, Lamstedt, Hadeln, Hemmoor, Wurster Nordsk"
     site:                   ffcux
@@ -313,13 +323,14 @@ hoods:
     fastd_port:		    11220
     fastd_anonym:           true
     fastd_bind:             any
-    fastd_inst:             2
+    fastd_inst:             1
     fastd_p_lim:            70
     style:
       color:                "#6363cd" 
   "23":
     number:                 "23"
     sname:                  ffcuxls
+    fw_hide_domain:         false
     name:                   "FFCUX: Cuxland-Sued"
     comment:                "Beverstedt, Hagen, Loxstedt, Schiffdorf"
     site:                   ffcux
@@ -333,7 +344,7 @@ hoods:
     fastd_port:		    11230
     fastd_anonym:           true
     fastd_bind:             any
-    fastd_inst:             2
+    fastd_inst:             1
     fastd_p_lim:            70
     style:
       color:                "#63cd63" 
@@ -342,6 +353,7 @@ hoods:
   "31":
     number:                 "31"
     sname:                  ffstd
+    fw_hide_domain:         false
     name:                   "FFNH: Stade-Landkreis"
     comment:                "Landkreis Stade"
     site:                   ffnh
@@ -350,12 +362,12 @@ hoods:
     nextnode4:              "10.72.47.254"
     nextnode6:              "2a07:59c6:ec06:ff31::31ff"
     btm_conntype:           "fastd"
-    ssid:                   "freifunk.net"
+    ssid:                   "nordheide.freifunk.net"
     meshid:                 "ue3H3uXffnh31"
     fastd_port:		    11310
     fastd_anonym:           true
     fastd_bind:             any
-    fastd_inst:             2
+    fastd_inst:             1
     fastd_p_lim:            70
     style:
       color:                "#cdcd63" 
@@ -364,32 +376,35 @@ hoods:
   "41":
     number:                 "41"
     sname:                  ffnhdiv
-    name:                   "FFNH: Osterholz-Row-Hk"
-    comment:                "Lk Osterholz, Row, Hk, ..."
+    fw_hide_domain:         false
+    name:                   "FFNH: Osterholz-Row-Hk-Son"
+    comment:                "Lk Osterholz, Row, Hk, Sonstige"
     site:                   ffnh
     dhcp_range:             "10.72.48.0/20"
     dhcp6_range:            "2a07:59c6:ec06:ff41::/64"
     nextnode4:              "10.72.63.254"
     nextnode6:              "2a07:59c6:ec06:ff41::41ff"
     btm_conntype:           "fastd"
-    ssid:                   "freifunk.net"
+    ssid:                   "nordheide.freifunk.net"
     meshid:                 "ue3H3uXffnh41"
     fastd_port:		    11410
     fastd_anonym:           true
     fastd_bind:             any
-    fastd_inst:             2
+    fastd_inst:             1
     fastd_p_lim:            70
     style:
-      color:                "#cd63cd" 
-# ffson
-  "99":
-    number:                 "99"
-    sname:                  ffxxx
-    name:                   FFxxx-Sonstige
-    comment:                "in Arbeit! - noch keiner Domäne zugeordnet"
-    site:                   ffother
-    style:
       color:                "#636363" 
+#      color:                "#cd63cd" 
+# ffson
+#  "99":
+#    number:                 "99"
+#    sname:                  ffxxx
+#    fw_hide_domain:         true
+#    name:                   FFxxx-Sonstige
+#    comment:                "in Arbeit! - noch keiner Domäne zugeordnet"
+#    site:                   ffother
+#    style:
+#      color:                "#636363" 
 
 ##################################################################
 ##### GATEWAYS
@@ -438,30 +453,30 @@ gateways:
 ##################################################################
 ##### ffnh - gateways - ffnh - l2tp
 ##################################################################
-  "06":
-    number:                 "06"
-    name:                   06gw
-    lname:                  "06.gw.{{ sites['ffnh'].domain }}"
-    ipv4:                   "194.50.19.108"
-    if:                     "ens18"
-    host:                   "05"
-    site:                   "ffnh"
-    btm_conntype:           "td_slovenia"
-    div_type:               "vlannw"
-    div_if:                 "ens19"
-    div_gwv4:               10.100.0.1
-    div_ipv4:               10.100.0.6
-    div_ipv6:               "2a07:59c6:ec06:ff06::fd06/64" 
-    domains:
-      "06":
-        cnt:                1
-        bat_ipv4:           10.72.96.1/20
-        bat_ipv6:           "2a07:59c6:ec06:ff06::ff06"
-        bat_ipv6_l:         "fd8f:14c7:d318:ff06::ff06"
-        dhcp_first:         "10.72.96.5"
-        dhcp_last:          "10.72.103.253"
-        nextnode4:          "10.72.111.254"
-        nextnode6:          "2a07:59c6:ec06:ff06::06ff"
+#  "06":
+#    number:                 "06"
+#    name:                   06gw
+#    lname:                  "06.gw.{{ sites['ffnh'].domain }}"
+#    ipv4:                   "194.50.19.108"
+#    if:                     "ens18"
+#    host:                   "05"
+#    site:                   "ffnh"
+#    btm_conntype:           "td_slovenia"
+#    div_type:               "vlannw"
+#    div_if:                 "ens19"
+#    div_gwv4:               10.100.0.1
+#    div_ipv4:               10.100.0.6
+#    div_ipv6:               "2a07:59c6:ec06:ff06::fd06/64" 
+#    domains:
+#      "06":
+#        cnt:                1
+#        bat_ipv4:           10.72.96.1/20
+#        bat_ipv6:           "2a07:59c6:ec06:ff06::ff06"
+#        bat_ipv6_l:         "fd8f:14c7:d318:ff06::ff06"
+#        dhcp_first:         "10.72.96.5"
+#        dhcp_last:          "10.72.103.253"
+#        nextnode4:          "10.72.111.254"
+#        nextnode6:          "2a07:59c6:ec06:ff06::06ff"
 
 ##################################################################
 ##### ffnh - gateways - ffnh - Neu - Domains
@@ -511,7 +526,7 @@ gateways:
     div_type:               "vlannw"
     div_if:                 "ens19"
     div_gwv4:               10.100.0.1
-    div_ipv4:               10.100.0.6
+    div_ipv4:               10.100.0.7
     div_ipv6:               "2a07:59c6:ec06:ff03::fd41/64" 
     domains:
       "41":
@@ -860,7 +875,7 @@ gateways:
 #    nextnode4:              "10.72.111.254"
 #    nextnode6:              "2a07:59c6:ec06:ff06::ffff"
 #    btm_conntype:           "td_slovenia"
-##    btm_conntype: "td_std"
+#    btm_conntype: "td_std"
 #    btm_conntype: "fastd"
 #    div_type:               "vlannw"
 #    div_if:                 "ens19"
@@ -868,20 +883,165 @@ gateways:
 #    div_ipv4:               10.100.0.6
 #    div_ipv6:               "{{ sites[hoods['06'].site].ipv6_prefix }}ff06::fd06/48" 
 
-# statistik:
+# statistik: influx + grafana
   "stat01":
     number:                 "stat01"
     name:                   "stat01"
-    hood:                   "none"
-    lname:                  "stat.01.{{ sites['ffnh'].domain }}"
+    aliases:
+    - "statistik.freifunk-nordheide.de"
+    site:                   "ffnh"
+    lname:                  "stat01.{{ sites['ffnh'].domain }}"
     host:                   "01"
-    ipv4:                   "213.32.41.10"
-    if:                     "eth0"
+    ipv4:                   "188.165.121.234"
+    if:                     "ens18"
 
+# collect: yanic + firmware
+  "coll01":
+    number:                 "coll01"
+    name:                   "coll01"
+    aliases:
+    - "firmware.freifunk-nordheide.de"
+    site:                   "ffnh"
+    btm_conntype:           "fastd"
+    lname:                  "coll01.{{ sites['ffnh'].domain }}"
+    host:                   "05"
+    ipv4:                   "194.50.19.108"
+    if:                     "ens18"
+    div_if:                 "ens19"
+    div_gwv4:               10.100.0.1
+    div_ipv4:               10.100.0.6
+    div_ipv6:               "2a07:59c6:ec06:fffa::fdfa/48" 
+    domains:
+      "01":
+        cnt:                1
+        bat_ipv4:           10.72.16.3/20
+        bat_ipv6:           "2a07:59c6:ec06:ff01::fffa"
+        bat_ipv6_l:         "fd8f:14c7:d318:ff01::fffa"
+      "10":
+        cnt:                2
+        bat_ipv4:           10.72.160.3/20
+        bat_ipv6:           "2a07:59c6:ec06:ff10::fffa"
+        bat_ipv6_l:         "fd8f:14c7:d318:ff10::fffa"
+      "11":
+        cnt:                3
+        bat_ipv4:           10.72.176.3/20
+        bat_ipv6:          "2a07:59c6:ec06:ff11::fffa"
+        bat_ipv6_l:         "fd8f:14c7:d318:ff11::fffa"
+      "12":
+        cnt:                4
+        bat_ipv4:           10.72.192.3/20
+        bat_ipv6:           "2a07:59c6:ec06:ff12::fffa"
+        bat_ipv6_l:         "fd8f:14c7:d318:ff12::fffa"
+      "13":
+        cnt:                5
+        bat_ipv4:           10.72.208.3/20
+        bat_ipv6:           "2a07:59c6:ec06:ff13::fffa"
+        bat_ipv6_l:         "fd8f:14c7:d318:ff13::fffa"
+      "14":
+        cnt:                6
+        bat_ipv4:           10.72.224.3/20
+        bat_ipv6:           "2a07:59c6:ec06:ff14::fffa"
+        bat_ipv6_l:         "fd8f:14c7:d318:ff14::fffa"
+      "21":
+        cnt:                7
+        bat_ipv4:           10.115.16.3/20
+        bat_ipv6:           "2a07:59c6:ec06:ff21::fffa"
+        bat_ipv6_l:         "fd8f:14c7:d318:ff21::fffa"
+      "22":
+        cnt:                8
+        bat_ipv4:           10.115.32.3/20
+        bat_ipv6:           "2a07:59c6:ec06:ff22::fffa"
+        bat_ipv6_l:         "fd8f:14c7:d318:ff22::fffa"
+      "23":
+        cnt:                9
+        bat_ipv4:           10.115.48.3/20
+        bat_ipv6:           "2a07:59c6:ec06:ff23::fffa"
+        bat_ipv6_l:         "fd8f:14c7:d318:ff23::fffa"
+      "31":
+        cnt:                10
+        bat_ipv4:           10.72.32.3/20
+        bat_ipv6:           "2a07:59c6:ec06:ff31::fffa"
+        bat_ipv6_l:         "fd8f:14c7:d318:ff31::fffa"
+      "41":
+        cnt:                11
+        bat_ipv4:           10.72.48.3/20
+        bat_ipv6:           "2a07:59c6:ec06:ff41::fffa"
+        bat_ipv6_l:         "fd8f:14c7:d318:ff41::fffa"
+#     "00":
+#       cnt:                12
+#       bat_ipv4:           10.71.0.0/18
+#       bat_ipv6:           "2a07:59c6:ec06::ff15"
+#       bat_ipv6_l:         "fd8f:14c7:d318::ff15"
+ 
 # maps:
+  "map01":
+    number:                 "map01"
+    name:                   map01
+    aliases:
+    - "map.freifunk-nordheide.de"
+    - "tmap.freifunk-nordheide.de"
+    site:                   "ffnh"
+    hood:                   "none"
+    lname:                  "map01.{{ sites['ffnh'].domain }}"
+    host:                   "01"
+    ipv4:                   "188.165.121.235"
+    if:                     "ens18"
+    areas:                  # routers inside these areas are going to be shown on the map 
+  #   ffnh
+      "01":          
+        id:                 "01"
+        type:               "hood"
+      "10":          
+        id:                 "10"
+        type:               "hood"
+      "11":          
+        id:                 "11"
+        type:               "hood"
+      "12":
+        id:                 "12"
+        type:               "hood"
+      "13":
+        id:                 "13"
+        type:               "hood"
+      "14":
+        id:                 "14"
+        type:               "hood"
+  #   ffcux
+      "21":
+        id:                 "21"
+        type:               "hood"
+      "22":
+        id:                 "22"
+        type:               "hood"
+      "23":
+        id:                 "23"
+        type:               "hood"
+  #   ffstd
+      "31":
+        id:                 "31"
+        type:               "hood"
+  #   ffdiv
+      "41":
+        id:                 "41"
+        type:               "hood"
+
+  #   Sonstige
+      "a1":
+        id:                 "a1"
+        type:               "region"
+        name:               "old map data"
+        address:            "http://map.freifunk-nordheide.de/data"
+      "x1":
+        id:                 "x1"
+        type:               "region"
+        name:               "straussmann"
+        address:            "https://meshviewer.strausmann.com/data"
+
+# testmap
   "tmap":
     number:                 "tmap"
     name:                   tmap
+    site:                   "ffnh"
     hood:                   "none"
     lname:                  "tmap.{{ sites['ffnh'].domain }}"
     host:                   "05"
@@ -927,9 +1087,9 @@ gateways:
         type:               "hood"
 
   #   Sonstige
-      "06":
-        id:                 "06"
-        type:               "hood"
+#      "06":
+#        id:                 "06"
+#        type:               "hood"
       "a1":
         id:                 "a1"
         type:               "region"
