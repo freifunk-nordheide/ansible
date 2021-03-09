@@ -1,0 +1,36 @@
+---
+
+#
+
+unit_type:                      "statserver"
+unit_id:                        "stat01"
+site:                           "ffnh"
+site_domain_a:                  "{{ sites[site].domain2 }}"
+site_domain:                    "{{ sites[site].domain }}"
+
+
+# ####################################
+# Basiseinstellungen - Ab hier nicht ändern!
+# ####################################
+
+host_id:                        "{{ gateways[unit_id].host }}"
+hood_id:                        "{{ gateways[unit_id].hood }}"
+
+# ####################################
+# Basiseinstellungen
+# ####################################
+
+unit_idn:                       "stat01"
+unit_idnn:                      "stat01"
+unit_name:                      "stat01.{{ site_domain }}"
+
+base_gwv4:                      "{{ hosts[gateways[unit_id].host].ipv4 }}"
+base_ipv4:                      "{{ gateways[unit_id].ipv4 }}"
+base_if:                        "{{ gateways[unit_id].if}}"
+
+# ####################################
+# Nginx
+# ####################################
+
+nginx_ssl: True
+
