@@ -1,0 +1,115 @@
+---
+
+- name: Install nginx und certbot for stat-server
+  apt:
+    name:            ['nginx', 'python-simplejson', 'certbot', 'python3-certbot-nginx']
+#    update_cache:    yes
+
+- name: Generate dhparams
+  shell:             openssl dhparam -out /etc/nginx/dhparams.pem 2048
+  args:
+    creates:         /etc/nginx/dhparams.pem
+
+- name: create letsencrypt directory
+  file: 
+    name:            /var/lib/letsencrypt
+    state:           directory
+    owner:           www-data
+    group:           www-data
+    mode:            g+s
+
+- name: create .acme-challenge directory
+  file: 
+    name:            /var/lib/letsencrypt/.well-known/acme-challenge
+    state:           directory
+    owner:           www-data
+    group:           www-data
+
+- name: Remove default nginx config
+  file: 
+    name:            /etc/nginx/sites-enabled/default 
+    state:           absent
+
+- name: Install system nginx config
+  copy:
+    src:             nginx.conf
+    dest:            /etc/nginx/nginx.conf
+
+- name: Create snippet letsencrypt.conf
+  template:
+    src:             templates/letsencrypt.conf.j2
+    dest:            /etc/nginx/snippets/letsencrypt.conf
+
+- name: Create snippet ssl.conf
+  template:
+    src:             templates/ssl.conf.j2
+    dest:            /etc/nginx/snippets/ssl.conf
+
+- name: Create snippet cors.conf
+  template:
+    src:             templates/cors.conf.j2
+    dest:            /etc/nginx/snippets/cors.conf
+
+# test, whether certificate already exist
+- name: create path text
+  set_fact:
+    xxpath:          /etc/letsencrypt/live/{{ unit_id }}.gw.{{ sites[gateways[unit_id].site].domain }}/fullchain.pem
+  when:              unit_type == "gateway"
+
+- name: create path text
+  set_fact:
+    xxpath:          /etc/letsencrypt/live/{{ unit_id }}.{{ sites[gateways[unit_id].site].domain }}/fullchain.pem
+  when:              unit_type != "gateway"
+
+- name: Check certs exist
+  stat:              
+    path:            "{{ xxpath }}"
+  register:          st
+
+- name: Display facts
+  debug: 
+    var:             st
+
+- name: Install nginx site for specified site
+  template:
+    src:             templates/default_nokey.j2
+    dest:            /etc/nginx/sites-enabled/default
+  when:              not st.stat.exists
+
+- name: Reload nginx to activate letsencrypt site
+  command:           systemctl restart nginx
+  when:              not st.stat.exists
+
+- name: Create letsencrypt certificate for gateways
+  shell:             certbot certonly --agree-tos --email {{ letsencrypt_email }} --webroot -w /var/lib/letsencrypt/ -d {{ unit_id }}.gw.{{ sites[gateways[unit_id].site].domain }}
+  when:              not st.stat.exists and unit_type == "gateway"
+
+- name: Create letsencrypt certificate for mapserver and statserver
+  shell:             certbot certonly --agree-tos --email {{ letsencrypt_email }} --webroot -w /var/lib/letsencrypt/ -d {{ unit_id }}.{{ sites[gateways[unit_id].site].domain }}
+  when:              not st.stat.exists and (unit_type != "gateway")
+
+- name: Install nginx site for specified site
+  template:
+    src:             templates/default_std.j2
+    dest:            /etc/nginx/sites-enabled/default
+
+- name: Reload nginx to activate letsencrypt site
+  command:           "systemctl restart nginx"
+
+# Auto-renew certificates and reload nginx (cron-jobs)
+- name: Add crontab to renew certificates
+  cron: 
+    minute:          "30" 
+    hour:            "3" 
+    weekday:         "1"
+    job:             "certbot renew >> /var/log/le-renew.log"
+
+- name: Add crontab to reload server
+  cron: 
+    minute:         "35"
+    hour:           "3" 
+    weekday:        "1" 
+    job:            "systemctl restart nginx"
+
+
+

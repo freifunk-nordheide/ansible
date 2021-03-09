@@ -1,0 +1,31 @@
+#!/bin/bash
+
+{% for i_area in gateways[unit_id].areas|dict2items if i_area.value.type == "hood" %}
+{% for i_gw in gateways|dict2items if i_gw.value.domains is defined and i_gw.value.domains[i_area.key] is defined %}
+{% if loop.first -%}
+wget --connect-timeout=15 -N -q -O /var/www/html/meshviewer/data/{{i_area.key}}/meshviewer.json https://{{i_gw.value.lname}}/{{hoods[i_area.key].sname}}/meshviewer.json
+if [[ $? -ne 0 ]]; then
+{% endif %}
+{% if loop.last %}
+	wget --connect-timeout=15 -N -q -O /var/www/html/meshviewer/data/{{i_area.key}}/meshviewer.json https://{{i_gw.value.lname}}/meshviewer.json
+	if [[ $? -ne 0 ]]; then
+	        cp /var/www/html/meshviewer/data/{{i_area.key}}/offline/meshviewer.json /var/www/html/meshviewer/data/{{i_area.key}}/meshviewer.json
+	fi
+fi
+{%- endif %}
+{% endfor %}  
+if [[ $(du -b /var/www/html/meshviewer/data/{{i_area.key}}/meshviewer.json| cut -f1) -lt 100 ]]; then
+        cp /var/www/html/meshviewer/data/{{i_area.key}}/offline/meshviewer.json /var/www/html/meshviewer/data/{{i_area.key}}/meshviewer.json
+fi
+{% endfor -%}
+
+{%- for i_area in gateways[unit_id].areas|dict2items if i_area.value.type == "region" %}
+wget --connect-timeout=15 -N -q -O /var/www/html/meshviewer/data/{{i_area.key}}/meshviewer.json {{i_area.value.address}}/meshviewer.json
+if [[ $? -ne 0 ]]; then
+        cp /var/www/html/meshviewer/data/{{i_area.key}}/offline/meshviewer.json /var/www/html/meshviewer/data/{{i_area.key}}/meshviewer.json
+fi
+if [[ $(du -b /var/www/html/meshviewer/data/{{i_area.key}}/meshviewer.json| cut -f1) -lt 100 ]]; then
+        cp /var/www/html/meshviewer/data/{{i_area.key}}/offline/meshviewer.json /var/www/html/meshviewer/data/{{i_area.key}}/meshviewer.json
+fi
+{% endfor %}  
+

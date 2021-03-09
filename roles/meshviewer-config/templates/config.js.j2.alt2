@@ -1,0 +1,312 @@
+// {{ ansible_managed }}
+
+module.exports = function () {
+  return {
+    'reverseGeocodingApi': 'https://nominatim.openstreetmap.org/reverse',
+    'maxAge': 2,
+    'maxAgeAlert': 3,
+    'nodeZoom': 18,
+    'labelZoom': 13,
+    'clientZoom': 15,
+    'fullscreen': true,
+    'fullscreenFrame': true,
+    'nodeAttr': [
+      // value can be a node attribute (1 depth) or a a function in utils/node with prefix show
+      {
+        'name': 'node.status',
+        'value': 'Status'
+      },
+      {
+        'name': 'node.gateway',
+        'value': 'Gateway'
+      },
+      {
+        'name': 'node.coordinates',
+        'value': 'GeoURI'
+      },
+      //    {
+      //      "name": "node.contact",
+      //      "value": "owner"
+      //    },
+
+      // Examples for functions
+      //{
+      // no name will remove first column
+      //   'value': function (d) {
+      //     var moment = require('moment');
+      //     var V = require('snabbdom').default;
+      //     return V.h('td', { props: { colSpan: 2 }, style: { background: '#49a' } },
+      //       _.t('sidebar.nodeOnline') + ' translate, ' + moment(d.firstseen).get('month') +
+      //       ' Month require libs like moment, access config ' + config.siteName);
+      //   }
+      //},
+      //{
+      //   'name': 'Neighbour first seen',
+      //   'value': function (d, nodeDict) {
+      //      return nodeDict[d.gateway_nexthop].firstseen.format();
+      //   }
+      //},
+      {
+        'name': 'node.hardware',
+        'value': 'model'
+      },
+      {
+        'name': 'node.primaryMac',
+        'value': 'mac'
+      },
+      {
+        'name': 'node.firmware',
+        'value': 'Firmware'
+      },
+      {
+        'name': 'node.uptime',
+        'value': 'Uptime'
+      },
+      {
+        'name': 'node.firstSeen',
+        'value': 'FirstSeen'
+      },
+      {
+        'name': 'node.systemLoad',
+        'value': 'Load'
+      },
+      {
+        'name': 'node.ram',
+        'value': 'RAM'
+      },
+      {
+        'name': 'node.ipAddresses',
+        'value': 'IPs'
+      },
+      {
+        'name': 'node.update',
+        'value': 'Autoupdate'
+      },
+      {
+        'name': 'node.domain',
+        'value': 'Domain'
+      },
+      {
+        'name': 'node.clients',
+        'value': 'Clients'
+      }
+    ],
+    // Variables are NODE_ID and NODE_NAME (only a-z0-9\- other chars are replaced with _)
+    'nodeInfos': [
+      {
+        'name': 'Clientstatistik',
+        'href': 'http://statistik.freifunk-nordheide.de:3000/d/fLurVy4Zk/node-stat?orgId=1&var-nodeid={NODE_ID}',
+        'image': 'http://statistik.freifunk-nordheide.de:3000/render/d-solo/fLurVy4Zk/node-stat?orgId=1&panelId=2&var-nodeid={NODE_ID}&width=650&height=350&from=now-3d&theme=light&_t{TIME}',
+        'title': 'Node {NODE_NAME} - Clients'
+      },
+      {
+        //'name': 'Test1',
+        'href': 'http://statistik.freifunk-nordheide.de:3000/d/hBrcOYIZz/node-stat-15-minute-interval?orgId=1&panelid=2&from=now-30d&var-nodeid={NODE_ID}',
+        'image': 'http://statistik.freifunk-nordheide.de:3000/render/d-solo/s0RwhPIZk/node-stat-extra?openVizPicker&orgId=1&panelId=4&width=500&height=40&frameborder=0&from=now-30d&theme=light&_t{TIME}',
+        'title': 'Node {NODE_NAME} - Clients'
+      },
+      {
+        //'name': 'Test2',
+        'href': 'http://statistik.freifunk-nordheide.de:3000/d/yb6NxPSZk/node-stat-360-minute-interval?orgId=1&panelid=2&from=now-185d&var-nodeid={NODE_ID}',
+        'image': 'http://statistik.freifunk-nordheide.de:3000/render/d-solo/s0RwhPIZk/node-stat-extra?openVizPicker&orgId=1&panelId=5&width=500&height=40&frameborder=0&from=now-30d&theme=light&_t{TIME}',
+        'title': 'Node {NODE_NAME} - Clients'
+      },
+      {
+        'name': 'Clients in local Cloud',
+        'href': 'http://statistik.freifunk-nordheide.de:3000/d/fLurVy4Zk/node-stat?orgId=1&var-nodeid={NODE_ID}',
+        'image': 'http://statistik.freifunk-nordheide.de:3000/render/d-solo/fLurVy4Zk/node-stat?orgId=1&panelId=18&var-nodeid={NODE_ID}&width=650&height=400&from=now-3d&theme=light&_t{TIME}',
+        'title': 'Node {NODE_NAME} - Local Cloud'
+      },
+      //{
+      //  'name': 'Airtime',
+      //  'href': 'http://statistik.freifunk-nordheide.de:3000/d/nFRq0aGZz/node-stat01?orgId=1&var-hostname={NODE_NAME}',
+      //  'image': 'http://statistik.freifunk-nordheide.de:3000/render/d-solo/nFRq0aGZz/node-stat01?orgId=1&panelId=22&var-hostname={NODE_NAME}&width=650&height=350&from=now-3d&theme=light&_t{TIME}',
+      //  'title': 'Node {NODE_NAME} - Airtime'
+      //},
+      {
+        'name': 'Traffic',
+        'href': 'http://statistik.freifunk-nordheide.de:3000/d/fLurVy4Zk/node-stat?orgId=1&var-nodeid={NODE_ID}',
+        'image': 'http://statistik.freifunk-nordheide.de:3000/render/d-solo/fLurVy4Zk/node-stat?orgId=1&panelId=4&var-nodeid={NODE_ID}&width=650&height=350&from=now-3d&theme=light&_t{TIME}',
+         'title': 'Node {NODE_NAME} - Traffic'
+      }
+    ],
+    'globalInfos': [
+      {
+        'name': 'Clients and Nodes',
+        'href': 'http://statistik.freifunk-nordheide.de:3000/d/4PhqkbGZz/global-stat01?refresh=10s&orgId=1',
+        'image': 'http://statistik.freifunk-nordheide.de:3000/render/d-solo/4PhqkbGZz/global-stat01?panelId=2&orgId=1&width=750&height=300&from=now-7d&to=now&theme=light&_t{TIME}',
+        'title': 'Nodes, Clients'
+      },
+      {
+        'name': 'Clients per Node',
+        'href': 'http://statistik.freifunk-nordheide.de:3000/d/4PhqkbGZz/global-stat01?refresh=10s&orgId=1',
+        'image': 'http://statistik.freifunk-nordheide.de:3000/render/d-solo/4PhqkbGZz/global-stat01?panelId=6&orgId=1&width=750&height=300&from=now-7d&to=now&theme=light&_t{TIME}',
+        'title': 'Nodes, Clients'
+      },
+      {
+        'name': 'Gateway Traffic out (Tx)',
+        'href': 'http://statistik.freifunk-nordheide.de:3000/d/4PhqkbGZz/global-stat01?refresh=10s&orgId=1',
+        'image': 'http://statistik.freifunk-nordheide.de:3000/render/d-solo/4PhqkbGZz/global-stat01?panelId=8&orgId=1&var-gateway=All&var-gwlink=All&width=750&height=300&from=now-7d&to=now&theme=light&_t{TIME}',
+        'title': 'Gateways, Traffic'
+      },
+      {
+        'name': 'Gateway Mgmnt Traffic in (Rx)',
+        'href': 'http://statistik.freifunk-nordheide.de:3000/d/4PhqkbGZz/global-stat01?refresh=10s&orgId=1',
+        'image': 'http://statistik.freifunk-nordheide.de:3000/render/d-solo/4PhqkbGZz/global-stat01?panelId=12&orgId=1&var-gateway=All&var-gwlink=All&width=750&height=300&from=now-7d&to=now&theme=light&_t{TIME}',
+        'title': 'Gateways, Management Traffic'
+      }
+    ],
+// Array of data provider are supported
+    'dataPath': [
+      './data/'
+    ],
+    'siteName': 'Freifunk Nordheide',
+    'mapLayers': [
+      {
+        'name': 'Freifunk Südholstein',
+        'url': 'https://tiles.freifunk-suedholstein.de/{z}/{x}/{y}.png',
+        'config': {
+          'maxZoom': 19,
+          'attribution': '<a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
+          //'start': 6
+        }
+      },
+      { 'name': 'arcgisonline-topo',
+        'url': 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+        'config': {
+          'subdomains': '1234',
+          'type': 'osm',
+          'attribution': 'Tiles &copy; ARCGISONLINE.com',
+          'maxZoom': 19
+        }
+      },
+      { 'name': 'arcgisonline',
+        'url': 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+        'config': {
+          'subdomains': '1234',
+          'type': 'osm', 
+          'attribution': 'Tiles &copy; ARCGISONLINE.com',
+          'maxZoom': 19
+        }
+      },
+      {
+        'name': 'Esri.WorldImagery',
+        'url': '//server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        'config': {
+          'maxZoom': 20,
+          'attribution': 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+        }
+      },
+    ],
+    // Set a visible frame
+    'fixedCenter': [
+      // Northwest
+      [
+        53.922133554,
+        8.503417969
+      ],
+      // Southeast
+      [
+        52.932085719,
+        10.692443848
+      ]
+    ],
+    'domainNames': [
+//{% for xarea in gateways[unit_id].areas | dict2items if xarea.value.type = "hood" %}
+//      {
+//        'domain': {{ hoods[xarea.key].sname }}
+//        'name': {{ hoods[xarea.key].sname }} - {{ hoods[xarea.key].name }}
+//      }{% if not loop.last %},
+//{% else %} 
+//{% endif %}
+//{% endfor %}    
+      {
+        'domain': 'ffnh',
+        'name': 'ffnh: Nordheide'
+      }
+//      {
+//        'domain': 'ffnhbase',
+//        'name': 'ffnhbase: Nordheide Standard-Gateway'
+//      },
+//      {
+//        'domain': 'ffnhevent',
+//        'name': 'ffnhevent: Nordheide events'
+//      },
+//      {
+//        'domain': 'ffnhnw',
+//        'name': 'ffnhnw Nordheide-NordWest'
+//      },
+//      {
+//        'domain': 'ffnhno',
+//        'name': 'ffnhno: Nordheide-NordOst'
+//      },
+//      {
+//        'domain': 'ffnhsw',
+//        'name': 'ffnhsw: Nordheide-SuedWest'
+//      },
+//      {
+//        'domain': 'ffnhso',
+//        'name': 'ffnhso: Nordheide-SuedOst'
+//      },
+//      {
+//        'domain': 'ffcuxhv',
+//        'name': 'ffcuxhv: Cuxhaven-Stadt'
+//      },
+//      {
+//        'domain': 'ffcuxln',
+//        'name': 'ffcuxln: Cuxland-Nord'
+//      },
+//      {
+//        'domain': 'ffcuxls',
+//        'name': 'ffcuxls: Cuxland-Sued'
+//      },
+//      {
+//        'domain': 'ffstd',
+//        'name': 'ffstd: Stade-Landkreis'
+//      },
+//      {
+//        'domain': '',
+//        'name': 'Nordheide-Gateways'
+//      }
+    ],
+    'linkList': [
+    ],
+    geo: [
+      {
+        json: function () {
+            return require('helper').getJSON('./data/geodata/hoods/areafeatures.json');
+        },
+        
+        option: {
+
+          onEachFeature: function onEachFeature(feature, layer) {
+            if (feature.properties && feature.properties.freifunk) {
+              var t = L.tooltip({permanent: false, interactive: true, sticky: false, direction: "auto" }, layer)
+                      .setContent(
+	                "<strong>Region: " + feature.properties.name + "<br />" +
+                        "zur Zeit zugeordnet zu: " + feature.properties.freifunk.sitename + "<br />" +
+                        "Domäne: " + feature.properties.freifunk.hood + " - " + feature.properties.freifunk.hoodsname + " - "  + feature.properties.freifunk.hoodname + "</strong><br />" +
+                        "(" + feature.properties.freifunk.remark + ")<br />" +
+                        "<strong><a href='" + feature.properties.freifunk.sitehtml[1] + "'>Lokale Map:     " + feature.properties.freifunk.sitehtml[1] + "</a><br />" +
+                        "<a href='" + feature.properties.freifunk.sitehtml[0] + "'>Lokale Website: " + feature.properties.freifunk.sitehtml[0] + "</a>" + "<br />" +
+                        "<a href='" + feature.properties.freifunk.sitehtml[2] + "'>Freifunk:       " + feature.properties.freifunk.sitehtml[2] + "</a></strong>"
+                      );
+              layer.bindTooltip(t);
+            }
+          },
+
+          style: function(feature) {
+            return {color:       feature.properties.freifunk.style.color, 
+                    weight:      1.5,
+                    opacity:     feature.properties.freifunk.style.opacity,
+                    fillOpacity: 0.2
+            }
+          }
+        },
+        pane: 'markerPane'
+      }
+    ]
+  };
+};
+
+

@@ -1,0 +1,31 @@
+#!/bin/sh
+# {{ ansible_managed }}
+/sbin/ip route add default via 10.100.0.6 table 42
+
+{% for item in gateways[unit_id].domains %}
+/sbin/ip route add {{ gateways[unit_id].domains[item].bat_ipv4 | ipaddr('network') }} dev br-{{ hoods[item].sname }} src {{ gateways[unit_id].domains[item].bat_ipv4 | ipaddr('address')}} table 42
+{% endfor %}
+
+/sbin/ip route del default via 10.100.0.6 table 42
+
+/sbin/ip route add 10.72.0.0/16 via 194.50.19.108 table 42
+/sbin/ip route add 10.115.0.0/16 via 194.50.19.108 table 42
+
+/sbin/iptables -t nat -D POSTROUTING -s 0/0 -d 0/0 -j SNAT --to-source 10.100.0.6 > /dev/null 2>&1
+/sbin/iptables -t nat -I POSTROUTING -s 0/0 -d 0/0 -j SNAT --to-source 10.100.0.6
+
+{% for item in gateways[unit_id].domains %}
+/sbin/iptables -t nat -D POSTROUTING -s {{ gateways[unit_id].domains[item].bat_ipv4 | ipaddr('address')}}/30 -d {{ gateways[unit_id].domains[item].bat_ipv4 | ipaddr('address')}}/30 -j SNAT --to-source {{ gateways[unit_id].domains[item].bat_ipv4 | ipaddr('address')}} > /dev/null 2>&1
+/sbin/iptables -t nat -I POSTROUTING -s {{ gateways[unit_id].domains[item].bat_ipv4 | ipaddr('address')}}/30 -d {{ gateways[unit_id].domains[item].bat_ipv4 | ipaddr('address')}}/30 -j SNAT --to-source {{ gateways[unit_id].domains[item].bat_ipv4 | ipaddr('address')}}
+{% endfor %}
+
+/sbin/iptables -t mangle -D PREROUTING -s 10.72.0.0/16 -j MARK --set-mark 0x1 > /dev/null 2>&1
+/sbin/iptables -t mangle -I PREROUTING -s 10.72.0.0/16 -j MARK --set-mark 0x1
+/sbin/iptables -t mangle -D OUTPUT -s 10.72.0.0/16 -j MARK --set-mark 0x1 > /dev/null 2>&1
+/sbin/iptables -t mangle -I OUTPUT -s 10.72.0.0/16 -j MARK --set-mark 0x1
+
+/sbin/iptables -t mangle -D PREROUTING -s 10.115.0.0/16 -j MARK --set-mark 0x1 > /dev/null 2>&1
+/sbin/iptables -t mangle -I PREROUTING -s 10.115.0.0/16 -j MARK --set-mark 0x1
+/sbin/iptables -t mangle -D OUTPUT -s 10.115.0.0/16 -j MARK --set-mark 0x1 > /dev/null 2>&1
+/sbin/iptables -t mangle -I OUTPUT -s 10.115.0.0/16 -j MARK --set-mark 0x1
+

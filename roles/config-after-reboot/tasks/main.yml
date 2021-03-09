@@ -1,0 +1,51 @@
+---
+
+
+#- name: Reboot immediately 
+#  shell: "sleep 5 && reboot"
+#  async: 1
+#  poll: 0
+
+#- name: Wait for the reboot to complete if there was a change.
+#  wait_for_connection:
+#    connect_timeout: 20
+#    sleep: 5
+#    delay: 5
+#    timeout: 300
+#  register:               task_result
+
+- name: restart network
+  service:
+    name:                    networking
+    state:                   restarted
+
+- name: Run ip mesh config
+  command:                   /bin/sh /etc/fastd/iptables_{% for idm in gateways[unit_id].domains | dict2items %}{% if loop.first %}{{hoods[idm.key].site}}{% endif %}{% endfor %}.sh
+
+- name: Reload systemd
+  command:                   systemctl daemon-reload
+
+- name: Restart fastd
+  service: 
+    name:                    fastd@{{ hoods[item[0].key]['sname'] }}{{ item[1] }} 
+    state:                   restarted
+  with_nested:
+    -                        "{{ gateways[unit_id]['domains'] | dict2items }}"
+    -                        [0,1,2,3]
+  when:                      gateways[unit_id].btm_conntype == "fastd" and item[1] | int < hoods[item[0].key].fastd_inst | int
+
+- name: Restart radvd
+  service:                   
+    name:                    radvd 
+    state:                   restarted
+
+- name: Restart isc-dhcp-server
+  service: 
+    name:                    isc-dhcp-server 
+    state:                   restarted
+
+- name: Restart bind9
+  service: 
+    name:                    bind9 
+    state:                   restarted
+

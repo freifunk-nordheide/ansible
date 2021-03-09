@@ -1,0 +1,26 @@
+127.0.0.1       localhost
+127.0.1.1       {{ unit_idn }}   {% if unit_type == "gateway" %}{{ unit_id }}.gw.{{ sites[gateways[unit_id].site].domain }}
+{% else %}{{ unit_name }}
+{% endif %}
+{% if unit_type == "gateway" %}
+{{ gateways[unit_id].ipv4 }}	{{ unit_id }}.gw.{{ sites[gateways[unit_id].site].domain }}	{{ unit_idn }}
+{% for igw in gateways[unit_id]['domains'] | dict2items %}
+{{ gateways[unit_id].domains[igw.key].bat_ipv4 | ipaddr('address')}}	{{ hoods[igw.key].sname }}
+{% endfor %}
+{% else %}
+{{ gateways[unit_id].ipv4 }}	{{ unit_name }}	{{ unit_idn }}
+{% endif %}
+
+# The following lines are desirable for IPv6 capable hosts
+{% if unit_type == "gateway" %}
+::1	{{unit_idn}}	{{ unit_id }}.gw.{{ sites[gateways[unit_id].site].domain }}	localhost	ip6-localhost	ip6-loopback
+{% for igw in gateways[unit_id]['domains'] | dict2items %}
+{{ gateways[unit_id].domains[igw.key].bat_ipv6 | ipaddr('address')}}	{{ hoods[igw.key].sname }}
+{% endfor %}
+{% else %}
+::1	{{unit_idn}}	{{ unit_name }}	localhost	ip6-localhost	ip6-loopback
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+{% endif %}
+
+

@@ -1,0 +1,10 @@
+---
+
+# file: grafana/handlers/main.yml
+#
+
+- name: restart grafana
+  service:
+    name:                 grafana-server
+    state:                restarted
+  become:                 yes

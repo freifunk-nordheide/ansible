@@ -1,0 +1,17 @@
+# {{ ansible_managed }}
+
+server {
+	listen 80 default_server;
+
+{% if unit_type == 'gateway' %}
+	server_name {{ unit_id }}.gw.{{ sites[gateways[unit_id].site].domain }};
+{% elif unit_type == 'mapserver' %}
+	server_name {{ unit_id }}.{{ sites[gateways[unit_id].site].domain }};
+{% elif unit_type == 'statserver' %}
+	server_name {{ unit_id }}.{{ sites[gateways[unit_id].site].domain }};
+{% elif unit_type == 'collector' %}
+	server_name {{ unit_id }}.{{ sites[gateways[unit_id].site].domain }};
+{% endif %}
+	include snippets/letsencrypt.conf;
+}
+

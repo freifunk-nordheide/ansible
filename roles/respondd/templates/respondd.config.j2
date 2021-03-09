@@ -1,0 +1,50 @@
+# {{ ansible_managed }}
+
+# Default settings
+[Defaults]
+# Listen port
+# optional, default: 1001
+Port: 1001
+# Default link local listen addresses
+# optional, default: ff02::2:1001
+MulticastLinkAddress: ff02::2:1001
+# Default site local listen addresses
+# optional, default: ff05::2:1001
+MulticastSiteAddress: ff05::2:1001
+# Default domain to use
+# optional, if specified incoming requests that can not be mapped to a domain
+# are mapped to this domain
+DefaultDomain: {{ hoods[item.key].sname }}
+# Default domain type
+# optional, default: simple
+# supported domain types are: simple, batadv
+DomainType: batadv
+# Default ddhcpd IPv4 gateway address
+# optional
+IPv4Gateway: {{ item.value.bat_ipv4 | ipaddr('address') }}
+
+# A domain
+# User your own domain name here
+[{{ hoods[item.key].sname }}]
+# This is a batman domain
+# optional, default: @Defaults.DomainType
+# supported domain types are: simple, batadv
+DomainType: batadv
+# Link local listen addresses
+# optional, default: @Defaults.MulticastLinkAddress
+MulticastLinkAddress: ff02::2:1001
+# Site local listen addresses
+# optional, default: @Defautls.MulticastSiteAddress
+MulticastSiteAddress: ff05::2:1001
+# Batman interface
+# only for batadv domains, defaults to bat-<domain name>
+BatmanInterface: bat-{{ hoods[item.key].sname }}
+# Other listen interfaces
+# optional, specify comma separated list of listen/multicast interfaces for this domain here
+Interfaces: br-{{ hoods[item.key].sname }}, vpn-{{ hoods[item.key].sname }}0
+# IPv4 gateway option for ddhcpd
+# optional, default: @IPv4Gateway
+IPv4Gateway: {{ item.value.bat_ipv4 | ipaddr('address') }}
+
+# An arbitrary number of further domains may follow here
+
