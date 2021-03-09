@@ -1,0 +1,17 @@
+---
+
+- name:        Sync Push task - Executed on source host "statistik.freifunk-nordheide.de"
+  hosts:                "stat01.freifunk-nordheide.de" 
+  user:                 freifunker
+  tasks:
+    - name:    Copy the complete db from statistik to stat01 using Method Push
+      tags:             sync-push
+      synchronize:
+        src:            "/var/lib/influxdb/"
+        dest:           "/var/lib/influxdb/"
+        mode:           push
+        recursive:      true
+#        rsync_path:     "sudo rsync" 
+      become:           true
+      delegate_to:      "statistik.freifunk-nordheide.de"
+

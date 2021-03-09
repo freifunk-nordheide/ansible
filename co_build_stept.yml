@@ -10,13 +10,11 @@
   hosts: all
   roles:
   - ntp
-#  - bind
-  - nginx
-  - yanic
-  - maintenance
-
-- name: Reboot gateways
-  hosts: all
-  roles:
+  - batman
+  - fastd
+  - meshconfig
   - reboot-unit
+  - bind
+  - yanic
+#  - nginx
 

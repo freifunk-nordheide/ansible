@@ -1,0 +1,21 @@
+---
+
+- name: Setup statistik server
+  hosts: all
+  roles:
+  - stat-install-grafana
+
+#- name: Setup statserver
+#  hosts: all
+#  roles:
+#  - ntp
+#  - bind
+#  - nginx
+# # - yanic
+#  - maintenance
+
+#- name: Reboot gateways
+#  hosts: all
+#  roles:
+#  - reboot-unit
+

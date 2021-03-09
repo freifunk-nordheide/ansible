@@ -13,18 +13,15 @@
   - batman
   - fastd
   - meshconfig
-  - respondd
   - radvd
   - bind
-  - dhcp
- # - firewall
- # - bird
-  - nginx
+  - respondd
   - maintenance
-  - yanic
+  - nginx
+  - dhcp
 
-- name: Reboot gateways
+- name: Setup yanic
   hosts: all
   roles:
-  - reboot-unit
-
+  - yanic
+ 

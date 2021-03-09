@@ -1,0 +1,7 @@
+---
+
+- name: Reboot gateways
+  hosts: all
+  roles:
+  - config-after-reboot
+

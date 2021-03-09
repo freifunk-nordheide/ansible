@@ -1,11 +1,16 @@
 ---
 
-- name: Testing roles on hosts
+- name: prepare mapserver
   hosts: 
   - all
   roles:
   - hostname
   - common
+
+- name: build mapserver
+  hosts: 
+  - all
+  roles:
   - ntp
   - meshviewer-install
   - meshviewer-config
