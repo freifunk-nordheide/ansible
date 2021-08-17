@@ -50,15 +50,21 @@ GLUON_SITE_PACKAGES += \
 # Always call `make` from the command line with the desired release version!
 # otherwise this is generated:
 DEFAULT_GLUON_RELEASE := 2020.2.2~exp$(shell date '+%y%m%d01')
-#	DEFAULT_GLUON_RELEASE := 2020.2.2
+#	DEFAULT_GLUON_RELEASE := 2021.1.1
 
 # Allow overriding the release number from the command line
 GLUON_RELEASE ?= $(DEFAULT_GLUON_RELEASE)
 
 GLUON_PRIORITY ?= 0
-GLUON_BRANCH ?= experimental
+#GLUON_BRANCH ?= experimental
 #GLUON_BRANCH ?= stable
-export GLUON_BRANCH
+#export GLUON_BRANCH
+
+GLUON_AUTOUPDATER_BRANCH ?= stable
+export GLUON_AUTOUPDATER_BRANCH
+
+GLUON_AUTOUPDATER_ENABLED ?= 1
+export GLUON_AUTOUPDATER_ENABLED
 
 GLUON_DEPRECATED ?= update
 export GLUON_DEPRECATED
