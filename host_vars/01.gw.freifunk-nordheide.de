@@ -1,0 +1,41 @@
+---
+
+unit_type:                      gateway
+unit_id:                        "01"
+unit_idn:                       "{{ unit_id }}gw"
+
+# ####################################
+# Basiseinstellungen - Ab hier nicht ändern!
+# ####################################
+
+hw_address_prefix: 		"{{ sites[gateways[unit_id].site].hwadr_prefix }}"
+
+# ####################################
+# Basiseinstellungen
+# ####################################
+
+
+# ####################################
+# Ausleiten
+# ####################################
+
+tun_if: "tun0"
+
+divert_type:                    "{{ gateways[unit_id].div_type }}"
+divert_if:                      "{{ gateways[unit_id].div_if }}"
+divert_gwv4:                    "{{ gateways[unit_id].div_gwv4 }}"
+divert_ipv4:                    "{{ gateways[unit_id].div_ipv4 }}"
+divert_ipv6:                    "{{ gateways[unit_id].div_ipv6 }}"
+
+# ####################################
+# Fastd / L2tp
+# ####################################
+
+btm_conntype:		        "{{ gateways[unit_id].btm_conntype }}"	
+
+# ####################################
+# Nginx
+# ####################################
+
+nginx_ssl: True
+
