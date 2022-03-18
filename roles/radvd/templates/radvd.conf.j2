@@ -12,11 +12,13 @@ interface br-{{ hoods[item.key].sname }} {
     AdvAutonomous on;
     AdvRouterAddr on;
   };
+{% if gateways[unit_id].type == "gw" %}
   prefix {{ item.value.bat_ipv6_l | ipaddr('address') | ipsubnet(64) }} {
     AdvOnLink on;
     AdvAutonomous on;
     AdvRouterAddr on;
   };
+{% endif %}
   RDNSS {{  item.value.bat_ipv6 | ipaddr('address')}} {
   };
 };

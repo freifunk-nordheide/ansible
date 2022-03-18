@@ -11,8 +11,8 @@
   hosts: 
   - all
   roles:
-  - ntp
-  - meshviewer-install
-  - meshviewer-config
+  #- ntp
+  #- meshviewer-install
+  #- meshviewer-config
   - nginx
 

@@ -16,12 +16,9 @@
   - radvd
   - bind
   - respondd
+  - yanic
   - maintenance
   - nginx
   - dhcp
+  - reboot-unit
 
-- name: Setup yanic
-  hosts: all
-  roles:
-  - yanic
- 

@@ -10,6 +10,23 @@
     sitedir:            "{{ playbook_dir }}/firmware_site"
     targetsite:         ffnh
     gluon_sver:         "2020.2.2"
+    targetcollectors:
+    - "coll01"
+    - "coll02"
+    targethosts:
+    - "01"
+    - "02"
+    - "03"
+    - "04"
+    - "09"
+    - "10"
+    - "11"
+    - "12"
+    - "13"
+    - "14"
+    - "21"
+    - "22"
+    - "23"
     targetdomains:
     - "00"   # Alte Umgebung
     - "01"   # Standardhood

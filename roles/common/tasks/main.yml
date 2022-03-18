@@ -26,6 +26,7 @@
     - lsb-release
     - jq
     - traceroute
+    - ethtool
   register: task_result
 
 - name: Reboot immediately if there was a change.

@@ -95,64 +95,64 @@ module.exports = function () {
     'nodeInfos': [
       {
         'name': 'Clientstatistik',
-        'href': 'http://statistik.freifunk-nordheide.de:3000/d/fLurVy4Zk/node-stat?orgId=1&var-nodeid={NODE_ID}',
-        'image': 'http://statistik.freifunk-nordheide.de:3000/render/d-solo/fLurVy4Zk/node-stat?orgId=1&panelId=2&var-nodeid={NODE_ID}&width=650&height=350&from=now-3d&theme=light&_t{TIME}',
+        'href': 'https://{{ gateways[unit_id].stat_server }}/d/fLurVy4Zk/node-stat?orgId=1&var-nodeid={NODE_ID}',
+        'image': 'https://{{ gateways[unit_id].stat_server }}/render/d-solo/fLurVy4Zk/node-stat?orgId=1&panelId=2&var-nodeid={NODE_ID}&width=650&height=350&from=now-3d&theme=light&_t{TIME}',
         'title': 'Node {NODE_NAME} - Clients'
       },
-      {
+      //{
         //'name': 'Test1',
-        'href': 'http://statistik.freifunk-nordheide.de:3000/d/hBrcOYIZz/node-stat-15-minute-interval?orgId=1&panelid=2&from=now-30d&var-nodeid={NODE_ID}',
-        'image': 'http://statistik.freifunk-nordheide.de:3000/render/d-solo/s0RwhPIZk/node-stat-extra?openVizPicker&orgId=1&panelId=4&width=500&height=40&frameborder=0&from=now-30d&theme=light&_t{TIME}',
-        'title': 'Node {NODE_NAME} - Clients'
-      },
-      {
+        //'href': 'https://{{ gateways[unit_id].stat_server }}/d/hBrcOYIZz/node-stat-15-minute-interval?orgId=1&panelid=2&from=now-30d&var-nodeid={NODE_ID}',
+        //'image': 'https://{{ gateways[unit_id].stat_server }}/render/d-solo/s0RwhPIZk/node-stat-extra?openVizPicker&orgId=1&panelId=4&width=500&height=40&frameborder=0&from=now-30d&theme=light&_t{TIME}',
+        //'title': 'Node {NODE_NAME} - Clients'
+      //},
+      //{
         //'name': 'Test2',
-        'href': 'http://statistik.freifunk-nordheide.de:3000/d/yb6NxPSZk/node-stat-360-minute-interval?orgId=1&panelid=2&from=now-185d&var-nodeid={NODE_ID}',
-        'image': 'http://statistik.freifunk-nordheide.de:3000/render/d-solo/s0RwhPIZk/node-stat-extra?openVizPicker&orgId=1&panelId=5&width=500&height=40&frameborder=0&from=now-30d&theme=light&_t{TIME}',
-        'title': 'Node {NODE_NAME} - Clients'
-      },
+        //'href': 'https://{{ gateways[unit_id].stat_server }}/d/yb6NxPSZk/node-stat-360-minute-interval?orgId=1&panelid=2&from=now-185d&var-nodeid={NODE_ID}',
+        //'image': 'https://{{ gateways[unit_id].stat_server }}/render/d-solo/s0RwhPIZk/node-stat-extra?openVizPicker&orgId=1&panelId=5&width=500&height=40&frameborder=0&from=now-30d&theme=light&_t{TIME}',
+        //'title': 'Node {NODE_NAME} - Clients'
+      //},
       {
         'name': 'Clients in local Cloud',
-        'href': 'http://statistik.freifunk-nordheide.de:3000/d/fLurVy4Zk/node-stat?orgId=1&var-nodeid={NODE_ID}',
-        'image': 'http://statistik.freifunk-nordheide.de:3000/render/d-solo/fLurVy4Zk/node-stat?orgId=1&panelId=18&var-nodeid={NODE_ID}&width=650&height=400&from=now-3d&theme=light&_t{TIME}',
+        'href': 'https://{{ gateways[unit_id].stat_server }}/d/fLurVy4Zk/node-stat?orgId=1&var-nodeid={NODE_ID}',
+        'image': 'https://{{ gateways[unit_id].stat_server }}/render/d-solo/fLurVy4Zk/node-stat?orgId=1&panelId=18&var-nodeid={NODE_ID}&width=650&height=400&from=now-3d&theme=light&_t{TIME}',
         'title': 'Node {NODE_NAME} - Local Cloud'
       },
       //{
       //  'name': 'Airtime',
-      //  'href': 'http://statistik.freifunk-nordheide.de:3000/d/nFRq0aGZz/node-stat01?orgId=1&var-hostname={NODE_NAME}',
-      //  'image': 'http://statistik.freifunk-nordheide.de:3000/render/d-solo/nFRq0aGZz/node-stat01?orgId=1&panelId=22&var-hostname={NODE_NAME}&width=650&height=350&from=now-3d&theme=light&_t{TIME}',
+      //  'href': 'https://{{ gateways[unit_id].stat_server }}/d/nFRq0aGZz/node-stat01?orgId=1&var-hostname={NODE_NAME}',
+      //  'image': 'https://{{ gateways[unit_id].stat_server }}/render/d-solo/nFRq0aGZz/node-stat01?orgId=1&panelId=22&var-hostname={NODE_NAME}&width=650&height=350&from=now-3d&theme=light&_t{TIME}',
       //  'title': 'Node {NODE_NAME} - Airtime'
       //},
       {
         'name': 'Traffic',
-        'href': 'http://statistik.freifunk-nordheide.de:3000/d/fLurVy4Zk/node-stat?orgId=1&var-nodeid={NODE_ID}',
-        'image': 'http://statistik.freifunk-nordheide.de:3000/render/d-solo/fLurVy4Zk/node-stat?orgId=1&panelId=4&var-nodeid={NODE_ID}&width=650&height=350&from=now-3d&theme=light&_t{TIME}',
+        'href': 'https://{{ gateways[unit_id].stat_server }}/d/fLurVy4Zk/node-stat?orgId=1&var-nodeid={NODE_ID}',
+        'image': 'https://{{ gateways[unit_id].stat_server }}/render/d-solo/fLurVy4Zk/node-stat?orgId=1&panelId=4&var-nodeid={NODE_ID}&width=650&height=350&from=now-3d&theme=light&_t{TIME}',
          'title': 'Node {NODE_NAME} - Traffic'
       }
     ],
     'globalInfos': [
       {
         'name': 'Clients and Nodes',
-        'href': 'http://statistik.freifunk-nordheide.de:3000/d/4PhqkbGZz/global-stat01?refresh=10s&orgId=1',
-        'image': 'http://statistik.freifunk-nordheide.de:3000/render/d-solo/4PhqkbGZz/global-stat01?panelId=2&orgId=1&width=750&height=300&from=now-7d&to=now&theme=light&_t{TIME}',
+        'href': 'https://{{ gateways[unit_id].stat_server }}/d/4PhqkbGZz/global-stat01?refresh=10s&orgId=1',
+        'image': 'https://{{ gateways[unit_id].stat_server }}/render/d-solo/4PhqkbGZz/global-stat01?panelId=2&orgId=1&width=750&height=300&from=now-7d&to=now&theme=light&_t{TIME}',
         'title': 'Nodes, Clients'
       },
-      {
-        'name': 'Clients per Node',
-        'href': 'http://statistik.freifunk-nordheide.de:3000/d/4PhqkbGZz/global-stat01?refresh=10s&orgId=1',
-        'image': 'http://statistik.freifunk-nordheide.de:3000/render/d-solo/4PhqkbGZz/global-stat01?panelId=6&orgId=1&width=750&height=300&from=now-7d&to=now&theme=light&_t{TIME}',
-        'title': 'Nodes, Clients'
-      },
+      //{
+        //'name': 'Clients per Node',
+        //'href': 'https://{{ gateways[unit_id].stat_server }}/d/4PhqkbGZz/global-stat01?refresh=10s&orgId=1',
+        //'image': 'https://{{ gateways[unit_id].stat_server }}/render/d-solo/4PhqkbGZz/global-stat01?panelId=6&orgId=1&width=750&height=300&from=now-7d&to=now&theme=light&_t{TIME}',
+        //'title': 'Nodes, Clients'
+      //},
       {
         'name': 'Gateway Traffic out (Tx)',
-        'href': 'http://statistik.freifunk-nordheide.de:3000/d/4PhqkbGZz/global-stat01?refresh=10s&orgId=1',
-        'image': 'http://statistik.freifunk-nordheide.de:3000/render/d-solo/4PhqkbGZz/global-stat01?panelId=8&orgId=1&var-gateway=All&var-gwlink=All&width=750&height=300&from=now-7d&to=now&theme=light&_t{TIME}',
+        'href': 'https://{{ gateways[unit_id].stat_server }}/d/4PhqkbGZz/global-stat01?refresh=10s&orgId=1',
+        'image': 'https://{{ gateways[unit_id].stat_server }}/render/d-solo/4PhqkbGZz/global-stat01?panelId=8&orgId=1&var-gateway=All&var-gwlink=All&width=750&height=300&from=now-7d&to=now&theme=light&_t{TIME}',
         'title': 'Gateways, Traffic'
       },
       {
         'name': 'Gateway Mgmnt Traffic in (Rx)',
-        'href': 'http://statistik.freifunk-nordheide.de:3000/d/4PhqkbGZz/global-stat01?refresh=10s&orgId=1',
-        'image': 'http://statistik.freifunk-nordheide.de:3000/render/d-solo/4PhqkbGZz/global-stat01?panelId=12&orgId=1&var-gateway=All&var-gwlink=All&width=750&height=300&from=now-7d&to=now&theme=light&_t{TIME}',
+        'href': 'https://{{ gateways[unit_id].stat_server }}/d/4PhqkbGZz/global-stat01?refresh=10s&orgId=1',
+        'image': 'https://{{ gateways[unit_id].stat_server }}/render/d-solo/4PhqkbGZz/global-stat01?panelId=12&orgId=1&var-gateway=All&var-gwlink=All&width=750&height=300&from=now-7d&to=now&theme=light&_t{TIME}',
         'title': 'Gateways, Management Traffic'
       }
     ],

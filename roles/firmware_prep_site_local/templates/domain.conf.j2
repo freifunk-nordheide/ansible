@@ -11,7 +11,7 @@
 {% endif %}
 
   ntp_servers = {
-{% for igw in gateways if gateways[igw].domains is defined and gateways[igw].domains[item] is defined %}
+{% for igw in gateways if gateways[igw].domains is defined and gateways[igw].domains[item] is defined and gateways[igw].number in targethosts %}
       '{{ gateways[igw].domains[item].bat_ipv6 }}'{% if not loop.last %},
 {% else %} 
 {% endif %}
@@ -69,13 +69,41 @@
   dns = {
     cacheentries = 5000,
     servers = {
-{% for igw in gateways if gateways[igw].domains is defined and gateways[igw].domains[item] is defined %}
+{% for igw in gateways if gateways[igw].domains is defined and gateways[igw].domains[item] is defined and gateways[igw].number in targethosts %}
       '{{ gateways[igw].domains[item].bat_ipv6 }}'{% if not loop.last %},
 {% else %} 
 {% endif %}
 {% endfor %}
-    }
+    },
   },
+
+  autoupdater = {
+    branches = {
+      stable = {
+        mirrors = {
+{% for igw in targetcollectors if gateways[igw].domains is defined and gateways[igw].domains[item] is defined %}
+          'http://[{{ gateways[igw].domains[item].bat_ipv6 }}]/firmware/stable/sysupgrade',
+          'http://[{{ gateways[igw].domains[item].bat_ipv6_l }}]/firmware/stable/sysupgrade',
+          'http://{{ gateways[igw].number }}.freifunk-nordheide.de/firmware/stable/sysupgrade'{% if not loop.last %},
+{% else %} 
+{% endif %}
+{% endfor %}
+        },
+      },
+      experimental = {
+        mirrors = {
+{% for igw in targetcollectors if gateways[igw].domains is defined and gateways[igw].domains[item] is defined %}
+          'http://[{{ gateways[igw].domains[item].bat_ipv6 }}]/firmware/experimental/sysupgrade',
+          'http://[{{ gateways[igw].domains[item].bat_ipv6_l }}]/firmware/experimental/sysupgrade',
+          'http://{{ gateways[igw].number }}.freifunk-nordheide.de/firmware/experimental/sysupgrade'{% if not loop.last %},
+{% else %} 
+{% endif %}
+{% endfor %}
+        },
+      },
+    },
+  },
+
 
   mesh = {
 {% if item | int <= targetdefault | int %}
@@ -100,7 +128,7 @@
           limit = 1,
           peers = {
 {% if hoods[item].btm_conntype == "fastd" %}
-{% for igw in gateways if gateways[igw].domains is defined and gateways[igw].domains[item] is defined %}
+{% for igw in gateways if gateways[igw].domains is defined and gateways[igw].domains[item] is defined and gateways[igw].number in targethosts %}
             {{ gateways[igw].site}}_vpn{{ igw }}{{ item }} = {
               {{ fastd_keys[gateways[igw].name].domains[item].public | regex_replace('^public', 'key =') | regex_replace(';$', '')}},
               remotes = {
@@ -118,7 +146,7 @@
     tunneldigger = {
       brokers = {
 {% if hoods[item].btm_conntype != "fastd" %}
-{% for igw in gateways if gateways[igw].domains is defined and gateways[igw].domains[item] is defined %}
+{% for igw in gateways if gateways[igw].domains is defined and gateways[igw].domains[item] is defined and gateways[igw].number in targethosts %}
         '{{ gateways[igw].lname }}:{{ hoods[item].td_port }}'{% if not loop.last %},
 {% else %} 
 {% endif %}

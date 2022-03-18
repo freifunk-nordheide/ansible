@@ -61,12 +61,10 @@ iface bat-{{ hoods[item].sname }} inet6 manual
 	post-up batctl -m bat-{{ hoods[item].sname }} it 10000
 {% if unit_type == "gateway" %}
 {% if gateways[unit_id].domains[item].cnt|int < 2 %}
-	post-up batctl -m bat-{{ hoods[item].sname }} gw server 1000mbit/1000mbit
+	post-up batctl -m bat-{{ hoods[item].sname }} gw server 10000000/10000000
 {% else %}
-	post-up batctl -m bat-{{ hoods[item].sname }} gw server 50mbit/50mbit
+	post-up batctl -m bat-{{ hoods[item].sname }} gw server 50000/50000
 {% endif %}
-{% else %}
-	post-up batctl -m bat-{{ hoods[item].sname }} gw server 10mbit/10mbit
 {% endif %}
 	post-up batctl -m bat-{{ hoods[item].sname }} ra {{ batman_algo }}
 

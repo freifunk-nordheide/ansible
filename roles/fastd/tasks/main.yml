@@ -73,7 +73,7 @@
 
 - name: Create config directories peers
   file: 
-    path:      /etc/fastd/{{ hoods[item[0].key]['sname'] }}{{ item[1] }}/peers 
+    path:      /etc/fastd/{{ hoods[item[0].key]['sname'] }}{{ item[1] | int }}/peers 
     state:     directory
   with_nested:
     -          "{{ gateways[unit_id]['domains'] | dict2items }}"
@@ -89,14 +89,23 @@
     loop_var:  igw
   when:        gateways[unit_id].btm_conntype == "fastd"
 
-- name: Config backbone
+- name: Config backbone gw
   template: 
     src:       backbone.j2 
     dest:      /etc/fastd/{{ hoods[item[0].key]['sname'] }}{{ hoods[item[0].key].fastd_inst | int -1 }}/backbone/{{ item[1].value.lname }}
   with_nested:
     -          "{{ gateways[unit_id]['domains'] | dict2items }}"
     -          "{{ gateways | dict2items }}"
-  when:        gateways[unit_id].btm_conntype == "fastd" and item[1].value.domains is defined and item[1].value.domains[item[0].key] is defined and item[1].key != unit_id
+  when:        unit_type == "gateway" and gateways[unit_id].btm_conntype == "fastd" and item[1].value.domains is defined and item[1].value.domains[item[0].key] is defined and item[1].key != unit_id
+
+- name: Config backbone coll
+  template: 
+    src:       backbone.j2 
+    dest:      /etc/fastd/{{ hoods[item[0].key]['sname'] }}{{ hoods[item[0].key].fastd_inst | int -1 }}/backbone/{{ item[1].value.lname }}
+  with_nested:
+    -          "{{ gateways[unit_id]['domains'] | dict2items }}"
+    -          "{{ gateways | dict2items }}"
+  when:        unit_type == "collector" and gateways[unit_id].btm_conntype == "fastd" and item[1].value.domains is defined and item[1].value.domains[item[0].key] is defined and not item[1].key in ["coll01", "coll02"]
 
 - name: Configure fastd
   template: 
@@ -177,7 +186,7 @@
 
 - name: Enable fastd {{ site_code }}
   service: 
-    name:      fastd@{{ hoods[item[0].key]['sname'] }}{{ item[1] }}
+    name:      fastd@{{ hoods[item[0].key]['sname'] }}{{ item[1] | int }}
     enabled:   yes
   with_nested:
     -          "{{ gateways[unit_id]['domains'] | dict2items }}"

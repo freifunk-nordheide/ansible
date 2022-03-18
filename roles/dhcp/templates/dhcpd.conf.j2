@@ -1,10 +1,9 @@
 # {{ ansible_managed }}
 
 # option definitions common to all supported networks...
-option domain-name "{{ sites[gateways[unit_id].site].domain }}";
 
-default-lease-time 120;
-max-lease-time 600;
+default-lease-time 300;
+max-lease-time 1200;
 
 # Use this to enble / disable dynamic dns updates globally.
 ddns-update-style none;
@@ -21,10 +20,29 @@ log-facility local7;
 # Freifunk Nordheide
 {% for item in gateways[unit_id].domains | dict2items %}
 subnet {{ hoods[item.key].dhcp_range | ipaddr('network') }} netmask {{ hoods[item.key].dhcp_range | ipaddr('netmask') }} {
-  option routers {{ item.value.bat_ipv4 | ipaddr('address') }};
-  option domain-name-servers {{item.value.nextnode4}}, {{ item.value.bat_ipv4 | ipaddr('address') }};
-  interface br-{{hoods[item.key].sname}};
-  range {{ item.value.dhcp_first }} {{ item.value.dhcp_last }};
+  interface br-{{ hoods[item.key].sname }};
+  option domain-name "{{ hoods[item.key].sname }}";
+  option domain-search "{{ hoods[item.key].sname }}";
+
+  pool {
+    range {{ item.value.dhcp_first }} {{ item.value.dhcp_last }};
+    option routers {{ item.value.bat_ipv4 | ipaddr('address') }};
+    option domain-name-servers {{ item.value.bat_ipv4 | ipaddr('address') }};
+    allow unknown-clients;
+  }
+
+{% for gwitem in gateways | dict2items if gateways[gwitem.key].domains is defined %}
+{% for dmitem in gateways[gwitem.key].domains | dict2items %}
+{% if dmitem.key == item.key and gwitem.value.type == "gw" and gwitem.key != unit_id %}
+  pool {
+    range {{ dmitem.value.dhcp_first }} {{ dmitem.value.dhcp_last }};
+    option routers {{ dmitem.value.bat_ipv4 | ipaddr('address') }};
+    option domain-name-servers {{ dmitem.value.bat_ipv4 | ipaddr('address') }};
+    deny unknown-clients;
+  }
+{% endif %}
+{% endfor %}
+{% endfor %}
 }
 
 {% endfor %}

@@ -14,7 +14,7 @@ $ORIGIN {{ hoods[item.key].sname }}.
 {% if igw.key | regex_search('^\d{2}$') %}
 					IN	NS	{{ igw.key }}.gw
 {% else %}
-					IN	NS	{{ igw.key }}
+; 					IN	NS	{{ igw.key }}
 {% endif %}
 {% endif %}
 {% endfor %}
@@ -25,8 +25,8 @@ $ORIGIN {{ hoods[item.key].sname }}.
 {{ igw.key }}.gw				86400	IN	A	{{ igw.value.domains[item.key].bat_ipv4  | ipaddr('address')}}
 						AAAA	{{ igw.value.domains[item.key].bat_ipv6 }}
 {% else %}
-{{ igw.key }}				86400	IN	A	{{ igw.value.domains[item.key].bat_ipv4  | ipaddr('address')}}
-						AAAA	{{ igw.value.domains[item.key].bat_ipv6 }}
+; {{ igw.key }}				86400	IN	A	{{ igw.value.domains[item.key].bat_ipv4  | ipaddr('address')}}
+;						AAAA	{{ igw.value.domains[item.key].bat_ipv6 }}
 {% endif %}
 {% endif %}
 {% endfor %}
@@ -38,8 +38,8 @@ $ORIGIN {{ hoods[item.key].sname }}.
 {{ igw.key }}.gw				86400	IN	A	{{ igw.value.domains[item.key].bat_ipv4  | ipaddr('address') }}
 						AAAA	{{ igw.value.domains[item.key].bat_ipv6 }}
 {% else %}
-{{ igw.key }}				86400	IN	A	{{ igw.value.domains[item.key].bat_ipv4  | ipaddr('address') }}
-						AAAA	{{ igw.value.domains[item.key].bat_ipv6 }}
+; {{ igw.key }}				86400	IN	A	{{ igw.value.domains[item.key].bat_ipv4  | ipaddr('address') }}
+;						AAAA	{{ igw.value.domains[item.key].bat_ipv6 }}
 
 {% endif %}
 {% endif %}

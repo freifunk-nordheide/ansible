@@ -2,6 +2,11 @@
 #
 # file: grafana/tasks/main.yml
 #
+- name: Grafana Version
+  set_fact: 
+    grafana_version:               "8.1.1"
+    # Install first the above version because the existing grafana.db used here (containing all our charts) is based on this version
+    # Update grafana to a newer version after the first installation directly on the VM - this will guarantee a consistent db
 
 - name: ensure apt dependencies are installed
   apt:
@@ -32,24 +37,24 @@
 
 - name: ensure grafana is installed
   package:
-    name:                          "grafana{{ (grafana_version != 'latest') | ternary('=' ~ grafana_version, '') }}
+    name:                          "grafana{{ (grafana_version != 'latest') | ternary('=' ~ grafana_version, '') }}"
     state:                         "{{ (grafana_version == 'latest') | ternary('latest', 'present') }}"
   become:                          yes
   register:                        _install_packages
-  until:                           _install_packages ist succeeded
+  until:                           _install_packages is succeeded
   retries:                         5
   delay:                           2
   notify:                          restart grafana
 
-#- name: Ensure integrity of grafana configuration.
-#  template:
-#    src:                           "grafana.ini.j2"
-#    dest:                          "/etc/grafana/grafana.ini"
-#    owner:                         grafana
-#    group:                         grafana
-#    mode:                          0644
-#  become:                          yes
-#  notify:                          restart grafana
+- name: Ensure integrity of grafana configuration.
+  template:
+    src:                           "grafana.ini.j2"
+    dest:                          "/etc/grafana/grafana.ini"
+    owner:                         grafana
+    group:                         grafana
+    mode:                          0644
+  become:                          yes
+  notify:                          restart grafana
 
 #- name: Ensure integrity of grafana configuration.
 #  template:
@@ -78,7 +83,7 @@
     group:                         grafana
     mode:                          0755
     state:                         directory
-  become: yes
+  become:                          yes
   with_items:
     - /etc/grafana
     - /var/lib/grafana
@@ -86,6 +91,16 @@
     - /var/log/grafana
     - /var/lib/grafana/plugins
     - /var/run/grafana
+
+- name: Copy existing grafana.db
+  copy:        
+    src:                           grafana.db 
+    dest:                          /var/lib/grafana/grafana.db 
+    owner:                         grafana
+    group:                         grafana
+    mode:                          0755 
+    force:                         yes
+  become:                          yes  
 
 - name: ensure grafana is running and enabled to start on boot
   service:

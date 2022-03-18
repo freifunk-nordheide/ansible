@@ -1,6 +1,5 @@
 # {{ ansible_managed }}
 
 {{ fastd_keys[item[1].value.name].domains[item[0].key].public | regex_replace('^public', 'key') }}
-# remote "{{ item[1].value.number }}.gw.{{ sites[gateways[unit_id].site].domain }}" port {{ fastd_port_pref }}{{item[0].key}}{{ (hoods[item[0].key].fastd_inst | int -1) | string }};
-remote ipv4 "{{ item[1].value.domains[item[0].key].bat_ipv4 | ipaddr("address") }}" port {{ fastd_port_pref }}{{item[0].key}}{{ (hoods[item[0].key].fastd_inst | int -1) | string}};
+remote "{{ item[1].value.number }}.gw.{{ sites[gateways[unit_id].site].domain }}" port {% if gateways[unit_id].type == 'gwa' %}10050{% else %}{{ fastd_port_pref }}{{item[0].key}}{{ (hoods[item[0].key].fastd_inst | int -1) | string}}{% endif %};
 

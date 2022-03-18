@@ -208,7 +208,7 @@ hoods:
     site:                   ffnh
     dhcp_range:             "10.72.176.0/20"
     dhcp6_range:            "2a07:59c6:ec06:ff11::/64"
-    nextnode4:              "10.71.191.254"
+    nextnode4:              "10.72.191.254"
     nextnode6:              "2a07:59c6:ec06:ff11::11ff"
     btm_conntype:           "fastd"
     ssid:                   "nordheide.freifunk.net"
@@ -229,7 +229,7 @@ hoods:
     site:                   ffnh
     dhcp_range:             "10.72.192.0/20"
     dhcp6_range:            "2a07:59c6:ec06:ff12::/64"
-    nextnode4:              "10.71.207.254"
+    nextnode4:              "10.72.207.254"
     nextnode6:              "2a07:59c6:ec06:ff12::12ff"
     btm_conntype:           "fastd"
     ssid:                   "nordheide.freifunk.net"
@@ -250,7 +250,7 @@ hoods:
     site:                   ffnh
     dhcp_range:             "10.72.208.0/20"
     dhcp6_range:            "2a07:59c6:ec06:ff13::/64"
-    nextnode4:              "10.71.223.254"
+    nextnode4:              "10.72.223.254"
     nextnode6:              "2a07:59c6:ec06:ff13::13ff"
     btm_conntype:           "fastd"
     ssid:                   "nordheide.freifunk.net"
@@ -271,7 +271,7 @@ hoods:
     site:                   ffnh
     dhcp_range:             "10.72.224.0/20"
     dhcp6_range:            "2a07:59c6:ec06:ff14::/64"
-    nextnode4:              "10.71.239.254"
+    nextnode4:              "10.72.239.254"
     nextnode6:              "2a07:59c6:ec06:ff14::14ff"
     btm_conntype:           "fastd"
     ssid:                   "nordheide.freifunk.net"
@@ -415,6 +415,7 @@ gateways:
   "01":
     number:                 "01"
     name:                   01gw
+    type:                   "gwa"
     lname:                  "01.gw.{{ sites['ffnh'].domain }}"
     ipv4:                   "51.38.103.120"
     if:                     "eth0"
@@ -434,10 +435,14 @@ gateways:
   "04":
     number:                 "04"
     name:                   04gw
+    type:                   "gwa"
     lname:                  "04.gw.{{ sites['ffnh'].domain }}"
-    ipv4:                   "51.38.107.244"
-    if:                     "eth0"
-    host:                   "04"
+    ipv4:                   "162.19.134.62"
+#    ipv4:                   "51.38.107.244"
+    if:                     "ens18"
+    div_if:                 "ens18"
+    div_ipv4:               "162.19.134.62"
+    host:                   "01"
     site:                   "ffnh"
     btm_conntype:           "fastd"
     domains:
@@ -449,6 +454,32 @@ gateways:
         dhcp_last:          "10.71.17.253"
         nextnode4:          "10.71.31.254"
         nextnode6:          "fd8f:14c7:d318::ffff"
+
+
+# Test "neues" gw in der Alt-Umgebung 
+#  "05":
+#    number:                 "05"
+#    name:                   05gw
+#    type:                   "gwa"
+#    lname:                  "05.gw.{{ sites['ffnh'].domain }}"
+#    ipv4:                   "162.19.134.63"
+#    ipv4:                   "51.38.107.244"
+#    if:                     "ens18"
+#    div_if:                 "ens18"
+#    div_ipv4:               "162.19.134.63"
+#    host:                   "01"
+#    site:                   "ffnh"
+#    btm_conntype:           "fastd"
+#    domains:
+#      "00":
+#        cnt:                1
+#        bat_ipv4:           10.71.18.1/18
+#        bat_ipv6:           "fd8f:14c7:d318::ff05"
+#        dhcp_first:         "10.71.18.2"
+#        dhcp_last:          "10.71.26.253"
+#        nextnode4:          "10.71.31.254"
+#        nextnode6:          "fd8f:14c7:d318::ffff"
+
 
 ##################################################################
 ##### ffnh - gateways - ffnh - l2tp
@@ -478,12 +509,14 @@ gateways:
 #        nextnode4:          "10.72.111.254"
 #        nextnode6:          "2a07:59c6:ec06:ff06::06ff"
 
+
 ##################################################################
 ##### ffnh - gateways - ffnh - Neu - Domains
 ##################################################################
   "02":
     number:                 "02"
     name:                   02gw
+    type:                   "gw"
     lname:                  "02.gw.{{ sites['ffnh'].domain }}"
     ipv4:                   "194.50.19.109"
     if:                     "ens18"
@@ -517,6 +550,7 @@ gateways:
   "03":
     number:                 "03"
     name:                   03gw
+    type:                   "gw"
     lname:                  "03.gw.{{ sites['ffnh'].domain }}"
     ipv4:                   "194.50.19.101"
     if:                     "ens18"
@@ -550,6 +584,7 @@ gateways:
   "09":
     number:                 "09"
     name:                   09gw
+    type:                   "gw"
     lname:                  "09.gw.{{ sites['ffnh'].domain }}"
     ipv4:                   "194.50.19.107"
     if:                     "ens18"
@@ -583,6 +618,7 @@ gateways:
   "10":
     number:                 "10"
     name:                   10gw
+    type:                   "gw"
     lname:                  "10.gw.{{ sites['ffnh'].domain }}"
     ipv4:                   "194.50.19.100"
     if:                     "ens18"
@@ -616,6 +652,7 @@ gateways:
   "11":
     number:                 "11"
     name:                   11gw
+    type:                   "gw"
     lname:                  "11.gw.{{ sites['ffnh'].domain }}"
     ipv4:                   "194.50.19.104"
     if:                     "ens18"
@@ -649,6 +686,7 @@ gateways:
   "12":
     number:                 "12"
     name:                   12gw
+    type:                   "gw"
     lname:                  "12.gw.{{ sites['ffnh'].domain }}"
     ipv4:                   "194.50.19.105"
     if:                     "ens18"
@@ -682,6 +720,7 @@ gateways:
   "13":
     number:                 "13"
     name:                   13gw
+    type:                   "gw"
     lname:                  "13.gw.{{ sites['ffnh'].domain }}"
     ipv4:                   "194.50.19.96"
     if:                     "ens18"
@@ -716,6 +755,7 @@ gateways:
   "14":
     number:                 "14"
     name:                   14gw
+    type:                   "gw"
     lname:                  "14.gw.{{ sites['ffnh'].domain }}"
     host:                   "02"
     ipv4:                   194.50.19.97
@@ -754,6 +794,7 @@ gateways:
   "21":
     number:                 "21"
     name:                   21gw
+    type:                   "gw"
     lname:                  "21.gw.{{ sites['ffnh'].domain }}"
     ipv4:                   "194.50.19.98"
     if:                     "ens18"
@@ -790,6 +831,7 @@ gateways:
   "22":
     number:                 "22"
     name:                   22gw
+    type:                   "gw"
     lname:                  "22.gw.{{ sites['ffnh'].domain }}"
     ipv4:                   "194.50.19.99"
     if:                     "ens18"
@@ -826,6 +868,7 @@ gateways:
   "23":
     number:                 "23"
     name:                   23gw
+    type:                   "gw"
     lname:                  "23.gw.{{ sites['ffnh'].domain }}"
     ipv4:                   "194.50.19.106"
     if:                     "ens18"
@@ -887,6 +930,7 @@ gateways:
   "stat01":
     number:                 "stat01"
     name:                   "stat01"
+    type:                   "stat"
     aliases:
     - "statistik.freifunk-nordheide.de"
     site:                   "ffnh"
@@ -895,10 +939,23 @@ gateways:
     ipv4:                   "188.165.121.234"
     if:                     "ens18"
 
+  "stat02":
+    number:                 "stat02"
+    name:                   "stat02"
+    type:                   "stat"
+    aliases:
+    - "statistik.freifunk-nordheide.de"
+    site:                   "ffnh"
+    lname:                  "stat02.{{ sites['ffnh'].domain }}"
+    host:                   "01"
+    ipv4:                   "162.19.134.53"
+    if:                     "ens18"
+
 # collect: yanic + firmware
   "coll01":
     number:                 "coll01"
     name:                   "coll01"
+    type:                   "coll"
     aliases:
     - "firmware.freifunk-nordheide.de"
     site:                   "ffnh"
@@ -925,7 +982,7 @@ gateways:
       "11":
         cnt:                3
         bat_ipv4:           10.72.176.3/20
-        bat_ipv6:          "2a07:59c6:ec06:ff11::fffa"
+        bat_ipv6:           "2a07:59c6:ec06:ff11::fffa"
         bat_ipv6_l:         "fd8f:14c7:d318:ff11::fffa"
       "12":
         cnt:                4
@@ -967,27 +1024,113 @@ gateways:
         bat_ipv4:           10.72.48.3/20
         bat_ipv6:           "2a07:59c6:ec06:ff41::fffa"
         bat_ipv6_l:         "fd8f:14c7:d318:ff41::fffa"
-#     "00":
-#       cnt:                12
-#       bat_ipv4:           10.71.0.0/18
-#       bat_ipv6:           "2a07:59c6:ec06::ff15"
-#       bat_ipv6_l:         "fd8f:14c7:d318::ff15"
- 
-# maps:
+      "00":
+        cnt:                12
+        bat_ipv4:           10.71.31.3/18
+        bat_ipv6:           "2a07:59c6:ec06::fffa"
+        bat_ipv6_l:         "fd8f:14c7:d318::fffa"
+
+
+  "coll02":
+    number:                 "coll02"
+    name:                   "coll02"
+    type:                   "coll"
+    aliases:
+    - "firmware.freifunk-nordheide.de"
+    site:                   "ffnh"
+    btm_conntype:           "fastd"
+    lname:                  "coll02.{{ sites['ffnh'].domain }}"
+    host:                   "01"
+    ipv4:                   "162.19.134.51"
+    if:                     "ens18"
+    div_if:                 "ens18"
+#    div_gwv4:               10.100.0.1
+#    div_ipv4:               10.100.0.6
+#    div_ipv6:               "2a07:59c6:ec06:fffa::fdfa/48" 
+    domains:
+      "01":
+        cnt:                1
+        bat_ipv4:           10.72.16.4/20
+        bat_ipv6:           "2a07:59c6:ec06:ff01::fffb"
+        bat_ipv6_l:         "fd8f:14c7:d318:ff01::fffb"
+      "10":
+        cnt:                2
+        bat_ipv4:           10.72.160.4/20
+        bat_ipv6:           "2a07:59c6:ec06:ff10::fffb"
+        bat_ipv6_l:         "fd8f:14c7:d318:ff10::fffb"
+      "11":
+        cnt:                3
+        bat_ipv4:           10.72.176.4/20
+        bat_ipv6:           "2a07:59c6:ec06:ff11::fffb"
+        bat_ipv6_l:         "fd8f:14c7:d318:ff11::fffb"
+      "12":
+        cnt:                4
+        bat_ipv4:           10.72.192.4/20
+        bat_ipv6:           "2a07:59c6:ec06:ff12::fffb"
+        bat_ipv6_l:         "fd8f:14c7:d318:ff12::fffb"
+      "13":
+        cnt:                5
+        bat_ipv4:           10.72.208.4/20
+        bat_ipv6:           "2a07:59c6:ec06:ff13::fffb"
+        bat_ipv6_l:         "fd8f:14c7:d318:ff13::fffb"
+      "14":
+        cnt:                6
+        bat_ipv4:           10.72.224.4/20
+        bat_ipv6:           "2a07:59c6:ec06:ff14::fffb"
+        bat_ipv6_l:         "fd8f:14c7:d318:ff14::fffb"
+      "21":
+        cnt:                7
+        bat_ipv4:           10.115.16.4/20
+        bat_ipv6:           "2a07:59c6:ec06:ff21::fffb"
+        bat_ipv6_l:         "fd8f:14c7:d318:ff21::fffb"
+      "22":
+        cnt:                8
+        bat_ipv4:           10.115.32.4/20
+        bat_ipv6:           "2a07:59c6:ec06:ff22::fffb"
+        bat_ipv6_l:         "fd8f:14c7:d318:ff22::fffb"
+      "23":
+        cnt:                9
+        bat_ipv4:           10.115.48.4/20
+        bat_ipv6:           "2a07:59c6:ec06:ff23::fffb"
+        bat_ipv6_l:         "fd8f:14c7:d318:ff23::fffb"
+      "31":
+        cnt:                10
+        bat_ipv4:           10.72.32.4/20
+        bat_ipv6:           "2a07:59c6:ec06:ff31::fffb"
+        bat_ipv6_l:         "fd8f:14c7:d318:ff31::fffb"
+      "41":
+        cnt:                11
+        bat_ipv4:           10.72.48.4/20
+        bat_ipv6:           "2a07:59c6:ec06:ff41::fffb"
+        bat_ipv6_l:         "fd8f:14c7:d318:ff41::fffb"
+      "00":
+        cnt:                12
+        bat_ipv4:           10.71.31.4/18
+        bat_ipv6:           "2a07:59c6:ec06::fffb"
+        bat_ipv6_l:         "fd8f:14c7:d318::fffb"
+
+#  maps:
   "map01":
     number:                 "map01"
     name:                   map01
+    type:                   "map"
     aliases:
     - "map.freifunk-nordheide.de"
-    - "tmap.freifunk-nordheide.de"
     site:                   "ffnh"
     hood:                   "none"
     lname:                  "map01.{{ sites['ffnh'].domain }}"
     host:                   "01"
     ipv4:                   "188.165.121.235"
     if:                     "ens18"
+    data_s01:               "coll01.freifunk-nordheide.de" # data-source 1
+    data_s02:               "coll02.freifunk-nordheide.de" # data-source 2
+    data_file:              "meshviewer.json"
+    stat_server:            "stat01.freifunk-nordheide.de"
     areas:                  # routers inside these areas are going to be shown on the map 
   #   ffnh
+      "00":
+        id:                 "00"
+        type:               "hood"
       "01":          
         id:                 "01"
         type:               "hood"
@@ -1026,11 +1169,82 @@ gateways:
         type:               "hood"
 
   #   Sonstige
-      "a1":
-        id:                 "a1"
+#      "a1":
+#        id:                 "a1"
+#        type:               "region"
+#        name:               "old map data"
+#        address:            "http://map.freifunk-nordheide.de/data"
+      "x1":
+        id:                 "x1"
         type:               "region"
-        name:               "old map data"
-        address:            "http://map.freifunk-nordheide.de/data"
+        name:               "straussmann"
+        address:            "https://meshviewer.strausmann.com/data"
+
+  "map02":
+    number:                 "map02"
+    name:                   map02
+    type:                   "map"
+    aliases:
+    - "map.freifunk-nordheide.de"
+#    - "tmap.freifunk-nordheide.de"
+    site:                   "ffnh"
+    hood:                   "none"
+    lname:                  "map02.{{ sites['ffnh'].domain }}"
+    host:                   "01"
+    ipv4:                   "162.19.134.52"
+    if:                     "ens18"
+    data_s01:               "coll02.freifunk-nordheide.de" # data-source 1
+    data_s02:               "coll01.freifunk-nordheide.de" # data-source 2
+    data_file:              "meshviewer.json"
+    stat_server:            "stat02.freifunk-nordheide.de"
+    areas:                  # routers inside these areas are going to be shown on the map 
+  #   ffnh
+      "00":
+        id:                 "00"
+        type:               "hood"
+      "01":          
+        id:                 "01"
+        type:               "hood"
+      "10":          
+        id:                 "10"
+        type:               "hood"
+      "11":          
+        id:                 "11"
+        type:               "hood"
+      "12":
+        id:                 "12"
+        type:               "hood"
+      "13":
+        id:                 "13"
+        type:               "hood"
+      "14":
+        id:                 "14"
+        type:               "hood"
+  #   ffcux
+      "21":
+        id:                 "21"
+        type:               "hood"
+      "22":
+        id:                 "22"
+        type:               "hood"
+      "23":
+        id:                 "23"
+        type:               "hood"
+  #   ffstd
+      "31":
+        id:                 "31"
+        type:               "hood"
+  #   ffdiv
+      "41":
+        id:                 "41"
+        type:               "hood"
+
+  #   Sonstige
+#     "a1":
+#        id:                 "a1"
+#        type:               "region"
+#        name:               "old map data"
+#        address:            "https://coll02.freifunk-nordheide.de/ffnh/"
       "x1":
         id:                 "x1"
         type:               "region"
@@ -1041,6 +1255,7 @@ gateways:
   "tmap":
     number:                 "tmap"
     name:                   tmap
+    type:                   "map"
     site:                   "ffnh"
     hood:                   "none"
     lname:                  "tmap.{{ sites['ffnh'].domain }}"
@@ -1087,14 +1302,11 @@ gateways:
         type:               "hood"
 
   #   Sonstige
-#      "06":
-#        id:                 "06"
-#        type:               "hood"
-      "a1":
-        id:                 "a1"
-        type:               "region"
-        name:               "old map data"
-        address:            "http://map.freifunk-nordheide.de/data"
+#      "a1":
+#        id:                 "a1"
+#        type:               "region"
+#        name:               "old map data"
+#        address:            "http://map.freifunk-nordheide.de/data"
       "x1":
         id:                 "x1"
         type:               "region"

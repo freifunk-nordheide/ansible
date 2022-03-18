@@ -15,7 +15,7 @@ method "salsa2012+umac";
 # secure handshakes yes;
 mode tap;
 
-bind {{ hoods[item[0].key]['fastd_bind'] }}: {{ (hoods[item[0].key]['fastd_port']|int + item[1]|int)|string }};
+bind {{ hoods[item[0].key]['fastd_bind'] }}: {% if gateways[unit_id].type == 'gwa' %}10050{% else %}{{ (hoods[item[0].key]['fastd_port']|int + item[1]|int)|string }}{% endif %};
 
 include "secret.conf";
 

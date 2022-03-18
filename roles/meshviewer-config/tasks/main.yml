@@ -59,7 +59,7 @@
   
 - name: Create wget data script
   template: 
-    src:       get_nodevalues.j2
+    src:       get_nodevalues_coll.j2
     dest:      /usr/local/bin/get_nodevalues
     mode:      "755"
 

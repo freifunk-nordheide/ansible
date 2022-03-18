@@ -1,16 +1,16 @@
 ---
 
-- name: Install dependencies
-  apt: 
-    name:          ethtool
+#- name: Install dependencies
+#  apt: 
+#    name:          ethtool
 
-- name: Stop and disable respondd service
-  service:
-    name:          "respondd@{{ hoods[item.key].sname }}.service"
-    enabled:       no
-    state:         stopped
-  loop:            "{{ gateways[unit_id]['domains'] | dict2items }}"
-  ignore_errors:   True
+#- name: Stop and disable respondd service
+#  service:
+#    name:          "respondd@{{ hoods[item.key].sname }}.service"
+#    enabled:       no
+#    state:         stopped
+#  loop:            "{{ gateways[unit_id]['domains'] | dict2items }}"
+#  ignore_errors:   True
 
 - name: Clone respondd announce repository
   git: 

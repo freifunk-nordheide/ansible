@@ -10,7 +10,7 @@
     - python3-json-pointer
 
 - name: Get nodejs
-  shell: "curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -"
+  shell: "curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -"
 
 - name: Install node_js
   apt:
