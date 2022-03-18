@@ -1,0 +1,19 @@
+---
+- name: reload systemd
+  systemd:
+    daemon_reload: yes
+
+- name: restart kea-dhcp4-server
+  systemd:
+    name: kea-dhcp4-server
+    state: restarted
+
+- name: restart kea-exporter
+  systemd:
+    name: kea-exporter
+    state: restarted
+
+- name: restart nginx
+  systemd:
+    name: nginx
+    state: restarted

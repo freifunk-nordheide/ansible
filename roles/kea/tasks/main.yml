@@ -1,0 +1,106 @@
+# This role builds ISC KEA 
+---
+
+- name: Install required packages for building KEA
+  apt:
+    pkg:                        ['git', 'g++', 'automake', 'autoconf', 'libtool', 'pkg-config', 'libboost-all-dev', 'openssl', 'libssl-dev', 'ca-certificates', 'liblog4cplus-dev', 'libpq-dev']
+    update_cache:               yes
+    cache_valid_time:           1800
+    state:                      present
+    install_recommends:         no
+
+- name: Clone ISC KEA git repo and checkout release Kea-2.0.0 
+  git: 
+    repo:                       https://github.com/isc-projects/kea.git
+    dest:                       /srv/kea
+    clone:                      yes
+    update:                     no
+    version:                    Kea-2.0.0
+
+- name: Build ISC KEA
+  shell:                        "{{item}}"
+  args:
+    chdir:                      "/srv/kea"
+    creates:                    "/usr/local/sbin/kea-dhcp4"
+  with_items:
+    - "autoreconf --install"
+    - "./configure"
+    - "make -j $(grep -ic 'model name' /proc/cpuinfo)"
+    - "make install"
+
+- name: Build ISC KEA-ldconfig
+  command:                      "ldconfig"
+  args:
+    chdir:                      "/usr/local/sbin"
+
+- name: Deploy systemd files
+  template:
+    src:                        "{{item}}"
+    dest:                       "/lib/systemd/system/{{item[:-3]}}"
+  with_items:
+    - kea-dhcp4.service.j2
+#    - kea-dhcp6.service.j2
+#    - kea-dhcp-ddns.service.j2
+  notify:
+    - reload systemd
+
+
+# Configure kea
+
+- name: check whether isc-dhcp-server.service is running
+  shell:                        "systemctl status isc-dhcp-server.service"
+  register:                     _isc_dhcp_status
+  failed_when:                  False
+  changed_when:                 False
+  check_mode:                   no
+
+#- name: check whether isc-dhcp-server.service is enabled
+#  shell:                        "systemctl is-enabled isc-dhcp-server.service"
+#  register:                     _isc_dhcp_enabled
+#  failed_when:                  False
+#  changed_when:                 False
+#  check_mode:                   no
+
+#- name: stop isc-dhcp
+#  service:                      name=isc-dhcp-server state=stopped
+#  when:
+#    - _isc_dhcp_status.rc == 0
+
+#- name: disable isc-dhcp
+#  service:                      name=isc-dhcp-server enabled=no
+#  when:
+#    - _isc_dhcp_enabled.rc == 0
+
+- name: enable kea-dhcp4.service
+  service:                      name=kea-dhcp4.service enabled=yes
+
+- name: Create /etc/kea directory
+  file:                         path=/etc/kea state=directory mode=0755
+
+- name: Create /var/kea directory
+  file:                         path=/var/kea state=directory mode=0755
+
+- name: Create /var/log/kea directory
+  file:                         path=/var/log/kea state=directory mode=0755
+
+- name: create /etc/kea/kea.conf
+  template:                     src=kea_dhcp4.conf.j2 dest=/etc/kea/kea.conf
+  notify:
+    - reload-or-restart kea-dhcp4.service
+
+# reboot
+
+- name: Reboot now
+  shell:                        "sleep 5 && reboot"
+  async:                        1
+  poll:                         0
+ 
+- name: Wait for the reboot to complete
+  wait_for_connection:
+    connect_timeout:            20
+    sleep:                      5
+    delay:                      5
+    timeout:                    300
+
+
+

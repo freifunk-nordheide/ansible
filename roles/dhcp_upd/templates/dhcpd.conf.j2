@@ -1,0 +1,49 @@
+# {{ ansible_managed }}
+
+# option definitions common to all supported networks...
+
+default-lease-time 300;
+max-lease-time 1200;
+
+# Use this to enble / disable dynamic dns updates globally.
+ddns-update-style none;
+
+# If this DHCP server is the official DHCP server for the local
+# network, the authoritative directive should be uncommented.
+authoritative;
+
+# Use this to send dhcp log messages to a different log file (you also
+# have to hack syslog.conf to complete the redirection).
+log-facility local7;
+
+
+# Freifunk Nordheide
+{% for item in gateways[unit_id].domains | dict2items %}
+subnet {{ hoods[item.key].dhcp_range | ipaddr('network') }} netmask {{ hoods[item.key].dhcp_range | ipaddr('netmask') }} {
+  interface br-{{ hoods[item.key].sname }};
+  option domain-name "{{ hoods[item.key].sname }}";
+  option domain-search "{{ hoods[item.key].sname }}";
+
+  pool {
+    range {{ item.value.dhcp_first }} {{ item.value.dhcp_last }};
+    option routers {{ item.value.bat_ipv4 | ipaddr('address') }};
+    option domain-name-servers {{ item.value.bat_ipv4 | ipaddr('address') }};
+    allow unknown-clients;
+  }
+
+{% for gwitem in gateways | dict2items if gateways[gwitem.key].domains is defined %}
+{% for dmitem in gateways[gwitem.key].domains | dict2items %}
+{% if dmitem.key == item.key and gwitem.value.type == "gw" and gwitem.key != unit_id %}
+  pool {
+    range {{ dmitem.value.dhcp_first }} {{ dmitem.value.dhcp_last }};
+    option routers {{ dmitem.value.bat_ipv4 | ipaddr('address') }};
+    option domain-name-servers {{ dmitem.value.bat_ipv4 | ipaddr('address') }};
+    deny unknown-clients;
+  }
+{% endif %}
+{% endfor %}
+{% endfor %}
+}
+
+{% endfor %}
+include "/etc/dhcp/static.conf";
