@@ -6,7 +6,7 @@
   - hostname
   - common
 
-- name: Setup collector
+- name: Setup collector step 1
   hosts: all
   roles:
   - ntp
@@ -14,7 +14,9 @@
   - fastd
   - meshconfig
   - reboot-unit
+
+- name: Setup collector step 1
+  hosts: all
+  roles:
   - bind
-#  - yanic
-#  - nginx
 

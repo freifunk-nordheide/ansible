@@ -85,7 +85,8 @@
   when:              not st.stat.exists and unit_type == "gateway"
 
 - name: Create letsencrypt certificate for mapserver and statserver
-  shell:             certbot certonly --agree-tos --email {{ letsencrypt_email }} --webroot -w /var/lib/letsencrypt/ -d {{ unit_id }}.{{ sites[gateways[unit_id].site].domain }}{% if gateways[unit_id].aliases is defined %}{% for ali in gateways[unit_id].aliases %} -d {{ali}}{% endfor %}{% endif %}
+  shell:             certbot certonly --agree-tos --email {{ letsencrypt_email }} --webroot -w /var/lib/letsencrypt/ -d {{ unit_id }}.{{ sites[gateways[unit_id].site].domain }}
+  # {% if gateways[unit_id].aliases is defined %}{% for ali in gateways[unit_id].aliases %} -d {{ali}}{% endfor %}{% endif %}
   when:              not st.stat.exists and (unit_type == "statserver" or unit_type == "mapserver")
 
 - name: Create letsencrypt certificate for collector

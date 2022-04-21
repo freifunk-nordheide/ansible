@@ -23,7 +23,11 @@ iface br-{{ hoods[item].sname }} inet static
 	netmask		{{ gateways[unit_id].domains[item].bat_ipv4 | ipaddr('netmask')}}
 
 iface br-{{ hoods[item].sname }} inet6 static
+{% if hoods[item].sname == 'ffnh' %}
+	address		{{ gateways[unit_id].domains[item].bat_ipv6_l }}
+{% else %}
 	address		{{ gateways[unit_id].domains[item].bat_ipv6 }}
+{% endif %}
 	netmask		64
 	post-up /sbin/ip rule add iif br-{{ hoods[item].sname }} table 42
 	pre-down /sbin/ip rule del iif br-{{ hoods[item].sname }} table 42

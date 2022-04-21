@@ -18,15 +18,17 @@ hosts:
     provider:               ovh
     name:                   proxmox01.freifunk-nordheide.de
     proxmox:                proxmox01.freifunk-nordheide.de
-    ipv4:                   "37.59.18.229"
+    ipv4:                   "141.95.32.104"
     ipv4_range:	            "213.32.41.8/29"
+    ipv6:                   "2001:41d0:0008:65e5::"
   "02":
     number:                 "02"
     provider:               vserver.site
-    name:                   root18.vserver.site
+    name:                   dedi18.vserver.site
     proxmox:                proxmox02.freifunk-nordheide.de
-    ipv4:                   "194.50.19.45"
-    ipv4_range:             "194.50.19.96/29"
+    proxmoxa:               dedi18
+    ipv4:                   "103.158.223.227"
+    ipv4_range:             
   "03":
     number:                 "03"
     provider:               ovh
@@ -39,15 +41,16 @@ hosts:
     provider:               ovh
     name:                   proxmox04.freifunk-nordheide.de
     proxmox:                proxmox04.freifunk-nordheide.de
-    ipv4:                   "145.239.2.137"
+    ipv4:                   "141.95.66.200"
     ipv4_range:
   "05":
     number:                 "05"
     provider:               vserver.site
-    name:                   root21.vserver.site
+    name:                   dedi16.vserver.site
     proxmox:                proxmox05.freifunk-nordheide.de
-    ipv4:                   "194.50.19.48"
-    ipv4_range:             "194.50.19.104/29"
+    proxmoxa:               dedi16
+    ipv4:                   "103.158.223.225"
+    ipv4_range:             
 
 sites:
   ffnh:
@@ -417,9 +420,12 @@ gateways:
     name:                   01gw
     type:                   "gwa"
     lname:                  "01.gw.{{ sites['ffnh'].domain }}"
-    ipv4:                   "51.38.103.120"
-    if:                     "eth0"
-    host:                   "03"
+    ipv4:                   "141.95.93.118"
+    if:                     "ens18"
+    div_if:                 "ens18"
+    div_ipv4:               "141.95.93.118"
+    div_gwv4:               "141.95.93.118"
+    host:                   "04"
     site:                   "ffnh"
     btm_conntype:           "fastd"
     domains:
@@ -427,6 +433,7 @@ gateways:
         cnt:                1
         bat_ipv4:           10.71.0.1/18
         bat_ipv6:           "fd8f:14c7:d318::ff01"
+        bat_ipv6_l:         "fd8f:14c7:d318::ff01"
         dhcp_first:         "10.71.0.2"
         dhcp_last:          "10.71.8.253"
         nextnode4:          "10.71.31.254"
@@ -450,36 +457,11 @@ gateways:
         cnt:                1
         bat_ipv4:           10.71.9.1/18
         bat_ipv6:           "fd8f:14c7:d318::ff04"
+        bat_ipv6_l:         "fd8f:14c7:d318::ff04"
         dhcp_first:         "10.71.9.2"
         dhcp_last:          "10.71.17.253"
         nextnode4:          "10.71.31.254"
         nextnode6:          "fd8f:14c7:d318::ffff"
-
-
-# Test "neues" gw in der Alt-Umgebung 
-#  "05":
-#    number:                 "05"
-#    name:                   05gw
-#    type:                   "gwa"
-#    lname:                  "05.gw.{{ sites['ffnh'].domain }}"
-#    ipv4:                   "162.19.134.63"
-#    ipv4:                   "51.38.107.244"
-#    if:                     "ens18"
-#    div_if:                 "ens18"
-#    div_ipv4:               "162.19.134.63"
-#    host:                   "01"
-#    site:                   "ffnh"
-#    btm_conntype:           "fastd"
-#    domains:
-#      "00":
-#        cnt:                1
-#        bat_ipv4:           10.71.18.1/18
-#        bat_ipv6:           "fd8f:14c7:d318::ff05"
-#        dhcp_first:         "10.71.18.2"
-#        dhcp_last:          "10.71.26.253"
-#        nextnode4:          "10.71.31.254"
-#        nextnode6:          "fd8f:14c7:d318::ffff"
-
 
 ##################################################################
 ##### ffnh - gateways - ffnh - l2tp
@@ -931,20 +913,20 @@ gateways:
     number:                 "stat01"
     name:                   "stat01"
     type:                   "stat"
-    aliases:
-    - "statistik.freifunk-nordheide.de"
+#    aliases:
+#    - "statistik.freifunk-nordheide.de"
     site:                   "ffnh"
     lname:                  "stat01.{{ sites['ffnh'].domain }}"
-    host:                   "01"
-    ipv4:                   "188.165.121.234"
+    host:                   "04"
+    ipv4:                   "141.95.93.116"
     if:                     "ens18"
 
   "stat02":
     number:                 "stat02"
     name:                   "stat02"
     type:                   "stat"
-    aliases:
-    - "statistik.freifunk-nordheide.de"
+#    aliases:
+#    - "statistik.freifunk-nordheide.de"
     site:                   "ffnh"
     lname:                  "stat02.{{ sites['ffnh'].domain }}"
     host:                   "01"
@@ -961,13 +943,18 @@ gateways:
     site:                   "ffnh"
     btm_conntype:           "fastd"
     lname:                  "coll01.{{ sites['ffnh'].domain }}"
-    host:                   "05"
-    ipv4:                   "194.50.19.108"
+    host:                   "04"
+    ipv4:                   "141.95.93.115"
     if:                     "ens18"
-    div_if:                 "ens19"
-    div_gwv4:               10.100.0.1
-    div_ipv4:               10.100.0.6
-    div_ipv6:               "2a07:59c6:ec06:fffa::fdfa/48" 
+    div_if:                 "ens18"
+#    div_gwv4:               10.100.0.1
+#    div_ipv4:               10.100.0.6
+#    div_ipv6:               "2a07:59c6:ec06:fffa::fdfa/48" 
+    yanic_params:
+      yanic_filldb:          true
+      yanic_influxdb:        "ffnh"
+      yanic_db_addresses:
+      - "https://stat01.freifunk-nordheide.de/influxdb"    
     domains:
       "01":
         cnt:                1
@@ -1047,6 +1034,11 @@ gateways:
 #    div_gwv4:               10.100.0.1
 #    div_ipv4:               10.100.0.6
 #    div_ipv6:               "2a07:59c6:ec06:fffa::fdfa/48" 
+    yanic_params:
+      yanic_filldb:          true
+      yanic_influxdb:        "ffnh"
+      yanic_db_addresses:
+      - "https://stat02.freifunk-nordheide.de/influxdb"    
     domains:
       "01":
         cnt:                1
@@ -1120,7 +1112,7 @@ gateways:
     hood:                   "none"
     lname:                  "map01.{{ sites['ffnh'].domain }}"
     host:                   "01"
-    ipv4:                   "188.165.121.235"
+    ipv4:                   "141.95.93.117"
     if:                     "ens18"
     data_s01:               "coll01.freifunk-nordheide.de" # data-source 1
     data_s02:               "coll02.freifunk-nordheide.de" # data-source 2

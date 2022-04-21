@@ -58,32 +58,32 @@ no_owner = true
 delete_after = "5000d"
 delete_interval = "1d"
 
-{% if item.value.cnt|int == 1 %}
+{% if gateways[unit_id].yanic_params.yanic_filldb is defined and gateways[unit_id].yanic_params["yanic_filldb"] == true%}
+{% for ydba in gateways[unit_id].yanic_params["yanic_db_addresses"] %}
 [[database.connection.influxdb]]
 enable   = true
-address  = "http://statistik.freifunk-nordheide.de:8086"
+address  = "{{ ydba }}"
 database = "ffnh"
 username = ""
 password = ""
+insecure_skip_verify = false
+[database.connection.influxdb.tags]
+#
+
+{% endfor %}
 {% else %}
 [[database.connection.influxdb]]
 enable   = false
-#password = ""
-{% endif %}
-
-{% if item.value.cnt|int == 1 %}
-#[[database.connection.influxdb]]
-#enable   = true
-#address  = "https://stat01.freifunk-nordheide.de/influxdb"
-#database = "ffnh"
-#username = ""
-#password = ""
-{% else %}
-#[[database.connection.influxdb]]
-#enable   = false
-{% endif %}
-
+address  = ""
+database = "ffnh"
+username = ""
+password = ""
+insecure_skip_verify = false
 [database.connection.influxdb.tags]
+#
+
+{% endif %}
+
 
 [[database.connection.graphite]]
 enable   = false

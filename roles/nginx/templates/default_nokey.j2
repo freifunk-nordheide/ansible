@@ -8,7 +8,7 @@ server {
 {% elif unit_type == 'mapserver' %}
 	server_name {{ unit_id }}.{{ sites[gateways[unit_id].site].domain }}{% if gateways[unit_id].aliases is defined %}{% for ali in gateways[unit_id].aliases %} {{ali}}{% endfor %}{% endif %};
 {% elif unit_type == 'statserver' %}
-	server_name {{ unit_id }}.{{ sites[gateways[unit_id].site].domain }}{% if gateways[unit_id].aliases is defined %}{% for ali in gateways[unit_id].aliases %} {{ali}}{% endfor %}{% endif %};
+	server_name {{ unit_id }}.{{ sites[gateways[unit_id].site].domain }};
 {% elif unit_type == 'collector' %}
 	server_name {{ unit_id }}.{{ sites[gateways[unit_id].site].domain }}{% if gateways[unit_id].aliases is defined %}{% for ali in gateways[unit_id].aliases %} {{ali}}{% endfor %}{% endif %};
 {% endif %}

@@ -3,7 +3,6 @@
 - name: Setup collector step 2
   hosts: all
   roles:
-  - bind
-  - yanic
+#  - yanic
   - nginx
 

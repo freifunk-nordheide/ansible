@@ -5,3 +5,6 @@
 
 - name: reload-or-restart kea-dhcp4.service
   shell: systemctl reload-or-restart kea-dhcp4.service
+
+- name: reload-or-restart kea-dhcp6.service
+  shell: systemctl reload-or-restart kea-dhcp4.service

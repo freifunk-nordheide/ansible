@@ -4,13 +4,18 @@
 #
 - name: Grafana Version
   set_fact: 
+#   Install first the version shown below because the existing grafana.db used here (containing all our charts) is based on this version
+#   Update grafana to a newer version after the first installation directly on the VM - this will guarantee a consistent db
     grafana_version:               "8.1.1"
-    # Install first the above version because the existing grafana.db used here (containing all our charts) is based on this version
-    # Update grafana to a newer version after the first installation directly on the VM - this will guarantee a consistent db
+
+#   if grafana_cfos == true then copy the grafana_db from other existing grafana server: grafana_es
+#   if false copy the local grafana_db in the file dir
+    grafana_cfos:                  false
+    grafana_es:                    "stat02.freifunk-nordheide.de"
 
 - name: ensure apt dependencies are installed
   apt:
-    name:                          ["apt-transport-https"]
+    name:                          ["apt-transport-https", "rsync"]
     state:                         present
   become:                          yes
 
@@ -92,7 +97,7 @@
     - /var/lib/grafana/plugins
     - /var/run/grafana
 
-- name: Copy existing grafana.db
+- name: Copy standard local grafana.db
   copy:        
     src:                           grafana.db 
     dest:                          /var/lib/grafana/grafana.db 
@@ -101,6 +106,19 @@
     mode:                          0755 
     force:                         yes
   become:                          yes  
+  when:                            grafana_cfos == false
+
+- name: Copy the complete db from {{ grafana_es }} to current server using Method Push
+  tags:                            sync-push
+  synchronize:
+    src:                           "/var/lib/grafana/grafana.db"
+    dest:                          "/var/lib/grafana/grafana.db"
+    mode:                          push
+    recursive:                     false
+#        rsync_path:     "sudo rsync" 
+  become:                          true
+  delegate_to:                     "{{ grafana_es }}"
+  when:                            grafana_cfos == true
 
 - name: ensure grafana is running and enabled to start on boot
   service:

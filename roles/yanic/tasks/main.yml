@@ -1,11 +1,11 @@
 ---
 
-- name: Stop a running yanic service
-  service:
-    name:               yanic@{{ hoods[item.key].sname }}.service
-    state:              stopped
-  loop:                 "{{ gateways[unit_id].domains | dict2items }}"
-  ignore_errors:        True
+#- name: Stop a running yanic service
+#  service:
+#    name:               yanic@{{ hoods[item.key].sname }}.service
+#    state:              stopped
+#  loop:                 "{{ gateways[unit_id].domains | dict2items }}"
+#  ignore_errors:        True
 
 - name: Create user
   user: 
@@ -13,11 +13,14 @@
     create_home:        no
 
 - name: Install yanic
-  shell:                /usr/local/go/bin/go get -v -u {{ yanic_source }}
+  shell:                /usr/local/go/bin/go install {{ yanic_source }}
   args:
     creates:            /opt/go/bin/yanic
   environment:
+    GOPRIVATE:          github.com/FreifunkBremen/yanic
     GOPATH:             /opt/go
+#  environment:
+#    GOPATH:             /opt/go
   notify:               Restart yanic
   ignore_errors:        true
 
