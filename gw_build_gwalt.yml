@@ -1,0 +1,24 @@
+---
+
+- name: Setup common roles on all hosts
+  hosts: all
+  roles:
+  - hostname
+  - common
+
+- name: Setup gateways
+  hosts: all
+  roles:
+  - ntp
+  - batman
+  - fastd
+  - meshconfig
+  - radvd
+  - bind
+  - respondd
+#  - yanic
+#  - maintenance
+#  - nginx
+  - kea
+#  - reboot-unit
+

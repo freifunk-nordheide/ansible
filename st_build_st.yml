@@ -1,0 +1,26 @@
+---
+
+- name: Setup common roles on all hosts
+  hosts: all
+  roles:
+  - hostname
+  - common
+
+- name: Setup statserver
+  hosts: all
+  roles:
+  - ntp
+  - stat-install-influx-db
+  - stat-install-grafana
+
+
+
+#  - bind
+#  - nginx
+# # - yanic
+
+#- name: Reboot gateways
+#  hosts: all
+#  roles:
+#  - reboot-unit
+

@@ -1,0 +1,7 @@
+---
+
+- name: Setup gateways manually
+  hosts: all
+  roles:
+   - dhcp_upd
+ 
